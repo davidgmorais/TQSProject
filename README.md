@@ -1,4 +1,4 @@
-# TQSProject
+# Book2Door
 Application developed as the group final project required for TQS
 
 ## Project Abstract
@@ -12,5 +12,7 @@ Application developed as the group final project required for TQS
 
 ## Bookmarks
 [Google Drive](https://drive.google.com/drive/folders/1py9LHF6XjFzE0fQoLlHiBdUrp-AvKi53?usp=sharing)
+
+[Backlog](https://github.com/davidgmorais/Book2Door/projects/1)
 
 [Pivotal Tracker](https://www.pivotaltracker.com/n/projects/2500165)
