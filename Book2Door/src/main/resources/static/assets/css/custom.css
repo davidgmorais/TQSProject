@@ -1,0 +1,63 @@
+.form-group {
+	padding-top: 3%;
+}
+
+input {
+	font-size: 22px !important;
+}
+
+.center {
+	text-align: center;
+	padding-top: 25%;
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.address {
+	padding-top: 10%;
+}
+
+#confirm {
+	padding-top: 5%;
+}
+
+.search {
+	padding-top: 5%;
+}
+
+.grid-container {
+	display: grid;
+	grid-template-columns: auto auto auto;
+	background-color: transparent;
+
+}
+
+
+.grid-item {
+	background-color: rgba(255, 255, 255, 0.8);
+	padding: 5px;
+	width: 90%;
+	height: 90%;
+}
+
+.grid-item-2 {
+	background-color: rgba(255, 255, 255, 0.8);
+	padding: 5px;
+	width: 60%;
+	height: 60%;
+}
+
+img{
+	max-width: 100%;
+	min-height: 100%;
+	min-width: 100%;
+	max-width: 100%;
+	object-fit: cover;
+}
+
+.stores {
+	padding-top: 5%;
+}
