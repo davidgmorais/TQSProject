@@ -15,6 +15,7 @@
     <link rel="stylesheet" th:href="@{assets/css/animate.css}" />
     <link rel="stylesheet" th:href="@{assets/css/main.css}" />
     <link rel="stylesheet" th:href="@{assets/css/custom.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 
@@ -93,9 +94,13 @@
             <div class="col-lg-12">
                 <div class="center" id="location">
                     <h1 class="wow fadeInUp" data-wow-delay=".2s">Where do you want your order delivered at?</h1>
-                    <span class="col-lg-6 wow fadeInUp address" data-wow-delay=".4s">
-                        <input class="form-control" type="text" placeholder="Enter your location" aria-label="Enter your location" />
-                    </span>
+                    <br>
+                    <p class="wow fadeInUp" data-wow-delay=".4s">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fas fa-map-marker-alt"></i></span>
+                        <input type="text" class="form-control" placeholder="Enter your location" aria-label="address" aria-describedby="addon-wrapping">
+                    </div>
+                    </p>
                     <br>
                     <span id="confirm"><button onclick="search()" class="main-btn btn-hover wow fadeInUp confirm" data-wow-delay=".6s">Confirm address</button></span>
                 </div>
@@ -103,7 +108,11 @@
                     <div>
                         <h1 class="wow fadeInUp" data-wow-delay=".2s">Search for your book!</h1>
                         <span class="col-lg-8 wow fadeInUp search" data-wow-delay=".4s">
-                            <input class="form-control" type="text" placeholder="Search for book title, author, store, ..." aria-label="Search for book title, author, store, ..." />
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text" id="inputGroup-sizing-lg 1"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" placeholder="Search for book title, author, store, ..." aria-label="address" aria-describedby="addon-wrapping">
+                            </div>
+
                         </span>
                     </div>
                     <div>

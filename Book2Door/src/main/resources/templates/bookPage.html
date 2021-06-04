@@ -83,6 +83,7 @@
     </div>
     <div class="container book">
         <div class="row align-items-center">
+
             <div class="col-lg-6">
                 <div class="hero-content">
                     <h1 class="wow fadeInUp" data-wow-delay=".2s">Book Name</h1>
@@ -91,16 +92,40 @@
                     <p class="wow fadeInUp" data-wow-delay=".4s">In Store</p>
                     <h3>Price</h3>
                     <div class="cart">
-                        <button class="main-btn btn-hover wow fadeInUp" data-wow-delay=".6s"><i class="fas fa-cart-plus"></i> Add to cart</button>
+                        <button type="button" class="main-btn btn-hover wow fadeInUp" data-toggle="modal" data-target="#myModal" data-wow-delay=".6s"><i class="fas fa-cart-plus"></i> Add to cart</button>
                     </div>
                 </div>
             </div>
             <div class="col-lg-4">
                 <img th:src="@{assets/img/book.jpg}">
             </div>
+
+        </div>
+
+    </div>
+
+</section>
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">This item was added to your cart!</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Go to your cart if you want to go to checkout.
+            </div>
+            <div class="modal-footer" style="text-align: center">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a th:href="@{/cart}"><button type="button" class="btn btn-primary" style="background-color: #91e0d2ff; border-color: #91e0d2ff;" >Go to Cart</button></a>
+            </div>
         </div>
     </div>
-</section>
+</div>
 <!-- ========================= hero-section end ========================= -->
 
 
