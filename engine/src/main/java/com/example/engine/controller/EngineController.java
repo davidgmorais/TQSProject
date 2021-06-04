@@ -26,5 +26,9 @@ public class EngineController {
         return "serviceStatistics";
     }
 
-}
+    @GetMapping(value = "/services")
+    public String servicesPage() {
+        return "servicesPage";
+    }
+
 

@@ -60,6 +60,7 @@ img{
 
 .stores {
 	padding-top: 5%;
+
 }
 
 
@@ -75,4 +76,6 @@ progress:not([value])::-webkit-progress-value {
 progress:not([value])::-moz-progress-bar {
 
 }
+
+
 
