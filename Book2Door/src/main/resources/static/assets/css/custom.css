@@ -60,4 +60,22 @@ img{
 
 .stores {
 	padding-top: 5%;
+
 }
+
+
+progress:not([value]) {
+	/* style rules */
+}
+progress:not([value])::-webkit-progress-bar {
+	background-color: pink !important;
+}
+progress:not([value])::-webkit-progress-value {
+	background-color: pink !important;
+}
+progress:not([value])::-moz-progress-bar {
+
+}
+
+
+

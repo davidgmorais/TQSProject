@@ -3,11 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>Book2Door - Checkout</title>
+    <title>Book2Door - Follow your Order</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" type="image/x-icon" th:href="@{assets/img/favicon.png}"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Place favicon.ico in the root directory -->
 
     <!-- ========================= CSS here ========================= -->
@@ -16,7 +15,8 @@
     <link rel="stylesheet" th:href="@{assets/css/animate.css}" />
     <link rel="stylesheet" th:href="@{assets/css/main.css}" />
     <link rel="stylesheet" th:href="@{assets/css/custom.css}" />
-    <link rel="stylesheet" th:href="@{assets/css/cartPage.css}" />
+    <link rel="stylesheet" th:href="@{assets/css/bookPage.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 
@@ -47,8 +47,8 @@
             <div class="row align-items-center">
                 <div class="col-lg-12">
                     <nav class="navbar navbar-expand-lg">
-                        <a class="navbar-brand" th:href="@{/}">
-                            <h3>Book2Door</h3>
+                        <a class="navbar-brand" href="index.html">
+                            <img th:src="@{assets/img/logo/logo.svg}" alt="Logo" />
                         </a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="toggler-icon"></span>
@@ -77,33 +77,79 @@
 <!-- ========================= header end ========================= -->
 
 <!-- ========================= hero-section start ========================= -->
-<section id="home" class="hero-section">
+<section id="login" class="hero-section">
     <div class="hero-shape">
         <img th:src="@{assets/img/hero/hero-shape.svg}" alt="" class="shape">
     </div>
-    <div class="container">
+    <div class="container book">
         <div class="row align-items-center">
-            <div class="cart">
-                <div class="hero-content" style="padding-top: 5%;">
-                    <h3>Order Details</h3>
-                    <br>
-                    <p><i class="fas fa-map-pin"></i> Address</p>
-                    <p><i class="far fa-clock"></i> As soon as possible</p>
-                    <p><i class="fas fa-shopping-bag"></i> Products:</p>
-                    <p><i class="fas fa-money-bill-wave-alt"></i> Total: 45$ </p>
-                    <div id="placeOrder">
-                        <a><button class="main-btn btn-hover wow fadeInUp order" data-wow-delay=".6s" th:href="@{/order}">Place Order</button></a>
+            <h3 class="wow fadeInUp" data-wow-delay=".2s">Follow your Order</h3>
+            <div id="orderPlaced">
+                <div class="col-lg-6">
+                    <div class="hero-content">
 
+                        <div style="text-align: center; padding-top: 5%">
+                            <h1 style="color: #91e0d2ff">Your order was placed!</h1>
+                            <progress>Loading...</progress>
+
+                        </div>
                     </div>
                 </div>
+                <div class="col-lg-6">
+                    <img th:src="@{assets/img/orderPlaced.png}">
+                </div>
+            </div>
+
+            <div id="orderPickedUp" style="display: none">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+
+                        <div style="text-align: center; padding-top: 5%">
+                            <h1 style="color: #91e0d2ff">A rider has picked up your order!</h1>
+                            <progress>Loading...</progress>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img th:src="@{assets/img/orderPlaced.png}">
+                </div>
+            </div>
+
+
+
+    </div>
+
+</section>
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">This item was added to your cart!</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Go to your cart if you want to go to checkout.
+            </div>
+            <div class="modal-footer" style="text-align: center">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a th:href="@{/cart}"><button type="button" class="btn btn-primary" style="background-color: #91e0d2ff; border-color: #91e0d2ff;" >Go to Cart</button></a>
             </div>
         </div>
     </div>
-</section>
+</div>
 <!-- ========================= hero-section end ========================= -->
 
 
+
 <!-- ========================= JS here ========================= -->
+<script>
+    
+</script>
 <script th:src="@{assets/js/bootstrap.5.0.0.alpha-2-min.js}"></script>
 <script th:src="@{assets/js/count-up.min.js}"></script>
 <script th:src="@{assets/js/wow.min.js}"></script>
