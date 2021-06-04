@@ -1,0 +1,23 @@
+.requests {
+    text-align: left;
+    font-size: 20px;
+}
+.cart {
+    padding-top: 3%;
+}
+
+
+.requests th {
+    background-color: #253b6eff;
+    color: white;
+}
+#storeRequests {
+    padding-top: 2%;
+}
+
+h2 {
+    color: #253b6eff;
+}
+.space {
+    margin-left: 2%;
+}

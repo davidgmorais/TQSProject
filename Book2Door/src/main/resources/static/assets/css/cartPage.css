@@ -1,0 +1,53 @@
+.products {
+    text-align: left;
+    font-size: 20px;
+}
+.cart {
+    padding-top: 3%;
+}
+
+.products a{
+    font-size: 16px;
+    color: #ffae8cff !important;
+}
+
+.products th {
+    background-color: #ffae8cff;
+    color: white;
+}
+#products {
+    padding-top: 4%;
+}
+
+#priceTotal {
+    padding-top: 3%;
+    font-size: 20px;
+}
+
+.price {
+    width: 30%;
+    float: right;
+}
+
+hr {
+    width:25%;
+    height:3px;
+    float: right;
+    background-color: #ffae8cff;
+}
+
+.borderless td, .borderless th {
+    border: none;
+}
+
+#checkout {
+    padding-left: 75%;
+}
+
+.checkout {
+    background-color: #ffae8cff;
+}
+
+.order {
+    background-color: #ffae8cff;
+}
