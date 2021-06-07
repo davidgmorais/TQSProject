@@ -33,17 +33,37 @@ class ContribService_UnitTest {
 
     @BeforeEach
     public void setUp() {
-        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 1);
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        bob.setId(1);
         Contrib bobService = new Contrib(bob, "Bob's Service");
         bobService.setVerified(true);
 
-        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 1);
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 2);
+        dakota.setId(2);
         Contrib dakotaService = new Contrib(dakota, "Dakota Service");
         dakotaService.setId(100);
 
         Mockito.when(contribRepository.findAllByVerifiedTrue()).thenReturn( new ArrayList<>(Collections.singletonList(bobService)));
         Mockito.when(contribRepository.findAllByVerifiedFalse()).thenReturn( new ArrayList<>(Collections.singletonList(dakotaService)));
+        Mockito.when(contribRepository.getContribByUserId(bob.getId())).thenReturn(bobService);
+        Mockito.when(contribRepository.getContribByUserId(dakota.getId())).thenReturn(dakotaService);
 
+    }
+
+    @Test
+    void whenCheckVerified_andContributorIsVerified_thenReturnTrue() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        bob.setId(1);
+        Boolean isVerified = contribService.isVerified(bob);
+        assertThat(isVerified).isTrue();
+    }
+
+    @Test
+    void whenCheckVerified_andContributorIsNotVerified_thenReturnFalse() {
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 2);
+        dakota.setId(2);
+        Boolean isVerified = contribService.isVerified(dakota);
+        assertThat(isVerified).isFalse();
     }
 
     @Test

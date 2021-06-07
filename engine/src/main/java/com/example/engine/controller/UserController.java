@@ -2,9 +2,11 @@ package com.example.engine.controller;
 
 import com.example.engine.component.JwtUtils;
 import com.example.engine.dto.ContribDTO;
+import com.example.engine.dto.UserDTO;
 import com.example.engine.entity.JwtUser;
 import com.example.engine.entity.User;
 import com.example.engine.service.ContribService;
+import com.example.engine.service.RiderService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +35,9 @@ public class UserController {
     @Autowired
     ContribService contribService;
 
+    @Autowired
+    RiderService riderService;
+
     @PostMapping("/auth")
     public ResponseEntity<String> authenticateUser(@RequestBody Map<String, String> body) {
         if (!body.containsKey("username") || !body.containsKey("password")) {
@@ -50,6 +55,12 @@ public class UserController {
         var user = new User();
         BeanUtils.copyProperties(jwtUser, user);
 
+        if (user.getRole() == 1 && Boolean.FALSE.equals(riderService.isVerified(user))) {
+            return new ResponseEntity<>("Your rider's account request is under review", HttpStatus.OK);
+        } else if (user.getRole() == 2 && Boolean.FALSE.equals(contribService.isVerified(user))) {
+            return new ResponseEntity<>("Your contributor's account request is under review", HttpStatus.OK);
+        }
+
         var responseHeader = new HttpHeaders();
         responseHeader.set("Authorization", jwt);
 
@@ -59,11 +70,17 @@ public class UserController {
 
     @PostMapping("/register/contrib")
     public ResponseEntity<String> registerContributor(@RequestBody ContribDTO user) {
-
         return contribService.create(user) == null ?
                 new ResponseEntity<>("This contributor already exists", HttpStatus.BAD_REQUEST) :
                 new ResponseEntity<>("Contributor created Successfully", HttpStatus.CREATED);
 
+    }
+
+    @PostMapping("/register/rider")
+    public ResponseEntity<String> registerRider(@RequestBody UserDTO user) {
+        return riderService.create(user) == null ?
+                new ResponseEntity<>("This rider already exists", HttpStatus.BAD_REQUEST) :
+                new ResponseEntity<>("Rider created successfully", HttpStatus.CREATED);
     }
 
 }

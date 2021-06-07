@@ -89,6 +89,28 @@ class ContribRepositoryTest {
         assertThat(allVerifiedContributors).isEmpty();
     }
 
+    @Test
+    void whenGetContributorByUser_andContributorExists_thenReturnContributor() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        Contrib bobService = new Contrib(bob, "Bob's Service");
+
+        entityManager.persist(bob);
+        entityManager.persist(bobService);
+        entityManager.flush();
+
+        Contrib found = contribRepository.getContribByUserId(bob.getId());
+        assertThat(found).isEqualTo(bobService);
+    }
+
+    @Test
+    void whenGetContributorByUser_andContributorDoesNotExists_thenReturnNull() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        entityManager.persist(bob);
+
+        Contrib found = contribRepository.getContribByUserId(bob.getId());
+        assertThat(found).isNull();
+    }
+
 
 
 }
