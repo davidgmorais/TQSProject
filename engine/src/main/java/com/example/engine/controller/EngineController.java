@@ -31,4 +31,15 @@ public class EngineController {
         return "servicesPage";
     }
 
+    @GetMapping(value = "/riders")
+    public String ridersPage() {
+        return "ridersPage";
+    }
+
+    @GetMapping(value = "/rider")
+    public String riderIndex() {
+        return "indexRider";
+    }
+
+}
 
