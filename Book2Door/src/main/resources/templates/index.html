@@ -95,13 +95,8 @@
                 <h1 class="wow fadeInUp" data-wow-delay=".2s">Your favorite books <span>delivered by <bold>Book2Door</bold></span></h1>
               <p class="wow fadeInUp" data-wow-delay=".4s">
                 <div class="input-group input-group-lg">
-
-                <span class="input-group-text" id="inputGroup-sizing-lg"><a onclick="getLocation()"><i class="fas fa-map-marker-alt"></i></a></span>
-                    <input type="text" id="searchTextField" class="form-control" placeholder="Enter your location" onclick="initAutocomplete()" aria-label="address" aria-describedby="addon-wrapping" >
-
-                    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fas fa-map-marker-alt"></i></span>
-                    <input type="text" class="form-control" placeholder="Enter your location" aria-label="address" aria-describedby="addon-wrapping">
-
+                <span class="input-group-text" id="getLocationTextField"><a onclick="getLocation()"><i class="fas fa-map-marker-alt"></i></a></span>
+                    <input type="text" id="searchLocation" class="form-control" placeholder="Enter your location" onclick="initAutocomplete()" aria-label="address" aria-describedby="addon-wrapping" >
                 </div>
               </p>
                 <a th:href="@{/search}" ><button class="main-btn btn-hover wow fadeInUp" data-wow-delay=".6s">Find books</button></a>
@@ -117,7 +112,7 @@
     </section>
 
     <!-- MODAL -->
-    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin: 0;
+    <div class="modal fade" id="orderLocation" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin: 0;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -125,7 +120,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Choose where you want your order delivered at!</h5>
+                    <h5 class="modal-title" id="orderLocationLabel">Choose where you want your order delivered at!</h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -141,7 +136,6 @@
             </div>
         </div>
     </div>
-
 		<!-- ========================= hero-section end ========================= -->
 
 		<!-- ========================= delivery-section start ========================= -->
@@ -215,7 +209,6 @@
     </a>
 
     <!-- ========================= JS here ========================= -->
-
     <script>
         var placeSearch, autocomplete;
         var componentForm = {
@@ -271,7 +264,7 @@
         var lat;
         var long;
         function showPosition(position) {
-            $("#myModal").modal("toggle");
+            $("#orderLocation").modal("toggle");
             var x = "Latitude: " + position.coords.latitude +
                 "Longitude: " + position.coords.longitude;
             lat = position.coords.latitude;
@@ -283,7 +276,6 @@
             geocoder.geocode({'latLng': location}, function (results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {           // if geocode success
                     var add = results[0].formatted_address;         // if address found, pass to processing function
-                    console.log(add);
                     address.innerHTML = add;
                 }
             });
@@ -302,7 +294,6 @@
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_RX6JT7ocON1P4Wi-8YIbD1dby-kw_EE&libraries=places"
             type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
     <script th:src="@{assets/js/bootstrap.5.0.0.alpha-2-min.js}"></script>
     <script th:src="@{assets/js/count-up.min.js}"></script>
     <script th:src="@{assets/js/wow.min.js}"></script>

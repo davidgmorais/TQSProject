@@ -82,16 +82,15 @@
         <img th:src="@{assets/img/hero/hero-shape.svg}" alt="" class="shape">
     </div>
     <div class="container book">
-        <div class="row align-items-center">
-            <h3 class="wow fadeInUp" data-wow-delay=".2s">Follow your Order</h3>
-            <div id="orderPlaced">
+        <h3 class="wow fadeInUp" data-wow-delay=".2s">Follow your Order</h3>
+        <p>Estimated time of arrival: 16:40-16:55</p>
+        <div id="orderPlaced">
+            <div class="row align-items-center">
                 <div class="col-lg-6">
                     <div class="hero-content">
-
                         <div style="text-align: center; padding-top: 5%">
                             <h1 style="color: #91e0d2ff">Your order was placed!</h1>
                             <progress>Loading...</progress>
-
                         </div>
                     </div>
                 </div>
@@ -99,57 +98,91 @@
                     <img th:src="@{assets/img/orderPlaced.png}">
                 </div>
             </div>
-
-            <div id="orderPickedUp" style="display: none">
+        </div>
+        <div id="orderPickedUp" style="display: none">
+            <div class="row align-items-center">
                 <div class="col-lg-6">
                     <div class="hero-content">
-
                         <div style="text-align: center; padding-top: 5%">
-                            <h1 style="color: #91e0d2ff">A rider has picked up your order!</h1>
+                            <h1 style="color: #91e0d2ff">Your order is being picked up by a rider!</h1>
                             <progress>Loading...</progress>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <img th:src="@{assets/img/orderPickedUp.png}">
+                </div>
+            </div>
+        </div>
+        <div id="orderMap" style="display: none">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <div style="text-align: center; padding-top: 5%">
+                            <h1 style="color: #91e0d2ff">Your order is being delivered!</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <!-- MAP here -->
+                    <div class="mapouter">
+                        <div class="gmap_canvas">
+                            <iframe class="gmap_iframe" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Aveiro&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+                            <a href="https://www.bgmi.org/">BGMI</a>
+                        </div>
+                        <style>.mapouter{position:relative;text-align:right;width:700px;height:500px;}.gmap_canvas {overflow:hidden;background:none!important;width:700px;height:500px;}.gmap_iframe {width:700px!important;height:500px!important;}</style>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="orderReview" style="display: none">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <div style="text-align: center; padding-top: 5%">
+                            <h1 style="color: #91e0d2ff">Review your order</h1>
 
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <img th:src="@{assets/img/orderPlaced.png}">
+                    <h3>Store</h3>
+                    <h3>Rider</h3>
+                    <img th:src="@{assets/img/orderPickedUp.png}">
                 </div>
-            </div>
-
-
-
-    </div>
-
-</section>
-<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">This item was added to your cart!</h5>
-                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Go to your cart if you want to go to checkout.
-            </div>
-            <div class="modal-footer" style="text-align: center">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a th:href="@{/cart}"><button type="button" class="btn btn-primary" style="background-color: #91e0d2ff; border-color: #91e0d2ff;" >Go to Cart</button></a>
             </div>
         </div>
     </div>
-</div>
+</section>
+
 <!-- ========================= hero-section end ========================= -->
 
 
 
 <!-- ========================= JS here ========================= -->
 <script>
+
+    function changeDiv() {
+        document.getElementById("orderPickedUp").style.display = "flex";
+        document.getElementById("orderPlaced").style.display = "none";
+    }
+
+    function changeDiv2() {
+        document.getElementById("orderPickedUp").style.display = "none";
+        document.getElementById("orderMap").style.display = "flex";
+    }
+
+    function changeDiv3() {
+        document.getElementById("orderMap").style.display = "none";
+        document.getElementById("orderReview").style.display = "flex";
+    }
+
+    let change = setTimeout(changeDiv, 5000);
+    let change2 = setTimeout(changeDiv2, 10000);
+    let change3 = setTimeout(changeDiv3, 20000);
     
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script th:src="@{assets/js/bootstrap.5.0.0.alpha-2-min.js}"></script>
 <script th:src="@{assets/js/count-up.min.js}"></script>
 <script th:src="@{assets/js/wow.min.js}"></script>

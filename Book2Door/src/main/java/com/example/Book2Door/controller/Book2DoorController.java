@@ -61,12 +61,16 @@ public class Book2DoorController {
         return "adminFrontPage";
     }
 
-
     @GetMapping(value="/order")
     public String orderProcess()
     {
         return "orderPage";
     }
 
+    @GetMapping(value="/adminStore")
+    public String adminStore()
+    {
+        return "adminStorePage";
+    }
 
 }
