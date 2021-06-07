@@ -1,13 +1,10 @@
 package com.example.book2door.controller;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.example.book2door.entities.Book;
-import com.example.book2door.entities.Client;
 import com.example.book2door.entities.Store;
 import com.example.book2door.repository.BookRepository;
-import com.example.book2door.repository.ClientRepository;
 import com.example.book2door.repository.StoreRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;

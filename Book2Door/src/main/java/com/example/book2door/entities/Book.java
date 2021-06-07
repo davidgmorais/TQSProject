@@ -28,13 +28,13 @@ public class Book {
     name = "booksBySellers", 
     joinColumns = @JoinColumn(name = "book_sellers"), 
     inverseJoinColumns = @JoinColumn(name = "store_bookList"))
-    private Set<Store> sellers;
+    public Set<Store> sellers = new HashSet<>();
     @Column(name= "language")
     private String language;
     @Column(name= "stock", nullable = false)
     private int stock=0;
     @Column(name= "genres")
-    private ArrayList<String> genres;
+    private ArrayList<String> genres = new ArrayList<>();
     
 
 
@@ -49,7 +49,6 @@ public class Book {
         this.price = price;
         this.language = language;
         this.stock+=1;
-        this.genres = new ArrayList<>();
     }
 
     public Long getId() {

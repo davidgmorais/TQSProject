@@ -1,6 +1,7 @@
 package com.example.book2door.entities;
 
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import javax.persistence.*;
@@ -28,7 +29,7 @@ public class Store {
     @Column(name = "rating")
     private Double rating=0.0;
     @ManyToMany(mappedBy = "sellers")
-    private Set<Book> bookList;
+    private Set<Book> bookList = new HashSet<>();
     private boolean logged=false;
     @Column(name = "accepted")
     private boolean accepted;
@@ -88,10 +89,6 @@ public class Store {
 
     public Set<Book> getBookList() {
         return this.bookList;
-    }
-
-    public void addBook(Book book) {
-        this.bookList.add(book);
     }
 
     public String getStoreName() {
@@ -175,11 +172,6 @@ public class Store {
         return this.accepted;
     }
 
-   
-
-    public void setTotalRate(Double totalRate) {
-        this.totalRate = totalRate;
-    }
 
     @Override
     public String toString() {

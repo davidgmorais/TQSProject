@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface BookRepository extends JpaRepository<Book, Long> {
 
     Book findByTitle(String title);
+    Book findById(long id);
     ArrayList<Book> findAll();
     
 }
