@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
-    <title>Book2Door - Admin</title>
+    <title>Book2Door - Cart</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="shortcut icon" type="image/x-icon" th:href="@{assets/img/favicon.png}"/>
@@ -100,23 +100,15 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>Fnac Aveiro</td>
-                                <td>Rua fnrhdne</td>
-                                <td>fnacaveiro@store.pt</td>
-                                <td>123456789</td>
-                                <td>Mauro Dias</td>
+                            <tr th:each="store: ${stores}">
+                                <td th:text="${store.storeName}"></td>
+                                <td th:text="${store.storeAddress}"></td>
+                                <td th:text="${store.storeEmail}"></td>
+                                <td th:text="${store.storePhone}"></td>
+                                <td th:text="${store.fullName}"></td>
                                 <td><button type="button" class="btn btn-success ">Accept</button><button type="button" class="btn btn-danger space">Decline</button></td>
                             </tr>
-                            <tr>
-                                <td>Bertrand Aveiro</td>
-                                <td>Rua aadefe</td>
-                                <td>bertrandaveiro@store.pt</td>
-                                <td>987654321</td>
-                                <td>Rita Passos</td>
-                                <td><button type="button" class="btn btn-success">Accept</button><button type="button" class="btn btn-danger space">Decline</button></td>
-                            </tr>
-                            </tbody>
+                                </tbody>
                         </table>
                     </div>
                     <br>

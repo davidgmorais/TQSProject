@@ -1,4 +1,4 @@
-package com.example.Book2Door;
+package com.example.book2door;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
