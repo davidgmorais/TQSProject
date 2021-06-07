@@ -22,14 +22,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -167,6 +163,27 @@ class ContribControllerITest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
 
+    }
+
+    @Test
+    void whenGetAllContributors_andHasNoAuthorization_thenRaiseUnauthorized() throws Exception {
+        mvc.perform(get("/api/admin/contributors").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void whenGetAllContributors_andWrongToken_thenRaiseUnauthorized() throws Exception {
+        mvc.perform(get("/api/admin/contributors").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer wrongStringToken"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void whenGetAllContributors_andWrongTokenFormat_thenRaiseUnauthorized() throws Exception {
+        mvc.perform(get("/api/admin/contributors").contentType(MediaType.APPLICATION_JSON).header("Authorization", "wrongStringToken"))
+                .andExpect(status().isUnauthorized());
+
+        mvc.perform(get("/api/admin/contributors").contentType(MediaType.APPLICATION_JSON).header("Authorization", "JWT wrongStringToken"))
+                .andExpect(status().isUnauthorized());
     }
 
 

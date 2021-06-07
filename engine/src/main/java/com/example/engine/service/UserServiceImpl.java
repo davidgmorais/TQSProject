@@ -16,7 +16,7 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public JwtUser loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findUserByUsername(username);
+        var user = userRepository.findUserByUsername(username);
         if (user != null) {
             return new JwtUser(user);
         }

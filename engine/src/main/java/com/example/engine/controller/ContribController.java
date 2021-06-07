@@ -17,7 +17,7 @@ public class ContribController {
 
     @PostMapping("/admin/contributors/verify/{contribId}")
     public ResponseEntity<String> verifyContrib(@PathVariable int contribId) {
-        Contrib contrib = contribService.verifyContributor(contribId);
+        var contrib = contribService.verifyContributor(contribId);
         return contrib != null ? new ResponseEntity<>("Contributors request accepted", HttpStatus.ACCEPTED)
                 : new ResponseEntity<>("This service's request does not exist", HttpStatus.NOT_FOUND);
     }

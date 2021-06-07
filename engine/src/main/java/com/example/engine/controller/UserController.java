@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,18 +39,18 @@ public class UserController {
             return new ResponseEntity<>("Must provide username and password", HttpStatus.BAD_REQUEST);
         }
 
-        Authentication auth = authenticationManager.authenticate(
+        var auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(body.get("username"), body.get("password")));
 
         SecurityContextHolder.getContext().setAuthentication(auth);
         String jwt = jwtUtils.generateJwtToken(auth);
 
-        JwtUser jwtUser = (JwtUser) auth.getPrincipal();
+        var jwtUser = (JwtUser) auth.getPrincipal();
         logger.info("Authenticated as {}", jwtUser.getUsername());
-        User user = new User();
+        var user = new User();
         BeanUtils.copyProperties(jwtUser, user);
 
-        HttpHeaders responseHeader = new HttpHeaders();
+        var responseHeader = new HttpHeaders();
         responseHeader.set("Authorization", jwt);
 
         return new ResponseEntity<>("Authentication successful - Authorization token was sent in the header.",

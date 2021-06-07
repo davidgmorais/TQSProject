@@ -24,7 +24,7 @@ public class ContribServiceImpl implements ContribService{
     public Contrib create(ContribDTO user) {
 
         // map ContribDTO to persistent Contrib User
-        User persistentUser = new User();
+        var persistentUser = new User();
         persistentUser.setEmail(user.getEmail());
         persistentUser.setUsername(user.getUsername());
         persistentUser.setFirstName(user.getFirstName());
@@ -33,9 +33,9 @@ public class ContribServiceImpl implements ContribService{
         persistentUser.setPassword(encoder.encode(user.getPassword()));
         persistentUser.setRole(2);
 
-        User saved = userService.register(persistentUser);
+        var saved = userService.register(persistentUser);
         if (saved != null) {
-            Contrib contribData = new Contrib(saved, user.getStoreName());
+            var contribData = new Contrib(saved, user.getStoreName());
             return repository.save(contribData);
         }
 
@@ -45,7 +45,7 @@ public class ContribServiceImpl implements ContribService{
     @Override
     public Contrib verifyContributor(int contribId) {
 
-        Contrib contribToVerify = repository.findContribById(contribId);
+        var contribToVerify = repository.findContribById(contribId);
 
         if (contribToVerify != null) {
             contribToVerify.setVerified(true);
