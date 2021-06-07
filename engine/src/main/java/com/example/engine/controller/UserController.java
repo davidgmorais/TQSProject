@@ -1,10 +1,10 @@
 package com.example.engine.controller;
 
 import com.example.engine.component.JwtUtils;
-import com.example.engine.dto.UserDTO;
+import com.example.engine.dto.ContribDTO;
 import com.example.engine.entity.JwtUser;
 import com.example.engine.entity.User;
-import com.example.engine.service.UserService;
+import com.example.engine.service.ContribService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -32,7 +32,7 @@ public class UserController {
     JwtUtils jwtUtils;
 
     @Autowired
-    UserService userService;
+    ContribService contribService;
 
     @PostMapping("/auth")
     public ResponseEntity<String> authenticateUser(@RequestBody Map<String, String> body) {
@@ -58,12 +58,13 @@ public class UserController {
                 responseHeader, HttpStatus.OK);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody UserDTO user) {
+    @PostMapping("/register/contrib")
+    public ResponseEntity<String> registerContributor(@RequestBody ContribDTO user) {
 
-        return userService.register(user) == null ?
-                new ResponseEntity<>("This user already exists", HttpStatus.BAD_REQUEST) :
-                new ResponseEntity<>("User created Successfully", HttpStatus.CREATED);
+        return contribService.create(user) == null ?
+                new ResponseEntity<>("This contributor already exists", HttpStatus.BAD_REQUEST) :
+                new ResponseEntity<>("Contributor created Successfully", HttpStatus.CREATED);
+
     }
 
 }

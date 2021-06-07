@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class JwtUtils {
     private static final Logger logger = Logger.getLogger(JwtUtils.class.getName());
 
-    @Value("${jwt.secret")
+    @Value("${jwt.secret}")
     private String secret;
 
     @Value("${jwt.expiration}")

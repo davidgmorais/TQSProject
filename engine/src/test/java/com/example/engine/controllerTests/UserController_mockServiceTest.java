@@ -2,8 +2,10 @@ package com.example.engine.controllerTests;
 
 import com.example.engine.component.JwtUtils;
 import com.example.engine.controller.UserController;
-import com.example.engine.dto.UserDTO;
+import com.example.engine.dto.ContribDTO;
+import com.example.engine.entity.Contrib;
 import com.example.engine.entity.User;
+import com.example.engine.service.ContribServiceImpl;
 import com.example.engine.service.UserServiceImpl;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,35 +30,38 @@ class UserController_mockServiceTest {
     private MockMvc mvc;
 
     @MockBean
-    private UserServiceImpl service;
+    private ContribServiceImpl contribService;
+
+    @MockBean
+    private UserServiceImpl userService;
 
     @MockBean
     private JwtUtils jwtUtils;
 
     @Test
     void whenPostRegister_thenCreateEmployee() throws Exception {
-        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 1);
-        when(service.register(Mockito.any())).thenReturn(bob);
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        Contrib bobService = new Contrib(bob, "Bob's Store");
+        when(contribService.create(Mockito.any())).thenReturn(bobService);
 
-        UserDTO bobDTO = new UserDTO(bob.getUsername(), bob.getPassword(), bob.getEmail(), bob.getFirstName(), bob.getLastName());
-        mvc.perform(post("/api/register").contentType(MediaType.APPLICATION_JSON).content(toJson(bobDTO)))
+        ContribDTO bobDTO = new ContribDTO(bob.getUsername(), bob.getPassword(), bob.getEmail(), bob.getFirstName(), bob.getLastName(), bobService.getStoreName());
+        mvc.perform(post("/api/register/contrib").contentType(MediaType.APPLICATION_JSON).content(toJson(bobDTO)))
                 .andExpect(status().isCreated())
-                .andExpect(content().string("User created Successfully"));
-        verify(service, times(1)).register(Mockito.any());
+                .andExpect(content().string("Contributor created Successfully"));
+        verify(contribService, times(1)).create(Mockito.any());
     }
 
     @Test
     void whenPostRegister_andEmailAlreadyExists_thenBadRequest() throws Exception {
-        UserDTO bob = new UserDTO("bob", "bobSmith@gmail.com", "password", "Bob", "Smith");
-        when(service.register(Mockito.any())).thenReturn(null);
+        ContribDTO bob = new ContribDTO("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", "Bob's Store");
+        when(contribService.create(Mockito.any())).thenReturn(null);
 
-        mvc.perform(post("/api/register").contentType(MediaType.APPLICATION_JSON).content(toJson(bob)))
+        mvc.perform(post("/api/register/contrib").contentType(MediaType.APPLICATION_JSON).content(toJson(bob)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("This user already exists"));
-        verify(service, times(1)).register(Mockito.any());
+                .andExpect(content().string("This contributor already exists"));
+        verify(contribService, times(1)).create(Mockito.any());
 
     }
-
 
     static byte[] toJson(Object object) throws IOException {
         ObjectMapper mapper = new ObjectMapper();

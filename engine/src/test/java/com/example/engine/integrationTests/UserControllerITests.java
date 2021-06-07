@@ -3,8 +3,10 @@ package com.example.engine.integrationTests;
 import java.util.HashMap;
 import java.util.List;
 import com.example.engine.EngineApplication;
+import com.example.engine.dto.ContribDTO;
 import com.example.engine.dto.UserDTO;
 import com.example.engine.entity.User;
+import com.example.engine.repository.ContribRepository;
 import com.example.engine.repository.UserRepository;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,37 +38,41 @@ class UserControllerITests {
     @Autowired
     private UserRepository repository;
 
+    @Autowired
+    private ContribRepository contribRepository;
+
     @AfterEach
     public void resetDb() {
+        contribRepository.deleteAll();
         repository.deleteAll();
     }
 
     @Test
-    void whenRegisterWithValidInput_thenCreateUser() throws Exception {
-        UserDTO john = new UserDTO("johnD", "12345", "johnD@gmail.com", "John", "Doe");
-        mvc.perform(post("/api/register").contentType(MediaType.APPLICATION_JSON).content(toJson(john)))
+    void whenRegisterContribWithValidInput_thenCreateContrib() throws Exception {
+        ContribDTO john = new ContribDTO("johnD", "12345", "johnD@gmail.com", "John", "Doe", "Store");
+        mvc.perform(post("/api/register/contrib").contentType(MediaType.APPLICATION_JSON).content(toJson(john)))
                 .andExpect(status().isCreated())
-                .andExpect(content().string("User created Successfully"));
+                .andExpect(content().string("Contributor created Successfully"));
 
         List<User> foundUsers = repository.findAll();
         assertThat(foundUsers).extracting(User::getUsername).containsOnly("johnD");
     }
 
     @Test
-    void whenRegisterWithInvalidInput_thenReturnBadGateway() throws Exception {
+    void whenRegisterContribWithInvalidInput_thenReturnBadGateway() throws Exception {
         User john = new User("johnD", "johnD@gmail.com", "12345", "John", "Doe", 1);
         repository.save(john);
 
         UserDTO sameUsernameUser =  new UserDTO("johnD", "54321", "jDale@outlook.com", "John", "Dale");
-        mvc.perform(post("/api/register").contentType(MediaType.APPLICATION_JSON).content(toJson(sameUsernameUser)))
+        mvc.perform(post("/api/register/contrib").contentType(MediaType.APPLICATION_JSON).content(toJson(sameUsernameUser)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("This user already exists"));
+                .andExpect(content().string("This contributor already exists"));
 
 
         UserDTO sameEmailUser =  new UserDTO("johnDale", "54321", "johnD@gmail.com", "John", "Dale");
-        mvc.perform(post("/api/register").contentType(MediaType.APPLICATION_JSON).content(toJson(sameEmailUser)))
+        mvc.perform(post("/api/register/contrib").contentType(MediaType.APPLICATION_JSON).content(toJson(sameEmailUser)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("This user already exists"));
+                .andExpect(content().string("This contributor already exists"));
 
         List<User> foundUsers = repository.findAll();
         assertThat(foundUsers).hasSize(1).extracting(User::getUsername).containsOnly("johnD");
