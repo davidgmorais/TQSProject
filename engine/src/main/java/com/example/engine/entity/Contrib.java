@@ -16,7 +16,7 @@ public class Contrib {
     @Column(name = "store_name", nullable = false)
     private String storeName;
 
-    @Column(name = "verified", nullable = false)
+    @Column(name = "verified", nullable = false , columnDefinition = "boolean default false")
     private Boolean verified;
 
     @OneToOne(cascade = CascadeType.REMOVE)

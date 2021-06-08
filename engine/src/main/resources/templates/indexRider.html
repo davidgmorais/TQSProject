@@ -60,11 +60,6 @@
                 <span>Statistics</span></a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="fas fa-store fa-chart-area"></i>
-                <span>Stores</span></a>
-        </li>
 
         <!-- Nav Item -->
         <li class="nav-item">
@@ -73,11 +68,6 @@
                 <span>Reviews</span></a>
         </li>
 
-        <li class="nav-item">
-            <a class="nav-link" href="#">
-                <i class="fas fa-biking fa-chart-area"></i>
-                <span>Riders</span></a>
-        </li>
 
         <!-- Divider -->
         <hr class="sidebar-divider">
@@ -181,7 +171,7 @@
                     <li class="nav-item dropdown no-arrow">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">Store Name</span>
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">Rider's Name</span>
                             <img class="img-profile rounded-circle"
                                  th:src="@{img/undraw_profile.svg}">
                         </a>
@@ -231,8 +221,8 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            Total Orders</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">15</div>
+                                            Total Deliveries</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">10</div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-shopping-bag fa-2x text-gray-300"></i>
@@ -249,8 +239,8 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                            Total Sales</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">500$</div>
+                                            Total Earnings</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">200$</div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
@@ -259,18 +249,17 @@
                             </div>
                         </div>
                     </div>
-
                     <!-- Pending Store Requests Card -->
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card border-left-info shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total Stores
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pending Delivery Requests
                                         </div>
                                         <div class="row no-gutters align-items-center">
                                             <div class="col-auto">
-                                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">20</div>
+                                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">1</div>
                                             </div>
                                         </div>
                                     </div>
@@ -284,19 +273,65 @@
                 </div>
 
                 <!-- Content Row -->
-                <!-- Sales Chart -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Sales Chart</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="chart-area">
-                            <canvas id="myAreaChart"></canvas>
+                <div id="row">
+                    <div class="col-xl-8 col-lg-7">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Next Deliveries</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="storeRequests" width="100%" cellspacing="0">
+                                        <thead>
+                                        <tr>
+                                            <th>Requester Name</th>
+                                            <th>Store</th>
+                                            <th>Order</th>
+                                            <th>Map Indication</th>
+                                            <th>Tracking</th>
+                                        </tr>
+                                        </thead>
+                                        <tfoot>
+                                        <tr>
+                                            <th>Requester Name</th>
+                                            <th>Store</th>
+                                            <th>Order</th>
+                                            <th>Map Indication</th>
+                                            <th>Tracking</th>
+                                        </tr>
+                                        </tfoot>
+                                        <tbody>
+                                        <tr>
+                                            <td>Inês Silva</td>
+                                            <td>UptownBook Aveiro</td>
+                                            <td>Moby Dick, Herman Melville</td>
+                                            <td>Store: Rua fmemjem, Aveiro <br>Address: Rua medmee <br><a style="cursor: pointer; color: #3b5998; font-weight: bold" data-toggle="modal" data-target="#myModal">Indications here</a></td>
+                                            <td>
+                                                <div class="dropdown mb-4">
+                                                    <button class="btn btn-primary dropdown-toggle" type="button"
+                                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="false">
+                                                        Track
+                                                    </button>
+                                                    <div class="dropdown-menu animated--fade-in"
+                                                         aria-labelledby="dropdownMenuButton">
+                                                        <a class="dropdown-item selected" href="#">Received order</a>
+                                                        <a class="dropdown-item" href="#">Picked up order</a>
+                                                        <a class="dropdown-item" href="#">Order delivered</a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
+
                     </div>
+
                 </div>
-
-
 
             </div>
             <!-- End of Main Content -->
@@ -341,7 +376,38 @@
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Indications map -->
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);">
+        <div class="modal-dialog">
+            <div class="modal-content" style="width: 650px">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModal_Label">Indications regarding the order</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mapouter" >
+                        <div class="gmap_canvas">
+                            <iframe class="gmap_iframe" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Aveiro&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+                            <a href="https://www.bgmi.org/">BGMI</a>
+                        </div>
+                        <style>.mapouter{position:relative;text-align:right;width:600px;height:500px;}.gmap_canvas {overflow:hidden;background:none!important;width:600px;height:500px;}.gmap_iframe {width:600px!important;height:500px!important;}</style>
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="text-align: center">
+                    <a href="#"><button type="button" class="btn btn-primary" >Picked up order</button></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 
     <!-- Bootstrap core JavaScript-->
     <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
