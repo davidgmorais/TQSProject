@@ -30,7 +30,6 @@ public class Store {
     private Double rating=0.0;
     @ManyToMany(mappedBy = "sellers")
     private Set<Book> bookList = new HashSet<>();
-    private boolean logged=false;
     @Column(name = "accepted")
     private boolean accepted;
     @Column(name = "numberOfRates")
@@ -73,14 +72,6 @@ public class Store {
         return this.accepted;
     }
     
-
-    public boolean isLogged(){
-        return this.logged;
-    }
-    
-    public void setLogged(boolean isLogged){
-        this.logged=isLogged;
-    }
 
     public Long getId() {
         return this.id;
@@ -159,18 +150,7 @@ public class Store {
 
 
 
-    public boolean getLogged() {
-        return this.logged;
-    }
-
-
-    public boolean isAccepted() {
-        return this.accepted;
-    }
-
-    public boolean getAccepted() {
-        return this.accepted;
-    }
+  
 
 
     @Override
@@ -185,8 +165,7 @@ public class Store {
             ", storeEmail='" + getStoreEmail() + "'" +
             ", rating='" + getRating() + "'" +
             ", bookList='" + getBookList() + "'" +
-            ", logged='" + isLogged() + "'" +
-            ", accepted='" + isAccepted() + "'" +
+            ", accepted='" + wasAccepted() + "'" +
             "}";
     }
 

@@ -18,6 +18,7 @@ import com.example.book2door.entities.Store;
 import com.example.book2door.repository.BookRepository;
 import com.example.book2door.repository.StoreRepository;
 
+
 @ExtendWith(MockitoExtension.class)
 class RepositoryTests {
 
@@ -130,6 +131,16 @@ class RepositoryTests {
         store.accept();
         assertThat(store.wasAccepted()).isTrue();
     }
+
+    @Test
+     void testStoreGetByIdAndEquals(){
+        Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
+        Store storeFromEmail = storeRepository.findBystoreEmail(store.getStoreEmail());
+        assertThat(store.getId()).isEqualTo(storeFromEmail.getId()); 
+        assertThat(store.equals(storeFromEmail)).isTrue();
+    }
+
+    
 
 
 

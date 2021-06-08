@@ -14,5 +14,4 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     ArrayList<Store> findAllTopTwelveByAccepted(boolean accepted);
     ArrayList<Store> findByAccepted(boolean accepted);
     Store findBystoreName(String storeName);
-    Store findById(long id);
 }

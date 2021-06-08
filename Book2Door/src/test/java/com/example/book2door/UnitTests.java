@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
- class UnitTests{
+class UnitTests{
     Book book;
     Store store;
 
@@ -86,7 +86,23 @@ import org.junit.jupiter.api.BeforeEach;
         
     }   
 
+    @Test
+    public void testStoreToString()
+    {
+        Store store = new Store();
+        String expected = "{ id='null', storeName='null', storeAddress='null', fullName='null', password='null', storePhone='null', storeEmail='null', rating='0.0', bookList='[]', accepted='false'}"; 
+        assertThat(expected.equals(store.toString())).isTrue();
 
+    }
+
+    @Test
+    public void testBookToString()
+    {
+        Book book = new Book();
+        String expected = "{ id='null', title='null', releaseYear='0', author='null', price='0.0', sellers='[]', language='null', genres='[]'}"; 
+        System.out.println(book);
+        assertThat(expected.equals(book.toString())).isTrue();
+    }
 
 
 
