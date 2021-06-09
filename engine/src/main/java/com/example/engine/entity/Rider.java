@@ -10,7 +10,7 @@ public class Rider {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column(name = "verified", nullable = false)
+    @Column(name = "verified", nullable = false, columnDefinition = "boolean default false")
     private Boolean verified;
 
     @OneToOne(cascade = CascadeType.REMOVE)
