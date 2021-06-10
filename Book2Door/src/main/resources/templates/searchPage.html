@@ -111,7 +111,7 @@
                             <span class="col-lg-8 wow fadeInUp search" data-wow-delay=".4s">
                                 <div class="input-group input-group-lg">
                                     <span class="input-group-text" id="inputGroup-sizing-lg 1"><i class="fas fa-search"></i></span>
-                                    <input type="text" name="searchWord" class="form-control" placeholder="Search for Book or Store" aria-label="address" aria-describedby="addon-wrapping">
+                                    <input type="text" name="param" class="form-control" placeholder="Search for Book or Store" aria-label="address" aria-describedby="addon-wrapping">
                                 </div>
                             </span>
                             <div class="text-center">
@@ -125,7 +125,7 @@
                             <div class="grid-container">
                                 <div class="grid-item"th:each="store: ${stores}">
                                     <h5 th:text="${store.storeName}"></h5>
-                                    <a th:href="@{/store?searchWord={s}(s=${store.storeName})}">
+                                    <a th:href="@{/store?name={s}(s=${store.storeName})}">
                                         <img th:src="@{assets/img/store.jpg}">
                                     </a>
                                 </div>
@@ -136,7 +136,7 @@
                             <div class="grid-container">
                                 <div class="grid-item" th:each="book :${books}">
                                     <h5 th:text="${book.title}"></h5>
-                                    <a th:href="@{/book?searchWord={b}(b=${book.title})}">
+                                    <a th:href="@{/book?title={b}(b=${book.title})}">
                                         <img th:src="@{assets/img/book.jpg}">
                                     </a>
                                 </div>

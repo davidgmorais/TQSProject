@@ -59,9 +59,6 @@ class UnitTests{
         assertThat(stock).isEqualTo(2);
         assertThat(genre).isEqualTo(gl);
         assertThat(seller).contains(store);
-        
-
-
     }
 
     @Test
@@ -87,21 +84,54 @@ class UnitTests{
     }   
 
     @Test
-    public void testStoreToString()
+    void testStoreToString()
     {
         Store store = new Store();
         String expected = "{ id='null', storeName='null', storeAddress='null', fullName='null', password='null', storePhone='null', storeEmail='null', rating='0.0', bookList='[]', accepted='false'}"; 
-        assertThat(expected.equals(store.toString())).isTrue();
+        assertThat(expected).isEqualTo(store.toString());
 
     }
 
     @Test
-    public void testBookToString()
+    void testBookToString()
     {
         Book book = new Book();
         String expected = "{ id='null', title='null', releaseYear='0', author='null', price='0.0', sellers='[]', language='null', genres='[]'}"; 
-        System.out.println(book);
-        assertThat(expected.equals(book.toString())).isTrue();
+        assertThat(expected).isEqualTo(book.toString());
+    }
+
+    @Test
+    void testBookEquals()
+    {
+        Book book = new Book();
+        Book book2 = new Book();
+        Book book3 = book;
+        book2.setTitle("asds");
+        boolean equal1 = book.equals(new Book());
+        boolean equal2 = book.equals(book3);
+        boolean Notequal1 = book.equals("s");
+        boolean Notequal2 = book.equals(book2);
+        assertThat(Notequal1).isFalse();
+        assertThat(equal1).isTrue();
+        assertThat(equal2).isTrue();
+        assertThat(Notequal2).isFalse();
+    }
+
+    @Test
+    void testStoreEquals()
+    {
+        Store store = new Store();
+        Store store2 = new Store();
+        store2.setStoreName("as");
+        Store store3 = store;
+        boolean equal1 = store.equals(new Store());
+        boolean equal2 = store.equals(store3);
+        boolean Notequal1 = store.equals("s");
+        boolean Notequal2 = store.equals(store2);
+        assertThat(Notequal1).isFalse();
+        assertThat(equal1).isTrue();
+        assertThat(equal2).isTrue();
+        assertThat(Notequal2).isFalse();
     }
 
 

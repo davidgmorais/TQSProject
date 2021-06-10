@@ -137,7 +137,6 @@ class RepositoryTests {
         Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
         Store storeFromEmail = storeRepository.findBystoreEmail(store.getStoreEmail());
         assertThat(store.getId()).isEqualTo(storeFromEmail.getId()); 
-        assertThat(store.equals(storeFromEmail)).isTrue();
     }
 
     

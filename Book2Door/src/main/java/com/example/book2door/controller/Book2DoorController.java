@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 @Controller
 public class Book2DoorController {
     
@@ -58,34 +59,34 @@ public class Book2DoorController {
     }
 
     @PostMapping(value="/search")
-    public String searchBookOrStore(@RequestParam String searchWord,Model model)
+    public String searchBookOrStore(@RequestParam String param,Model model)
     {
-        Store store = storeRepository.findBystoreName(searchWord);
+        Store store = storeRepository.findBystoreName(param);
         if(store!=null){
             model.addAttribute("store",store);
-            return "redirect:/store?searchWord="+searchWord;
+            return "redirect:/store?name="+param;
         }
-        Book book = bookRepository.findByTitle(searchWord);
+        Book book = bookRepository.findByTitle(param);
         if(book!=null){
             model.addAttribute("book",book);
-            return "redirect:/book?searchWord="+searchWord;
+            return "redirect:/book?title="+param;
         }
         return "searchPage";
     }
 
     @GetMapping(value="/store")
-    public String storePage(@RequestParam String searchWord,Model model)
+    public String storePage(@RequestParam String param,Model model)
     {   
-        Store store = storeRepository.findBystoreName(searchWord);
+        Store store = storeRepository.findBystoreName(param);
         model.addAttribute("store",store);
         
         return "storePage";
     }
 
     @GetMapping(value="/book")
-    public String bookPage(@RequestParam String searchWord,Model model)
+    public String bookPage(@RequestParam String param,Model model)
     {   
-        Book book = bookRepository.findByTitle(searchWord);
+        Book book = bookRepository.findByTitle(param);
         model.addAttribute("book",book);
         return "bookPage";
     }
