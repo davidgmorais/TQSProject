@@ -47,6 +47,7 @@ class UserControllerITests {
     @Autowired
     private RiderRepository riderRepository;
 
+
     @AfterEach
     public void resetDb() {
         riderRepository.deleteAll();
