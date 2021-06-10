@@ -31,7 +31,7 @@ import java.io.IOException;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class EngineWebControllerITest {
+class EngineWebControllerITest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -60,64 +60,59 @@ public class EngineWebControllerITest {
 
     @Test
     void whenNavigateToLogin_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/login")).andDo(print()).andExpect(status().isOk())
+        mockMvc.perform(get("/login")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Welcome Back!")));
     }
 
     @Test
     void whenNavigateToSignUpService_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/signup/service")).andDo(print()).andExpect(status().isOk())
+        mockMvc.perform(get("/signup/service")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Create an Account!")));
     }
 
 
     @Test
     void whenNavigateToSignUpRider_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/signup/rider")).andDo(print()).andExpect(status().isOk())
+        mockMvc.perform(get("/signup/rider")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Create an Account!")));
     }
 
     @Test
     void whenNavigateToSignUp_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/signup")).andDo(print()).andExpect(status().isOk())
+        mockMvc.perform(get("/signup")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Create an Account!")));
     }
 
     @Test
     void whenNavigateToRiderIndex_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/rider/dashboard")).andDo(print()).andExpect(status().isOk())
+        mockMvc.perform(get("/rider/dashboard")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Dashboard")));
     }
 
     @Test
     void whenNavigateToServiceIndex_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/service/dashboard")).andDo(print()).andExpect(status().isOk())
+        mockMvc.perform(get("/service/dashboard")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Dashboard")));
     }
 
     @Test
     void whenNavigateToServiceStatistics_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/service/dashboard")).andDo(print()).andExpect(status().isOk())
+        mockMvc.perform(get("/service/statistics")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Statistics")));
     }
 
     @Test
     void whenNavigateToServices_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/services")).andDo(print()).andExpect(status().isOk())
+        mockMvc.perform(get("/services")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Services")));
     }
 
     @Test
     void whenNavigateToAdminIndex_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/")).andDo(print()).andExpect(status().isOk())
+        mockMvc.perform(get("/")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Dashboard")));
     }
 
 
-    static byte[] toJson(Object object) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        return mapper.writeValueAsBytes(object);
-    }
 
 }

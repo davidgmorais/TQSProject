@@ -61,7 +61,7 @@ public class EngineController {
 
     @GetMapping(value = "/signup")
     public String signup() {
-        return "signup";
+        return SIGNUP_ERROR;
     }
 
     @GetMapping("/signup/service")
