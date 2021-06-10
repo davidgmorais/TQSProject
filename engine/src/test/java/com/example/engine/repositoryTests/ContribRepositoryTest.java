@@ -111,6 +111,78 @@ class ContribRepositoryTest {
         assertThat(found).isNull();
     }
 
+    @Test
+    void whenFindContribByUserUsername_andMatchingUsernames_thenListContributors() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        Contrib bobService = new Contrib(bob, "Bob Service");
+        User bob27 = new User("bob27", "bob@gmail.com", "12345", "Bob", null, 2);
+        Contrib bob27Service = new Contrib(bob27, "Bob Shop");
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 2);
+        Contrib dakotaService = new Contrib(dakota, "Dakota Service");
 
+        entityManager.persist(bob);
+        entityManager.persist(bobService);
+        entityManager.persist(bob27);
+        entityManager.persist(bob27Service);
+        entityManager.persist(dakota);
+        entityManager.persist(dakotaService);
+        entityManager.flush();
+
+        List<Contrib> found = contribRepository.findContribByUserUsernameContainingIgnoreCase("bob");
+        assertThat(found).hasSize(2).extracting(Contrib::getStoreName)
+                .contains(bobService.getStoreName(), bob27Service.getStoreName());
+    }
+
+    @Test
+    void whenFindContribByUserUsername_andNoMatchingUsernames_thenReturnEmptyList() {
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 2);
+        Contrib dakotaService = new Contrib(dakota, "Dakota Service");
+
+        entityManager.persist(dakota);
+        entityManager.persist(dakotaService);
+        entityManager.flush();
+
+        List<Contrib> found = contribRepository.findContribByUserUsernameContainingIgnoreCase("bob");
+        assertThat(found).isEmpty();
+    }
+
+    @Test
+    void whenFindContribByServiceName_andMatchingServiceNames_thenListContributors() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        Contrib bobService = new Contrib(bob, "Bob Service");
+        User bob27 = new User("bob27", "bob@gmail.com", "12345", "Bob", null, 2);
+        Contrib bob27Service = new Contrib(bob27, "Bob Shop");
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 2);
+        Contrib dakotaService = new Contrib(dakota, "Dakota Service");
+
+        entityManager.persist(bob);
+        entityManager.persist(bobService);
+        entityManager.persist(bob27);
+        entityManager.persist(bob27Service);
+        entityManager.persist(dakota);
+        entityManager.persist(dakotaService);
+        entityManager.flush();
+
+        List<Contrib> found = contribRepository.findContribByStoreNameContainingIgnoreCase("Bob");
+        assertThat(found).hasSize(2).extracting(Contrib::getStoreName)
+                .contains(bobService.getStoreName(), bob27Service.getStoreName());
+
+        found = contribRepository.findContribByStoreNameContainingIgnoreCase("bob");
+        assertThat(found).hasSize(2).extracting(Contrib::getStoreName)
+                .contains(bobService.getStoreName(), bob27Service.getStoreName());
+    }
+
+    @Test
+    void whenFindContribByStoreName_andNoMatchingStoreNames_thenReturnEmptyList() {
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 2);
+        Contrib dakotaService = new Contrib(dakota, "Dakota Service");
+
+        entityManager.persist(dakota);
+        entityManager.persist(dakotaService);
+        entityManager.flush();
+
+        List<Contrib> found = contribRepository.findContribByStoreNameContainingIgnoreCase("bob");
+        assertThat(found).isEmpty();
+    }
 
 }

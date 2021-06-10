@@ -24,6 +24,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import java.io.IOException;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -124,7 +125,7 @@ class UserControllerITests {
         repository.save(john);
 
         john.setPassword("12345");
-        mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(john)))
+        mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(Map.of("username", john.getUsername(), "password", john.getPassword()))))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Authentication successful - Authorization token was sent in the header."))
                 .andExpect(header().exists("Authorization"));
@@ -138,7 +139,7 @@ class UserControllerITests {
         repository.save(john);
 
         john.setPassword("54321");
-        mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(john)))
+        mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(Map.of("username", john.getUsername(), "password", john.getPassword()))))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -173,7 +174,7 @@ class UserControllerITests {
         riderRepository.save(riderJohn);
 
         john.setPassword("12345");
-        mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(john)))
+        mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(Map.of("username",john.getUsername(), "password", john.getPassword()))))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Your rider's account request is under review"))
                 .andExpect(header().doesNotExist("Authorization"));
@@ -190,7 +191,7 @@ class UserControllerITests {
         riderRepository.save(riderJohn);
 
         john.setPassword("12345");
-        mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(john)))
+        mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(Map.of("username", john.getUsername(), "password", john.getPassword()))))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Authentication successful - Authorization token was sent in the header."))
                 .andExpect(header().exists("Authorization"));
@@ -206,7 +207,7 @@ class UserControllerITests {
         contribRepository.save(johnService);
 
         john.setPassword("12345");
-        mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(john)))
+        mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(Map.of("username", john.getUsername(), "password", john.getPassword()))))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Your contributor's account request is under review"))
                 .andExpect(header().doesNotExist("Authorization"));
@@ -223,7 +224,7 @@ class UserControllerITests {
         contribRepository.save(johnService);
 
         john.setPassword("12345");
-        mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(john)))
+        mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(Map.of("username", john.getUsername(), "password", john.getPassword()))))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Authentication successful - Authorization token was sent in the header."))
                 .andExpect(header().exists("Authorization"));

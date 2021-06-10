@@ -46,7 +46,7 @@ public class UserController {
 
         var auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(body.get("username"), body.get("password")));
-
+        logger.info("{}", auth);
         SecurityContextHolder.getContext().setAuthentication(auth);
         String jwt = jwtUtils.generateJwtToken(auth);
 
