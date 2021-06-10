@@ -2,26 +2,38 @@ package com.example.engine.controller;
 
 import com.example.engine.dto.ContribDTO;
 import com.example.engine.dto.UserDTO;
+import com.example.engine.entity.Contrib;
+import com.example.engine.service.ContribService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+
 import java.util.List;
 import java.util.HashMap;
 
 
 @Controller
 public class EngineController {
+    public static final String LOGIN_PAGE = "redirect:/login";
+    public static final String SIGNUP_ERROR = "signup";
+
     @Autowired
     UserController userController;
+
+    @Autowired
+    ContribController contribController;
+
     private static final Logger logger = LoggerFactory.getLogger(EngineController.class);
 
     @GetMapping("/")
     public String index() {
-
         return "index";
     }
 
@@ -32,7 +44,7 @@ public class EngineController {
     }
 
     @PostMapping(value = "/login")
-    public String signIn(UserDTO userDTO) {
+    public String signIn(UserDTO userDTO, Model model) {
         HashMap<String, String> creds = new HashMap<>();
         creds.put("username", userDTO.getUsername());
         creds.put("password", userDTO.getPassword());
@@ -45,8 +57,13 @@ public class EngineController {
                 return "redirect:/";
             }
         }
-        return "redirect:/login";
+        else {
+            model.addAttribute("applicationMsg", authentication.getBody());
+            return "application";
+        }
+        return LOGIN_PAGE;
     }
+
 
     @GetMapping(value = "/signup")
     public String signup() {
@@ -54,15 +71,22 @@ public class EngineController {
     }
 
     @GetMapping("/signup/service")
-    public String signupService(Model model, ContribDTO contribDTO){
+    public String signupForService(Model model, ContribDTO contribDTO){
         model.addAttribute("service", contribDTO);
         return "signupService";
     }
 
-    @PostMapping("/signup/service")
-    public String signupService(ContribDTO contribDTO){
-        userController.registerContributor(contribDTO);
-        return "redirect:/login";
+    @PostMapping("signup/service")
+    public String signupForService(ContribDTO contribDTO, Model model){
+        ResponseEntity<String> registration = userController.registerContributor(contribDTO);
+        if (registration.getStatusCodeValue() == 201) {
+            return LOGIN_PAGE;
+        }
+        else {
+            model.addAttribute("error", registration.getBody() + ". Check if you are in the right page.");
+            return SIGNUP_ERROR;
+        }
+
     }
 
     @GetMapping("/signup/rider")
@@ -72,9 +96,16 @@ public class EngineController {
     }
 
     @PostMapping("/signup/rider")
-    public String signupRider(UserDTO rider){
-        userController.registerRider(rider);
-        return "redirect:/login";
+    public String signupRider(UserDTO rider, Model model){
+        ResponseEntity<String> registration = userController.registerRider(rider);
+        if (registration.getStatusCodeValue() == 201) {
+            return LOGIN_PAGE;
+        }
+        else {
+            model.addAttribute("error", registration.getBody() + ". Check if you are in the right page.");
+            return SIGNUP_ERROR;
+        }
+
     }
 
     @GetMapping(value = "/service/dashboard")
@@ -82,7 +113,7 @@ public class EngineController {
         return "indexService";
     }
 
-    @GetMapping(value = "/service-statistics")
+    @GetMapping(value = "/service/statistics")
     public String serviceStatistics() {
         return "serviceStatistics";
     }
