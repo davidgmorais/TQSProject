@@ -2,6 +2,7 @@ package com.example.engine.controller;
 
 import com.example.engine.dto.ContribDTO;
 import com.example.engine.dto.UserDTO;
+import com.example.engine.entity.Contrib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,23 @@ public class EngineController {
     private static final Logger logger = LoggerFactory.getLogger(EngineController.class);
 
     @GetMapping("/")
-    public String index() {
+    public String index(Model model) {
+        List<Contrib> contribRequests = contribController.listAllContributorRequests();
+        model.addAttribute("contribRequests", contribRequests);
+
         return "index";
+    }
+
+    @GetMapping("/deny/{id}")
+    public String denyUser(@PathVariable int id) {
+        contribController.denyContrib(id);
+        return "redirect:/";
+    }
+
+    @GetMapping("/verify/{id}")
+    public String verifyUser(@PathVariable int id) {
+        contribController.verifyContrib(id);
+        return "redirect:/";
     }
 
     @GetMapping(value = "/login")
@@ -50,12 +66,15 @@ public class EngineController {
                 logger.info("Token to include on header: {}", token);
                 return "redirect:/";
             }
+
         }
         else {
             model.addAttribute("applicationMsg", authentication.getBody());
             return "application";
         }
-        return LOGIN_PAGE;
+
+        return "application";
+
     }
 
 
@@ -113,7 +132,11 @@ public class EngineController {
     }
 
     @GetMapping(value = "/services")
-    public String servicesPage() {
+    public String servicesPage(Model model) {
+        List<Contrib> contribRequests = contribController.listAllContributorRequests();
+        model.addAttribute("contribRequests", contribRequests);
+        List<Contrib> contribList = contribController.listAllContributors(null, null);
+        model.addAttribute("contribList", contribList);
         return "servicesPage";
     }
 
