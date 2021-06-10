@@ -44,76 +44,11 @@
                             </button>
                             <div class="dropdown-menu animated--fade-in"
                                  aria-labelledby="dropdownMenuButton" style="font-size: 20px;">
-                                <a class="dropdown-item" onclick="signupStoreForm()" id="1">Add your Service</a>
-                                <a class="dropdown-item" onclick="signupRiderForm()" id="2">Become a Rider</a>
+                                <a class="dropdown-item" th:href="@{signup/service}" id="1">Add your Service</a>
+                                <a class="dropdown-item" th:href="@{signup/rider}" id="2">Become a Rider</a>
                             </div>
                         </div>
-                        <form class="user" id="signupRiderForm" style="display: none">
-                            <div class="form-group row">
-                                <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="text" class="form-control form-control-user" id="firstName"
-                                           placeholder="First Name">
-                                </div>
-                                <div class="col-sm-6">
-                                    <input type="text" class="form-control form-control-user" id="lastName"
-                                           placeholder="Last Name">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <input type="tel" class="form-control form-control-user" id="phoneNumber"
-                                       placeholder="Phone Number">
-                            </div>
-                            <div class="form-group">
-                                <input type="email" class="form-control form-control-user" id="inputEmail"
-                                       placeholder="Email Address">
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="password" class="form-control form-control-user"
-                                           id="exampleInputPassword" placeholder="Password">
-                                </div>
-                                <div class="col-sm-6">
-                                    <input type="password" class="form-control form-control-user"
-                                           id="exampleRepeatPassword" placeholder="Repeat Password">
-                                </div>
-                            </div>
-                            <a th:href="@{login}" class="btn btn-primary btn-user btn-block">
-                                Become a Rider
-                            </a>
-                            <hr>
-                        </form>
-                        <form class="user" id="signupStoreForm" style="display: none">
-                            <div class="form-group">
-                                <input type="text" class="form-control form-control-user" id="serviceName"
-                                       placeholder="Service Name">
-                            </div>
-                            <div class="form-group">
-                                <input type="text" class="form-control form-control-user" id="storeOwnerName"
-                                       placeholder="Full Name">
-                            </div>
-                            <div class="form-group">
-                                <input type="tel" class="form-control form-control-user" id="storeNumber"
-                                       placeholder="Phone Number">
-                            </div>
-                            <div class="form-group">
-                                <input type="email" class="form-control form-control-user" id="storeEmail"
-                                       placeholder="Email Address">
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <input type="password" class="form-control form-control-user"
-                                           id="storePassword" placeholder="Password">
-                                </div>
-                                <div class="col-sm-6">
-                                    <input type="password" class="form-control form-control-user"
-                                           id="storeRepeatPassword" placeholder="Repeat Password">
-                                </div>
-                            </div>
-                            <a th:href="@{login}" class="btn btn-primary btn-user btn-block">
-                                Add your store
-                            </a>
-                            <hr>
-                        </form>
+
                         <hr>
                         <div class="text-center">
                             <a class="small" th:href="@{/login}">Already have an account? Login!</a>

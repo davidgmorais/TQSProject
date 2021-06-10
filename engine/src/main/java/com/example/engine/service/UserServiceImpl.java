@@ -25,7 +25,6 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public User register(User user) {
-
         if (userRepository.findUserByUsername(user.getUsername()) == null && userRepository.findUserByEmail(user.getEmail()) == null) {
             return userRepository.save(user);
         }
