@@ -10,4 +10,5 @@ public interface ContribRepository extends JpaRepository<Contrib, Long> {
     Contrib findContribById(int contribId);
     List<Contrib> findAllByVerifiedTrue();
     List<Contrib> findAllByVerifiedFalse();
+    Contrib getContribByUserId(int userId);
 }

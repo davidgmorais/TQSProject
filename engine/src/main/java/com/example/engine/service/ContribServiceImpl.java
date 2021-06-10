@@ -55,6 +55,12 @@ public class ContribServiceImpl implements ContribService{
     }
 
     @Override
+    public Boolean isVerified(User user) {
+        var rider = repository.getContribByUserId(user.getId());
+        return rider.getVerified();
+    }
+
+    @Override
     public List<Contrib> getAllContributors() {
         return repository.findAllByVerifiedTrue();
     }
