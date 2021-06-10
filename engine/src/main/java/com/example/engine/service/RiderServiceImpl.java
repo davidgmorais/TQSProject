@@ -9,6 +9,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RiderServiceImpl implements RiderService {
     @Autowired
@@ -42,6 +44,11 @@ public class RiderServiceImpl implements RiderService {
     public Boolean isVerified(User user) {
         var rider = repository.getRiderByUserId(user.getId());
         return rider.getVerified();
+    }
+
+    @Override
+    public List<Rider> getAllRiders() {
+        return repository.findAllByVerifiedTrue();
     }
 
 }
