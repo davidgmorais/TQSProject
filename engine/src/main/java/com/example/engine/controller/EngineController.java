@@ -3,6 +3,7 @@ package com.example.engine.controller;
 import com.example.engine.dto.ContribDTO;
 import com.example.engine.dto.UserDTO;
 import com.example.engine.entity.Contrib;
+import com.example.engine.entity.Rider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,27 +26,45 @@ public class EngineController {
     @Autowired
     ContribController contribController;
 
+    @Autowired
+    RiderController riderController;
+
     private static final Logger logger = LoggerFactory.getLogger(EngineController.class);
 
     @GetMapping("/")
     public String index(Model model) {
         List<Contrib> contribRequests = contribController.listAllContributorRequests();
+        List<Rider> riderRequests = riderController.listAllRidersRequests();
+        System.out.println(riderRequests);
         model.addAttribute("contribRequests", contribRequests);
-
+        model.addAttribute("riderRequests", riderRequests);
         return "index";
     }
 
-    @GetMapping("/deny/{id}")
-    public String denyUser(@PathVariable int id) {
+    @PostMapping("/deny/contrib/{id}")
+    public String denyContrib(@PathVariable int id) {
         contribController.denyContrib(id);
         return "redirect:/";
     }
 
-    @GetMapping("/verify/{id}")
-    public String verifyUser(@PathVariable int id) {
+    @PostMapping("/deny/rider/{id}")
+    public String denyRider(@PathVariable int id) {
+        riderController.denyRider(id);
+        return "redirect:/";
+    }
+
+    @PostMapping("/verify/contrib/{id}")
+    public String verifyContrib(@PathVariable int id) {
         contribController.verifyContrib(id);
         return "redirect:/";
     }
+
+    @PostMapping("/verify/rider/{id}")
+    public String verifyRider(@PathVariable int id) {
+        riderController.verifyRider(id);
+        return "redirect:/";
+    }
+    
 
     @GetMapping(value = "/login")
     public String login(Model model, UserDTO userDTO) {
@@ -138,6 +157,15 @@ public class EngineController {
         List<Contrib> contribList = contribController.listAllContributors(null, null);
         model.addAttribute("contribList", contribList);
         return "servicesPage";
+    }
+
+    @GetMapping(value = "/riders")
+    public String ridersPage(Model model) {
+        List<Rider> ridersRequests = riderController.listAllRidersRequests();
+        model.addAttribute("riderRequests", ridersRequests);
+        List<Rider> ridersList = riderController.listAllRiders(null);
+        model.addAttribute("riderList", ridersList);
+        return "ridersPage";
     }
 
     @GetMapping(value = "/rider/dashboard")

@@ -9,16 +9,16 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Services</title>
+    <title>Riders</title>
 
     <!-- Custom fonts for this template-->
-    <link th:href="@{vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
     <link
             href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
             rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link th:href="@{css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
 
 </head>
 
@@ -66,7 +66,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" th:href="@{/riders}">
                 <i class="fas fa-biking fa-chart-area"></i>
                 <span>Riders</span></a>
         </li>
@@ -97,13 +97,13 @@
                 </button>
 
                 <!-- Topbar Search -->
-                <form th:object="${lecture}" method="post">
+                <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                     <div class="input-group">
-                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for a specific service"
-                               aria-label="Search" aria-describedby="basic-addon2" th:field="*{subject}">
+                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                               aria-label="Search" aria-describedby="basic-addon2">
                         <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit">
+                            <button class="btn btn-primary" type="button">
                                 <i class="fas fa-search fa-sm"></i>
                             </button>
                         </div>
@@ -175,7 +175,7 @@
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin</span>
                             <img class="img-profile rounded-circle"
-                                 th:src="@{img/undraw_profile.svg}">
+                                 th:src="@{/img/undraw_profile.svg}">
                         </a>
                         <!-- Dropdown - User Information -->
                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -209,10 +209,8 @@
 
                 <!-- Page Heading -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                    <h1 class="h3 mb-0 text-gray-800">Services</h1>
+                    <h1 class="h3 mb-0 text-gray-800">Riders</h1>
                 </div>
-
-
 
                 <!-- Content Row -->
                 <div class="row">
@@ -221,38 +219,35 @@
                     <div class="col-xl-8 col-lg-7">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">List of Services</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">List of Riders</h6>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="riderRequests" width="100%" cellspacing="0">
                                         <thead>
                                         <tr>
-                                            <th>Service Name</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
                                             <th>Username</th>
-                                            <th>Owner's First Name</th>
-                                            <th>Owner's Last Name</th>
                                             <th>Email</th>
                                         </tr>
                                         </thead>
                                         <tfoot>
                                         <tr>
-                                            <th>Service Name</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
                                             <th>Username</th>
-                                            <th>Owner's First Name</th>
-                                            <th>Owner's Last Name</th>
                                             <th>Email</th>
                                         </tr>
                                         </tfoot>
                                         <tbody>
-                                        <tr th:each="contribList:${contribList}">
-                                            <td th:text="${contribList.storeName}"></td>
-                                            <td th:text="${contribList.user.username}"></td>
-                                            <td th:text="${contribList.user.firstName}"></td>
-                                            <td th:text="${contribList.user.lastName}"></td>
-                                            <td th:text="${contribList.user.email}"></td>
-                                        </tr>
+                                        <tr th:each="riderList:${riderList}">
+                                            <td th:text="${riderList.user.firstName}"></td>
+                                            <td th:text="${riderList.user.lastName}"></td>
+                                            <td th:text="${riderList.user.username}"></td>
+                                            <td th:text="${riderList.user.email}"></td>
 
+                                        </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -269,55 +264,55 @@
                     <div class="col-xl-8 col-lg-7">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Pending Service Requests</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Pending Riders Requests</h6>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="storeRequests" width="100%" cellspacing="0">
                                         <thead>
                                         <tr>
-                                            <th>Service Name</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
                                             <th>Username</th>
-                                            <th>Owner's First Name</th>
-                                            <th>Owner's Last Name</th>
                                             <th>Email</th>
                                             <th>Accept/Decline</th>
                                         </tr>
                                         </thead>
                                         <tfoot>
                                         <tr>
-                                            <th>Service Name</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
                                             <th>Username</th>
-                                            <th>Owner's First Name</th>
-                                            <th>Owner's Last Name</th>
                                             <th>Email</th>
                                             <th>Accept/Decline</th>
                                         </tr>
                                         </tfoot>
                                         <tbody>
-                                        <tr th:each="contribRequests:${contribRequests}">
-                                            <td th:text="${contribRequests.storeName}"></td>
-                                            <td th:text="${contribRequests.user.username}"></td>
-                                            <td th:text="${contribRequests.user.firstName}"></td>
-                                            <td th:text="${contribRequests.user.lastName}"></td>
-                                            <td th:text="${contribRequests.user.email}"></td>
+                                        <tr th:each="riderRequests:${riderRequests}">
+                                            <td th:text="${riderRequests.user.firstName}"></td>
+                                            <td th:text="${riderRequests.user.lastName}"></td>
+                                            <td th:text="${riderRequests.user.username}"></td>
+                                            <td th:text="${riderRequests.user.email}"></td>
                                             <td>
-                                                <a href="#" class="btn btn-success btn-icon-split">
+                                                <form th:method="post" th:action="@{/verify/rider/{id}(id=${riderRequests.id})}">
+                                                    <a href="#" class="btn btn-success btn-icon-split">
                                                     <span class="icon text-white-50">
                                                         <i class="fas fa-check"></i>
                                                     </span>
-                                                    <span class="text">Accept</span>
-                                                </a>
-                                                <div class="my-2"></div>
-                                                <a href="#" class="btn btn-danger btn-icon-split">
+                                                        <button class="btn" style="color: white" type="submit">Accept</button>
+                                                    </a>
+                                                </form>
+                                                <form th:method="post" th:action="@{/deny/rider/{id}(id=${riderRequests.id})}">
+                                                    <div class="my-2"></div>
+                                                    <a href="#" class="btn btn-danger btn-icon-split">
                                                     <span class="icon text-white-50">
                                                         <i class="fas fa-trash"></i>
                                                     </span>
-                                                    <span class="text">Decline</span>
-                                                </a>
+                                                        <button class="btn" type="submit" style="color: white">Decline</button>
+                                                    </a>
+                                                </form>
                                             </td>
                                         </tr>
-
                                         </tbody>
                                     </table>
                                 </div>
