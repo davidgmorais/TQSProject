@@ -66,7 +66,7 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" th:href="@{/riders}">
                     <i class="fas fa-biking fa-chart-area"></i>
                     <span>Riders</span></a>
             </li>
@@ -333,7 +333,7 @@
                                                 <td th:text="${contribRequests.user.lastName}"></td>
                                                 <td th:text="${contribRequests.user.email}"></td>
                                                 <td>
-                                                    <form th:method="get" th:action="@{/verify/{id}(id=${contribRequests.id})}">
+                                                    <form th:method="post" th:action="@{/verify/contrib/{id}(id=${contribRequests.id})}">
                                                     <a href="#" class="btn btn-success btn-icon-split">
                                                     <span class="icon text-white-50">
                                                         <i class="fas fa-check"></i>
@@ -341,7 +341,7 @@
                                                         <button class="btn" style="color: white" type="submit">Accept</button>
                                                     </a>
                                                     </form>
-                                                    <form th:method="get" th:action="@{/deny/{id}(id=${contribRequests.id})}">
+                                                    <form th:method="post" th:action="@{/deny/contrib/{id}(id=${contribRequests.id})}">
                                                     <div class="my-2"></div>
                                                     <a href="#" class="btn btn-danger btn-icon-split">
                                                     <span class="icon text-white-50">
@@ -374,66 +374,48 @@
                                         <table class="table table-bordered" id="riderRequests" width="100%" cellspacing="0">
                                             <thead>
                                             <tr>
-                                                <th>Full Name</th>
-                                                <th>Phone Number</th>
+                                                <th>First Name</th>
+                                                <th>Last Name</th>
+                                                <th>Username</th>
                                                 <th>Email</th>
-                                                <th>CV</th>
                                                 <th>Accept/Decline</th>
                                             </tr>
                                             </thead>
                                             <tfoot>
                                             <tr>
-                                                <th>Full Name</th>
-                                                <th>Phone Number</th>
+                                                <th>First Name</th>
+                                                <th>Last Name</th>
+                                                <th>Username</th>
                                                 <th>Email</th>
-                                                <th>CV</th>
                                                 <th>Accept/Decline</th>
                                             </tr>
                                             </tfoot>
                                             <tbody>
-                                            <tr>
-                                                <td>Inês Monteiro</td>
-                                                <td>345678543</td>
-                                                <td>inesmonteiro@rider.pt</td>
-                                                <td>cv.pdf</td>
+                                            <tr th:each="riderRequests:${riderRequests}">
+                                                <td th:text="${riderRequests.user.firstName}"></td>
+                                                <td th:text="${riderRequests.user.lastName}"></td>
+                                                <td th:text="${riderRequests.user.username}"></td>
+                                                <td th:text="${riderRequests.user.email}"></td>
                                                 <td>
-                                                    <a href="#" class="btn btn-success btn-icon-split">
+                                                    <form th:method="post" th:action="@{/verify/rider/{id}(id=${riderRequests.id})}">
+                                                        <a href="#" class="btn btn-success btn-icon-split">
                                                     <span class="icon text-white-50">
                                                         <i class="fas fa-check"></i>
                                                     </span>
-                                                        <span class="text">Accept</span>
-                                                    </a>
-                                                    <div class="my-2"></div>
-                                                    <a href="#" class="btn btn-danger btn-icon-split">
+                                                            <button class="btn" style="color: white" type="submit">Accept</button>
+                                                        </a>
+                                                    </form>
+                                                    <form th:method="post" th:action="@{/deny/rider/{id}(id=${riderRequests.id})}">
+                                                        <div class="my-2"></div>
+                                                        <a href="#" class="btn btn-danger btn-icon-split">
                                                     <span class="icon text-white-50">
                                                         <i class="fas fa-trash"></i>
                                                     </span>
-                                                        <span class="text">Decline</span>
-                                                    </a>
+                                                            <button class="btn" type="submit" style="color: white">Decline</button>
+                                                        </a>
+                                                    </form>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>João Augusto</td>
-                                                <td>563178943</td>
-                                                <td>joaoaugusto@rider.pt</td>
-                                                <td>cv.pdf</td>
-                                                <td>
-                                                    <a href="#" class="btn btn-success btn-icon-split">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-check"></i>
-                                                    </span>
-                                                        <span class="text">Accept</span>
-                                                    </a>
-                                                    <div class="my-2"></div>
-                                                    <a href="#" class="btn btn-danger btn-icon-split">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-trash"></i>
-                                                    </span>
-                                                        <span class="text">Decline</span>
-                                                    </a>
-                                                </td>
-                                            </tr>
-
                                             </tbody>
                                         </table>
                                     </div>
