@@ -229,31 +229,29 @@
                                         <thead>
                                         <tr>
                                             <th>Service Name</th>
-                                            <th>Name</th>
-                                            <th>Phone Number</th>
+                                            <th>Username</th>
+                                            <th>Owner's First Name</th>
+                                            <th>Owner's Last Name</th>
                                             <th>Email</th>
-                                            <th>Date of Entry</th>
                                         </tr>
                                         </thead>
                                         <tfoot>
                                         <tr>
                                             <th>Service Name</th>
-                                            <th>Name</th>
-                                            <th>Phone Number</th>
+                                            <th>Username</th>
+                                            <th>Owner's First Name</th>
+                                            <th>Owner's Last Name</th>
                                             <th>Email</th>
-                                            <th>Date of Entry</th>
                                         </tr>
                                         </tfoot>
                                         <tbody>
-                                        <tr>
-                                            <td>BookLover</td>
-                                            <td>Inês Patrício</td>
-                                            <td>45685322</td>
-                                            <td>inespatricio@book.pt</td>
-                                            <td>2021/05/20</td>
-
+                                        <tr th:each="contribList:${contribList}">
+                                            <td th:text="${contribList.storeName}"></td>
+                                            <td th:text="${contribList.user.username}"></td>
+                                            <td th:text="${contribList.user.firstName}"></td>
+                                            <td th:text="${contribList.user.lastName}"></td>
+                                            <td th:text="${contribList.user.email}"></td>
                                         </tr>
-
 
                                         </tbody>
                                     </table>
@@ -279,52 +277,30 @@
                                         <thead>
                                         <tr>
                                             <th>Service Name</th>
-                                            <th>Name</th>
-                                            <th>Phone Number</th>
+                                            <th>Username</th>
+                                            <th>Owner's First Name</th>
+                                            <th>Owner's Last Name</th>
                                             <th>Email</th>
-                                            <th>Request Date</th>
                                             <th>Accept/Decline</th>
                                         </tr>
                                         </thead>
                                         <tfoot>
                                         <tr>
                                             <th>Service Name</th>
-                                            <th>Name</th>
-                                            <th>Phone Number</th>
+                                            <th>Username</th>
+                                            <th>Owner's First Name</th>
+                                            <th>Owner's Last Name</th>
                                             <th>Email</th>
-                                            <th>Request Date</th>
                                             <th>Accept/Decline</th>
                                         </tr>
                                         </tfoot>
                                         <tbody>
-                                        <tr>
-                                            <td>Book2Door</td>
-                                            <td>António Maurício</td>
-                                            <td>123456789</td>
-                                            <td>antoniomauricio@book.pt</td>
-                                            <td>2021/05/28</td>
-                                            <td>
-                                                <a href="#" class="btn btn-success btn-icon-split">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-check"></i>
-                                                    </span>
-                                                    <span class="text">Accept</span>
-                                                </a>
-                                                <div class="my-2"></div>
-                                                <a href="#" class="btn btn-danger btn-icon-split">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-trash"></i>
-                                                    </span>
-                                                    <span class="text">Decline</span>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>UptownBooks</td>
-                                            <td>Maria Silva</td>
-                                            <td>987654321</td>
-                                            <td>mariasilva@book.pt</td>
-                                            <td>2021/05/27</td>
+                                        <tr th:each="contribRequests:${contribRequests}">
+                                            <td th:text="${contribRequests.storeName}"></td>
+                                            <td th:text="${contribRequests.user.username}"></td>
+                                            <td th:text="${contribRequests.user.firstName}"></td>
+                                            <td th:text="${contribRequests.user.lastName}"></td>
+                                            <td th:text="${contribRequests.user.email}"></td>
                                             <td>
                                                 <a href="#" class="btn btn-success btn-icon-split">
                                                     <span class="icon text-white-50">
