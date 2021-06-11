@@ -47,11 +47,11 @@ class ContribService_UnitTest {
         Mockito.when(contribRepository.getContribByUserId(bob.getId())).thenReturn(bobService);
         Mockito.when(contribRepository.getContribByUserId(dakota.getId())).thenReturn(dakotaService);
 
-        Mockito.when(contribRepository.findContribByUserUsernameContainingIgnoreCase(bob.getUsername())).thenReturn(new ArrayList<>(Collections.singletonList(bobService)));
-        Mockito.when(contribRepository.findContribByUserUsernameContainingIgnoreCase("NonExistingUsername")).thenReturn(new ArrayList<>());
+        Mockito.when(contribRepository.findContribByVerifiedTrueAndUserUsernameContainingIgnoreCase(bob.getUsername())).thenReturn(new ArrayList<>(Collections.singletonList(bobService)));
+        Mockito.when(contribRepository.findContribByVerifiedTrueAndUserUsernameContainingIgnoreCase("NonExistingUsername")).thenReturn(new ArrayList<>());
 
-        Mockito.when(contribRepository.findContribByStoreNameContainingIgnoreCase("bob")).thenReturn(new ArrayList<>(Collections.singletonList(bobService)));
-        Mockito.when(contribRepository.findContribByStoreNameContainingIgnoreCase("NonExistingService")).thenReturn(new ArrayList<>());
+        Mockito.when(contribRepository.findContribByVerifiedTrueAndStoreNameContainingIgnoreCase("bob")).thenReturn(new ArrayList<>(Collections.singletonList(bobService)));
+        Mockito.when(contribRepository.findContribByVerifiedTrueAndStoreNameContainingIgnoreCase("NonExistingService")).thenReturn(new ArrayList<>());
 
     }
 

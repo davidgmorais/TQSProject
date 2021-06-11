@@ -107,7 +107,7 @@ class ContribControllerITest {
 
         mvc.perform(post("/api/admin/requests/contributors/deny/" + bobService.getId()).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isAccepted())
-                .andExpect(content().string("Contributors request denied"));
+                .andExpect(content().string("Contributor's request denied"));
 
         List<Contrib> foundContribList = contribRepository.findAll();
         assertThat(foundContribList).isEmpty();
@@ -199,6 +199,7 @@ class ContribControllerITest {
     void whenSearchContributor_andMatches_returnContributorsList(String url) throws Exception {
         User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
         Contrib bobService = new Contrib(bob, "Bob's Store");
+        bobService.setVerified(true);
         repository.saveAndFlush(bob);
         contribRepository.saveAndFlush(bobService);
 

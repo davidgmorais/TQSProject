@@ -9,4 +9,9 @@ public interface RiderService {
     Rider create(UserDTO rider);
     Boolean isVerified(User user);
     List<Rider> getAllRiders();
+    List<Rider> getAllRidersRequests();
+    List<Rider> search(String username);
+    Rider verifyRider(int riderId);
+    boolean denyRider(int riderId);
+
 }

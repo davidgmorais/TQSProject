@@ -79,12 +79,12 @@ public class ContribServiceImpl implements ContribService{
         ArrayList<Contrib> results = new ArrayList<>();
 
         if (filters.containsKey(userKey) && filters.containsKey(serviceKey)) {
-            results.addAll(repository.findContribByUserUsernameContainingIgnoreCase(filters.get(userKey)));
-            results.retainAll(repository.findContribByStoreNameContainingIgnoreCase(filters.get(serviceKey)));
+            results.addAll(repository.findContribByVerifiedTrueAndUserUsernameContainingIgnoreCase(filters.get(userKey)));
+            results.retainAll(repository.findContribByVerifiedTrueAndStoreNameContainingIgnoreCase(filters.get(serviceKey)));
         } else if (filters.containsKey(userKey)) {
-            results.addAll(repository.findContribByUserUsernameContainingIgnoreCase(filters.get(userKey)));
+            results.addAll(repository.findContribByVerifiedTrueAndUserUsernameContainingIgnoreCase(filters.get(userKey)));
         } else {
-            results.addAll(repository.findContribByStoreNameContainingIgnoreCase(filters.get(serviceKey)));
+            results.addAll(repository.findContribByVerifiedTrueAndStoreNameContainingIgnoreCase(filters.get(serviceKey)));
         }
 
         return results;

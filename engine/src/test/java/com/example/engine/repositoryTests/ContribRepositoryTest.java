@@ -115,10 +115,12 @@ class ContribRepositoryTest {
     void whenFindContribByUserUsername_andMatchingUsernames_thenListContributors() {
         User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
         Contrib bobService = new Contrib(bob, "Bob Service");
+        bobService.setVerified(true);
         User bob27 = new User("bob27", "bob@gmail.com", "12345", "Bob", null, 2);
         Contrib bob27Service = new Contrib(bob27, "Bob Shop");
         User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 2);
         Contrib dakotaService = new Contrib(dakota, "Dakota Service");
+        dakotaService.setVerified(true);
 
         entityManager.persist(bob);
         entityManager.persist(bobService);
@@ -128,9 +130,9 @@ class ContribRepositoryTest {
         entityManager.persist(dakotaService);
         entityManager.flush();
 
-        List<Contrib> found = contribRepository.findContribByUserUsernameContainingIgnoreCase("bob");
-        assertThat(found).hasSize(2).extracting(Contrib::getStoreName)
-                .contains(bobService.getStoreName(), bob27Service.getStoreName());
+        List<Contrib> found = contribRepository.findContribByVerifiedTrueAndUserUsernameContainingIgnoreCase("bob");
+        assertThat(found).hasSize(1).extracting(Contrib::getStoreName)
+                .containsOnly(bobService.getStoreName());
     }
 
     @Test
@@ -142,7 +144,7 @@ class ContribRepositoryTest {
         entityManager.persist(dakotaService);
         entityManager.flush();
 
-        List<Contrib> found = contribRepository.findContribByUserUsernameContainingIgnoreCase("bob");
+        List<Contrib> found = contribRepository.findContribByVerifiedTrueAndUserUsernameContainingIgnoreCase("bob");
         assertThat(found).isEmpty();
     }
 
@@ -150,10 +152,12 @@ class ContribRepositoryTest {
     void whenFindContribByServiceName_andMatchingServiceNames_thenListContributors() {
         User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
         Contrib bobService = new Contrib(bob, "Bob Service");
+        bobService.setVerified(true);
         User bob27 = new User("bob27", "bob@gmail.com", "12345", "Bob", null, 2);
         Contrib bob27Service = new Contrib(bob27, "Bob Shop");
         User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 2);
         Contrib dakotaService = new Contrib(dakota, "Dakota Service");
+        dakotaService.setVerified(true);
 
         entityManager.persist(bob);
         entityManager.persist(bobService);
@@ -163,13 +167,13 @@ class ContribRepositoryTest {
         entityManager.persist(dakotaService);
         entityManager.flush();
 
-        List<Contrib> found = contribRepository.findContribByStoreNameContainingIgnoreCase("Bob");
-        assertThat(found).hasSize(2).extracting(Contrib::getStoreName)
-                .contains(bobService.getStoreName(), bob27Service.getStoreName());
+        List<Contrib> found = contribRepository.findContribByVerifiedTrueAndStoreNameContainingIgnoreCase("Bob");
+        assertThat(found).hasSize(1).extracting(Contrib::getStoreName)
+                .containsOnly(bobService.getStoreName());
 
-        found = contribRepository.findContribByStoreNameContainingIgnoreCase("bob");
-        assertThat(found).hasSize(2).extracting(Contrib::getStoreName)
-                .contains(bobService.getStoreName(), bob27Service.getStoreName());
+        found = contribRepository.findContribByVerifiedTrueAndStoreNameContainingIgnoreCase("bob");
+        assertThat(found).hasSize(1).extracting(Contrib::getStoreName)
+                .containsOnly(bobService.getStoreName());
     }
 
     @Test
@@ -181,7 +185,7 @@ class ContribRepositoryTest {
         entityManager.persist(dakotaService);
         entityManager.flush();
 
-        List<Contrib> found = contribRepository.findContribByStoreNameContainingIgnoreCase("bob");
+        List<Contrib> found = contribRepository.findContribByVerifiedTrueAndStoreNameContainingIgnoreCase("bob");
         assertThat(found).isEmpty();
     }
 

@@ -27,7 +27,7 @@ public class ContribController {
     @PostMapping("/admin/requests/contributors/deny/{contribId}")
     public ResponseEntity<String> denyContrib(@PathVariable int contribId) {
         var contrib = contribService.denyContributor(contribId);
-        return contrib ? new ResponseEntity<>("Contributors request denied", HttpStatus.ACCEPTED)
+        return contrib ? new ResponseEntity<>("Contributor's request denied", HttpStatus.ACCEPTED)
                 : new ResponseEntity<>("This service's request does not exist", HttpStatus.NOT_FOUND);
     }
 
