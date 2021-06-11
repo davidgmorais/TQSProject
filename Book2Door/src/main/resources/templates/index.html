@@ -57,16 +57,16 @@
                 <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
                   <ul id="nav" class="navbar-nav ml-auto">
                     <li class="nav-item">
-                      <a class="page-scroll" href="#home">Home</a>
+                      <a class="page-scroll" th:href="@{/}">Home</a>
                     </li>
                     <li class="nav-item">
                       <a class="page-scroll" th:href="@{/search}">Make order</a>
                     </li>
                       <li class="nav-item">
-                          <a class="page-scroll" th:href="@{/addStore}">Add Your Store</a>
+                          <a th:unless="${store} OR ${client}" class="page-scroll" th:href="@{/addStore}">Add Your Store</a>
                       </li>
                     <li class="nav-item">
-                      <a class="page-scroll" th:href="@{/login}">Login</a>
+                      <a th:unless="${client} OR ${store}"  class="page-scroll" th:href="@{/login}">Login</a>
                     </li>
                   </ul>
                 </div>

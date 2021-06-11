@@ -1,4 +1,4 @@
-package com.example.Book2Door.controller;
+package com.example.book2door.controller;
 
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.stereotype.Controller;
