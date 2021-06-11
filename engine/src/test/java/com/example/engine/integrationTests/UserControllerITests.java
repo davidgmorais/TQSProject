@@ -27,10 +27,9 @@ import java.io.IOException;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = EngineApplication.class)
 @AutoConfigureMockMvc
@@ -128,7 +127,10 @@ class UserControllerITests {
         john.setPassword("12345");
         mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(Map.of("username", john.getUsername(), "password", john.getPassword()))))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Authentication successful - Authorization token was sent in the header."))
+                .andExpect(jsonPath("$.data", is("Authentication successful - Authorization token was sent in the header.")))
+                .andExpect(jsonPath("$.username", is(john.getUsername())))
+                .andExpect(jsonPath("$.email", is(john.getEmail())))
+                .andExpect(jsonPath("$.role", is(String.valueOf(john.getRole()))))
                 .andExpect(header().exists("Authorization"));
     }
 
@@ -150,19 +152,19 @@ class UserControllerITests {
         HashMap<String, String> incompleteCredential = new HashMap<>();
         mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(incompleteCredential)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Must provide username and password"));
+                .andExpect(jsonPath("$.data", is("Must provide username and password")));
 
         // only username provided
         incompleteCredential.put("username", "john");
         mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(incompleteCredential)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Must provide username and password"));
+                .andExpect(jsonPath("$.data", is("Must provide username and password")));
 
         incompleteCredential.clear();
         incompleteCredential.put("password", "password");
         mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(incompleteCredential)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Must provide username and password"));
+                .andExpect(jsonPath("$.data", is("Must provide username and password")));
     }
 
     @Test
@@ -177,7 +179,7 @@ class UserControllerITests {
         john.setPassword("12345");
         mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(Map.of("username",john.getUsername(), "password", john.getPassword()))))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Your rider's account request is under review"))
+                .andExpect(jsonPath("$.data", is("Your rider's account request is under review")))
                 .andExpect(header().doesNotExist("Authorization"));
     }
 
@@ -194,7 +196,10 @@ class UserControllerITests {
         john.setPassword("12345");
         mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(Map.of("username", john.getUsername(), "password", john.getPassword()))))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Authentication successful - Authorization token was sent in the header."))
+                .andExpect(jsonPath("$.data", is("Authentication successful - Authorization token was sent in the header.")))
+                .andExpect(jsonPath("$.username", is(john.getUsername())))
+                .andExpect(jsonPath("$.email", is(john.getEmail())))
+                .andExpect(jsonPath("$.role", is(String.valueOf(john.getRole()))))
                 .andExpect(header().exists("Authorization"));
     }
 
@@ -210,7 +215,7 @@ class UserControllerITests {
         john.setPassword("12345");
         mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(Map.of("username", john.getUsername(), "password", john.getPassword()))))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Your contributor's account request is under review"))
+                .andExpect(jsonPath("$.data", is("Your contributor's account request is under review")))
                 .andExpect(header().doesNotExist("Authorization"));
     }
 
@@ -227,7 +232,10 @@ class UserControllerITests {
         john.setPassword("12345");
         mvc.perform(post("/api/auth").contentType(MediaType.APPLICATION_JSON).content(toJson(Map.of("username", john.getUsername(), "password", john.getPassword()))))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Authentication successful - Authorization token was sent in the header."))
+                .andExpect(jsonPath("$.data", is("Authentication successful - Authorization token was sent in the header.")))
+                .andExpect(jsonPath("$.username", is(john.getUsername())))
+                .andExpect(jsonPath("$.email", is(john.getEmail())))
+                .andExpect(jsonPath("$.role", is(String.valueOf(john.getRole()))))
                 .andExpect(header().exists("Authorization"));
     }
 
