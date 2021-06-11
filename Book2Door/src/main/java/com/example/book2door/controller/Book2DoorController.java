@@ -71,22 +71,22 @@ public class Book2DoorController {
             model.addAttribute("book",book);
             return "redirect:/book?title="+param;
         }
-        return "searchPage";
+        return "error";
     }
 
     @GetMapping(value="/store")
-    public String storePage(@RequestParam String param,Model model)
+    public String storePage(@RequestParam String name,Model model)
     {   
-        Store store = storeRepository.findBystoreName(param);
+        Store store = storeRepository.findBystoreName(name);
         model.addAttribute("store",store);
         
         return "storePage";
     }
 
     @GetMapping(value="/book")
-    public String bookPage(@RequestParam String param,Model model)
+    public String bookPage(@RequestParam String title,Model model)
     {   
-        Book book = bookRepository.findByTitle(param);
+        Book book = bookRepository.findByTitle(title);
         model.addAttribute("book",book);
         return "bookPage";
     }
