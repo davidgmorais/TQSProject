@@ -21,6 +21,8 @@ public class EngineController {
     public static final String INDEX_PAGE = "redirect:/";
     public static final String LOGIN_PAGE = "redirect:/login";
     public static final String SIGNUP_ERROR = "signup";
+    public static final String INDEX_RIDER = "indexRider";
+    public static final String INDEX_SERVICE = "indexService";
 
     @Autowired
     UserController userController;
@@ -38,7 +40,6 @@ public class EngineController {
         model.addAttribute("search", userDTO);
         List<Contrib> contribRequests = contribController.listAllContributorRequests();
         List<Rider> riderRequests = riderController.listAllRidersRequests();
-        System.out.println(riderRequests);
         model.addAttribute("contribRequests", contribRequests);
         model.addAttribute("riderRequests", riderRequests);
         return "index";
@@ -53,7 +54,7 @@ public class EngineController {
     @PostMapping("/deny/rider/{id}")
     public String denyRider(@PathVariable int id) {
         riderController.denyRider(id);
-        return "redirect:/";
+        return INDEX_PAGE;
     }
 
     @PostMapping("/verify/contrib/{id}")
@@ -65,7 +66,7 @@ public class EngineController {
     @PostMapping("/verify/rider/{id}")
     public String verifyRider(@PathVariable int id) {
         riderController.verifyRider(id);
-        return "redirect:/";
+        return INDEX_PAGE;
     }
 
     @GetMapping("/search")
@@ -96,7 +97,16 @@ public class EngineController {
             if (authList != null && !authList.isEmpty()) {
                 String token = authList.get(0);
                 logger.info("Token to include on header: {}", token);
-                return INDEX_PAGE;
+                String role = authentication.getBody().get("role");
+                if (role.equals("1")) {
+                    return INDEX_RIDER;
+                }
+                else if (role.equals("2")) {
+                    return INDEX_SERVICE;
+                }
+                else {
+                    return INDEX_PAGE;
+                }
             }
 
         }
@@ -155,7 +165,7 @@ public class EngineController {
 
     @GetMapping(value = "/service/dashboard")
     public String service() {
-        return "indexService";
+        return INDEX_SERVICE;
     }
 
     @GetMapping(value = "/service/statistics")
@@ -185,7 +195,7 @@ public class EngineController {
 
     @GetMapping(value = "/rider/dashboard")
     public String riderIndex() {
-        return "indexRider";
+        return INDEX_RIDER;
     }
 
 }

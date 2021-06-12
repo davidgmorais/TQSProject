@@ -113,6 +113,18 @@ class EngineWebControllerITest {
                 .andExpect(content().string(containsString("Dashboard")));
     }
 
+    @Test
+    void whenNavigateToSearchPage_thenReturnContent_andStatusOk() throws Exception {
+        mockMvc.perform(get("/search")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("Search")));
+    }
+
+    @Test
+    void whenNavigateToRidersPage_thenReturnContent_andStatusOk() throws Exception {
+        mockMvc.perform(get("/riders")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("Riders")));
+    }
+
 
 
 }
