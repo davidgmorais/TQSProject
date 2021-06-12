@@ -13,10 +13,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Map;
 
 
 @Controller
 public class EngineController {
+    public static final String INDEX_PAGE = "redirect:/";
     public static final String LOGIN_PAGE = "redirect:/login";
     public static final String SIGNUP_ERROR = "signup";
 
@@ -45,7 +47,7 @@ public class EngineController {
     @PostMapping("/deny/contrib/{id}")
     public String denyContrib(@PathVariable int id) {
         contribController.denyContrib(id);
-        return "redirect:/";
+        return INDEX_PAGE;
     }
 
     @PostMapping("/deny/rider/{id}")
@@ -57,7 +59,7 @@ public class EngineController {
     @PostMapping("/verify/contrib/{id}")
     public String verifyContrib(@PathVariable int id) {
         contribController.verifyContrib(id);
-        return "redirect:/";
+        return INDEX_PAGE;
     }
 
     @PostMapping("/verify/rider/{id}")
@@ -88,13 +90,13 @@ public class EngineController {
         HashMap<String, String> creds = new HashMap<>();
         creds.put("username", userDTO.getUsername());
         creds.put("password", userDTO.getPassword());
-        ResponseEntity<String> authentication = userController.authenticateUser(creds);
+        ResponseEntity<Map<String, String>> authentication = userController.authenticateUser(creds);
         if (authentication.getHeaders().containsKey("Authorization")) {
             List<String> authList = authentication.getHeaders().get("Authorization");
             if (authList != null && !authList.isEmpty()) {
                 String token = authList.get(0);
                 logger.info("Token to include on header: {}", token);
-                return "redirect:/";
+                return INDEX_PAGE;
             }
 
         }
