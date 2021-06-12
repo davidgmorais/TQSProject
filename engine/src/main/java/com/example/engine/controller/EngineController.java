@@ -37,7 +37,6 @@ public class EngineController {
     public String index(Model model) {
         List<Contrib> contribRequests = contribController.listAllContributorRequests();
         List<Rider> riderRequests = riderController.listAllRidersRequests();
-        System.out.println(riderRequests);
         model.addAttribute("contribRequests", contribRequests);
         model.addAttribute("riderRequests", riderRequests);
         return "index";
@@ -52,7 +51,7 @@ public class EngineController {
     @PostMapping("/deny/rider/{id}")
     public String denyRider(@PathVariable int id) {
         riderController.denyRider(id);
-        return "redirect:/";
+        return INDEX_PAGE;
     }
 
     @PostMapping("/verify/contrib/{id}")
@@ -64,7 +63,7 @@ public class EngineController {
     @PostMapping("/verify/rider/{id}")
     public String verifyRider(@PathVariable int id) {
         riderController.verifyRider(id);
-        return "redirect:/";
+        return INDEX_PAGE;
     }
     
 

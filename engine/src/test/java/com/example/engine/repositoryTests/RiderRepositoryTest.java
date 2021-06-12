@@ -35,7 +35,7 @@ class RiderRepositoryTest {
     }
 
     @Test
-    void whenFindContribById_andInvalidID_thenReturnNull() {
+    void whenFindRiderById_andInvalidID_thenReturnNull() {
         Rider fromDb = riderRepository.findRiderById(2);
         assertThat(fromDb).isNull();
     }
@@ -59,6 +59,28 @@ class RiderRepositoryTest {
         entityManager.persist(bob);
 
         Rider found = riderRepository.getRiderByUserId(bob.getId());
+        assertThat(found).isNull();
+    }
+
+    @Test
+    void whenGetRiderByUsernamme_andRiderExists_thenReturnRider() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        Rider riderBob = new Rider(bob);
+
+        entityManager.persist(bob);
+        entityManager.persist(riderBob);
+        entityManager.flush();
+
+        Rider found = riderRepository.getRiderByUserUsername(bob.getUsername());
+        assertThat(found).isEqualTo(riderBob);
+    }
+
+    @Test
+    void whenGetRiderByUsernname_andRiderDoesNotExists_thenReturnNull() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        entityManager.persist(bob);
+
+        Rider found = riderRepository.getRiderByUserUsername(bob.getUsername());
         assertThat(found).isNull();
     }
 

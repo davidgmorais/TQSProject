@@ -81,4 +81,28 @@ public class RiderServiceImpl implements RiderService {
         return repository.findAllByVerifiedFalse();
     }
 
+    @Override
+    public boolean startShift(String riderUsername, Double currentLat, Double currentLon) {
+        var rider = repository.getRiderByUserUsername(riderUsername);
+        if (rider != null) {
+            rider.setWorking(true);
+            rider.setLocation(currentLat, currentLon);
+            repository.save(rider);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean endShift(String riderUsername) {
+        var rider = repository.getRiderByUserUsername(riderUsername);
+        if (rider != null) {
+            rider.setWorking(false);
+            rider.setLocation(null, null);
+            repository.save(rider);
+            return true;
+        }
+        return false;
+    }
+
 }

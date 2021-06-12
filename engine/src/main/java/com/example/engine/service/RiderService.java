@@ -13,5 +13,7 @@ public interface RiderService {
     List<Rider> search(String username);
     Rider verifyRider(int riderId);
     boolean denyRider(int riderId);
+    boolean startShift(String riderUsername, Double currentLat, Double currentLon);
+    boolean endShift(String riderUsername);
 
 }

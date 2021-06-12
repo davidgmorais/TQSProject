@@ -6,6 +6,8 @@ import com.example.engine.entity.Rider;
 import com.example.engine.entity.User;
 import com.example.engine.service.RiderServiceImpl;
 import com.example.engine.service.UserServiceImpl;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +17,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(RiderController.class)
@@ -127,6 +132,60 @@ class RiderController_mockServiceTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("This rider's request does not exist"));
         verify(riderService, times(1)).verifyRider(Mockito.anyInt());
+    }
+
+    @Test
+    void whenPutToStartShift_andValidRider_thenVerifyRider() throws Exception {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 1);
+        Rider riderBob = new Rider(bob);
+        when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(bob.getUsername());
+        when(riderService.startShift(riderBob.getUser().getUsername(), 0.0, 0.0)).thenReturn(true);
+
+        mvc.perform(put("/api/rider/shift/start").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt").content(toJson(Map.of("latitude", "0", "longitude", "0"))))
+                .andExpect(status().isOk());
+        verify(jwtUtils, times(1)).getUsernameFromJwt(Mockito.anyString());
+        verify(riderService, times(1)).startShift(Mockito.anyString(),Mockito.anyDouble(), Mockito.anyDouble());
+    }
+
+    @Test
+    void whenPutToStartShift_andInvalidRider_thenReturnNotFound() throws Exception {
+        when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn("NonExistingUsername");
+        when(riderService.startShift("NonExistingUsername", 0.0, 0.0)).thenReturn(false);
+
+        mvc.perform(put("/api/rider/shift/start").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt").content(toJson(Map.of("latitude", "0", "longitude", "0"))))
+                .andExpect(status().isNotFound());
+        verify(jwtUtils, times(1)).getUsernameFromJwt(Mockito.anyString());
+        verify(riderService, times(1)).startShift(Mockito.anyString(),Mockito.anyDouble(), Mockito.anyDouble());
+    }
+
+    @Test
+    void whenPutToEndShift_andValidRider_thenVerifyRider() throws Exception {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 1);
+        Rider riderBob = new Rider(bob);
+        when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(bob.getUsername());
+        when(riderService.endShift(riderBob.getUser().getUsername())).thenReturn(true);
+
+        mvc.perform(put("/api/rider/shift/end").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt"))
+                .andExpect(status().isOk());
+        verify(jwtUtils, times(1)).getUsernameFromJwt(Mockito.anyString());
+        verify(riderService, times(1)).endShift(Mockito.anyString());
+    }
+
+    @Test
+    void whenPutToEndShift_andInvalidRider_thenReturnNotFound() throws Exception {
+        when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn("NonExistingUsername");
+        when(riderService.endShift("NonExistingUsername")).thenReturn(false);
+
+        mvc.perform(put("/api/rider/shift/end").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt"))
+                .andExpect(status().isNotFound());
+        verify(jwtUtils, times(1)).getUsernameFromJwt(Mockito.anyString());
+        verify(riderService, times(1)).endShift(Mockito.anyString());
+    }
+
+    static byte[] toJson(Object object) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return mapper.writeValueAsBytes(object);
     }
 
 }
