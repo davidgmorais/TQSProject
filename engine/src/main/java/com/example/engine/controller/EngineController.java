@@ -32,7 +32,8 @@ public class EngineController {
     private static final Logger logger = LoggerFactory.getLogger(EngineController.class);
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, UserDTO userDTO) {
+        model.addAttribute("search", userDTO);
         List<Contrib> contribRequests = contribController.listAllContributorRequests();
         List<Rider> riderRequests = riderController.listAllRidersRequests();
         System.out.println(riderRequests);
@@ -64,7 +65,17 @@ public class EngineController {
         riderController.verifyRider(id);
         return "redirect:/";
     }
-    
+
+    @GetMapping("/search")
+    public String searchPage(Model model,  UserDTO userDTO) {
+        List<Contrib> resultsContrib = contribController.listAllContributors(userDTO.getUsername(), null);
+        List<Rider> resultsRider = riderController.listAllRiders(userDTO.getUsername());
+        model.addAttribute("search", userDTO);
+        model.addAttribute("results", resultsContrib);
+        model.addAttribute("resultsR", resultsRider);
+        return "searchPage";
+    }
+
 
     @GetMapping(value = "/login")
     public String login(Model model, UserDTO userDTO) {
@@ -151,7 +162,8 @@ public class EngineController {
     }
 
     @GetMapping(value = "/services")
-    public String servicesPage(Model model) {
+    public String servicesPage(Model model, UserDTO userDTO) {
+        model.addAttribute("search", userDTO);
         List<Contrib> contribRequests = contribController.listAllContributorRequests();
         model.addAttribute("contribRequests", contribRequests);
         List<Contrib> contribList = contribController.listAllContributors(null, null);
@@ -160,7 +172,8 @@ public class EngineController {
     }
 
     @GetMapping(value = "/riders")
-    public String ridersPage(Model model) {
+    public String ridersPage(Model model, UserDTO userDTO) {
+        model.addAttribute("search", userDTO);
         List<Rider> ridersRequests = riderController.listAllRidersRequests();
         model.addAttribute("riderRequests", ridersRequests);
         List<Rider> ridersList = riderController.listAllRiders(null);

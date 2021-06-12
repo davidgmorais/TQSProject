@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Services</title>
+    <title>Search</title>
 
     <!-- Custom fonts for this template-->
     <link th:href="@{vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
@@ -98,7 +98,7 @@
 
                 <!-- Topbar Search -->
                 <form th:method="get" th:action="@{/search}"
-                      class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                    class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                     <div class="input-group">
                         <input type="text" class="form-control bg-light border-0 small" placeholder="Search..."
                                aria-label="Search" aria-describedby="basic-addon2"  th:field="${search.username}">
@@ -221,38 +221,37 @@
                     <div class="col-xl-8 col-lg-7">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">List of Services</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Search Table Services</h6>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="riderRequests" width="100%" cellspacing="0">
                                         <thead>
                                         <tr>
-                                            <th>Service Name</th>
+                                            <th>Service Store</th>
                                             <th>Username</th>
-                                            <th>Owner's First Name</th>
-                                            <th>Owner's Last Name</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
                                             <th>Email</th>
                                         </tr>
                                         </thead>
                                         <tfoot>
                                         <tr>
-                                            <th>Service Name</th>
+                                            <th>Service Store</th>
                                             <th>Username</th>
-                                            <th>Owner's First Name</th>
-                                            <th>Owner's Last Name</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
                                             <th>Email</th>
                                         </tr>
                                         </tfoot>
                                         <tbody>
-                                        <tr th:each="contribList:${contribList}">
-                                            <td th:text="${contribList.storeName}"></td>
-                                            <td th:text="${contribList.user.username}"></td>
-                                            <td th:text="${contribList.user.firstName}"></td>
-                                            <td th:text="${contribList.user.lastName}"></td>
-                                            <td th:text="${contribList.user.email}"></td>
+                                        <tr th:each="results:${results}">
+                                            <td th:text="${results.storeName}"></td>
+                                            <td th:text="${results.user.username}"></td>
+                                            <td th:text="${results.user.firstName}"></td>
+                                            <td th:text="${results.user.lastName}"></td>
+                                            <td th:text="${results.user.email}"></td>
                                         </tr>
-
                                         </tbody>
                                     </table>
                                 </div>
@@ -260,72 +259,48 @@
                         </div>
                     </div>
 
-                </div>
-
-
-                <div class="row">
-
-                    <!-- Area Chart -->
                     <div class="col-xl-8 col-lg-7">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Pending Service Requests</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Search Table Riders</h6>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered" id="storeRequests" width="100%" cellspacing="0">
+                                    <table class="table table-bordered" id="riderSearch" width="100%" cellspacing="0">
                                         <thead>
                                         <tr>
-                                            <th>Service Name</th>
                                             <th>Username</th>
-                                            <th>Owner's First Name</th>
-                                            <th>Owner's Last Name</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
                                             <th>Email</th>
-                                            <th>Accept/Decline</th>
                                         </tr>
                                         </thead>
                                         <tfoot>
                                         <tr>
-                                            <th>Service Name</th>
                                             <th>Username</th>
-                                            <th>Owner's First Name</th>
-                                            <th>Owner's Last Name</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
                                             <th>Email</th>
-                                            <th>Accept/Decline</th>
                                         </tr>
                                         </tfoot>
                                         <tbody>
-                                        <tr th:each="contribRequests:${contribRequests}">
-                                            <td th:text="${contribRequests.storeName}"></td>
-                                            <td th:text="${contribRequests.user.username}"></td>
-                                            <td th:text="${contribRequests.user.firstName}"></td>
-                                            <td th:text="${contribRequests.user.lastName}"></td>
-                                            <td th:text="${contribRequests.user.email}"></td>
-                                            <td>
-                                                <a href="#" class="btn btn-success btn-icon-split">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-check"></i>
-                                                    </span>
-                                                    <span class="text">Accept</span>
-                                                </a>
-                                                <div class="my-2"></div>
-                                                <a href="#" class="btn btn-danger btn-icon-split">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-trash"></i>
-                                                    </span>
-                                                    <span class="text">Decline</span>
-                                                </a>
-                                            </td>
+                                        <tr th:each="resultsR:${resultsR}">
+                                            <td th:text="${resultsR.user.username}"></td>
+                                            <td th:text="${resultsR.user.firstName}"></td>
+                                            <td th:text="${resultsR.user.lastName}"></td>
+                                            <td th:text="${resultsR.user.email}"></td>
                                         </tr>
-
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
-
                     </div>
+
                 </div>
+
+
+
                 <!-- /.container-fluid -->
 
 
@@ -372,6 +347,7 @@
             </div>
         </div>
     </div>
+</div>
 
     <!-- Bootstrap core JavaScript-->
     <script th:src="@{vendor/jquery/jquery.min.js}"></script>
