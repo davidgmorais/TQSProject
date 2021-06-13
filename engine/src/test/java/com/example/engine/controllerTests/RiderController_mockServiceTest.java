@@ -135,7 +135,7 @@ class RiderController_mockServiceTest {
     }
 
     @Test
-    void whenPutToStartShift_andValidRider_thenVerifyRider() throws Exception {
+    void whenPutToStartShift_andValidRider_thenStartShift() throws Exception {
         User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 1);
         Rider riderBob = new Rider(bob);
         when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(bob.getUsername());
@@ -159,7 +159,7 @@ class RiderController_mockServiceTest {
     }
 
     @Test
-    void whenPutToEndShift_andValidRider_thenVerifyRider() throws Exception {
+    void whenPutToEndShift_andValidRider_thenEndShift() throws Exception {
         User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 1);
         Rider riderBob = new Rider(bob);
         when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(bob.getUsername());
