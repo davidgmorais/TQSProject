@@ -135,7 +135,7 @@ public class Book {
         if (!(o instanceof Book)) {
             return false;
         }
-        Book book = (Book) o;
+        var book = (Book) o;
         return Objects.equals(id, book.id) && Objects.equals(title, book.title) && releaseYear == book.releaseYear && Objects.equals(author, book.author) && price == book.price && Objects.equals(sellers, book.sellers) && Objects.equals(language, book.language) && Objects.equals(genres, book.genres);
     }
 

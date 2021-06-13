@@ -67,7 +67,7 @@ class UnitTests{
         assertThat(add).isEqualTo("TestAdd");
         final String fulln=  store.getFullName();
         assertThat(fulln).isEqualTo("TestFullName");
-        final String email =store.getStoreEmail();
+        final String email =store.getEmail();
         assertThat(email).isEqualTo("TestEmail");
         final String pass = store.getPassword();
         assertThat(pass).isEqualTo("Test");

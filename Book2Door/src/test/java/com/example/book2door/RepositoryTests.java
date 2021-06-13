@@ -38,7 +38,7 @@ class RepositoryTests {
         ArrayList<Store> storeList = new ArrayList<>();
         storeList.add(store);
         Mockito.when(bookRepository.findByTitle(book.getTitle())).thenReturn(book);
-        Mockito.when(storeRepository.findBystoreEmail(store.getStoreEmail())).thenReturn(store);
+        Mockito.when(storeRepository.findBystoreEmail(store.getEmail())).thenReturn(store);
         Mockito.when(storeRepository.findBystoreName(store.getStoreName())).thenReturn(store);
         Mockito.when(storeRepository.findByAccepted(store.wasAccepted())).thenReturn(storeList);
        
@@ -67,7 +67,7 @@ class RepositoryTests {
      void whenSearchStoreByNameAndStoreExistsOnDB_ThenReturnStore(){
         String storeName="Fnac";
         Store found = storeRepository.findBystoreName(storeName);
-        assertThat(found.getStoreEmail()).isEqualTo("fnac@fnac.pt");
+        assertThat(found.getEmail()).isEqualTo("fnac@fnac.pt");
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))
                 .findBystoreName(Mockito.anyString());
     }
@@ -135,7 +135,7 @@ class RepositoryTests {
     @Test
      void testStoreGetByIdAndEquals(){
         Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
-        Store storeFromEmail = storeRepository.findBystoreEmail(store.getStoreEmail());
+        Store storeFromEmail = storeRepository.findBystoreEmail(store.getEmail());
         assertThat(store.getId()).isEqualTo(storeFromEmail.getId()); 
     }
 
