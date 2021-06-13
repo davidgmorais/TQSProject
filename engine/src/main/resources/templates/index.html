@@ -12,13 +12,13 @@
     <title>Dashboard</title>
 
     <!-- Custom fonts for this template-->
-    <link th:href="@{vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link th:href="@{css/sb-admin-2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
 
 </head>
 
@@ -97,13 +97,13 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                    <form th:method="get" th:action="@{/search}"
+                          class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                                aria-label="Search" aria-describedby="basic-addon2">
+                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search..."
+                                   aria-label="Search" aria-describedby="basic-addon2"  th:field="${search.username}">
                             <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
+                                <button class="btn btn-primary" type="submit">
                                     <i class="fas fa-search fa-sm"></i>
                                 </button>
                             </div>
@@ -175,7 +175,7 @@
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin</span>
                                 <img class="img-profile rounded-circle"
-                                    th:src="@{img/undraw_profile.svg}">
+                                    th:src="@{/img/undraw_profile.svg}">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -308,69 +308,50 @@
                                             <thead>
                                             <tr>
                                                 <th>Service Name</th>
-                                                <th>Name</th>
-                                                <th>Phone Number</th>
+                                                <th>Username</th>
+                                                <th>Owner's First Name</th>
+                                                <th>Owner's Last Name</th>
                                                 <th>Email</th>
-                                                <th>Request Date</th>
                                                 <th>Accept/Decline</th>
                                             </tr>
                                             </thead>
                                             <tfoot>
                                             <tr>
                                                 <th>Service Name</th>
-                                                <th>Name</th>
-                                                <th>Phone Number</th>
+                                                <th>Username</th>
+                                                <th>Owner's First Name</th>
+                                                <th>Owner's Last Name</th>
                                                 <th>Email</th>
-                                                <th>Request Date</th>
                                                 <th>Accept/Decline</th>
                                             </tr>
                                             </tfoot>
                                             <tbody>
-                                            <tr>
-                                                <td>Book2Door</td>
-                                                <td>António Maurício</td>
-                                                <td>123456789</td>
-                                                <td>antoniomauricio@book.pt</td>
-                                                <td>2021/05/28</td>
+                                            <tr th:each="contribRequests:${contribRequests}">
+                                                <td th:text="${contribRequests.storeName}"></td>
+                                                <td th:text="${contribRequests.user.username}"></td>
+                                                <td th:text="${contribRequests.user.firstName}"></td>
+                                                <td th:text="${contribRequests.user.lastName}"></td>
+                                                <td th:text="${contribRequests.user.email}"></td>
                                                 <td>
+                                                    <form th:method="post" th:action="@{/verify/contrib/{id}(id=${contribRequests.id})}">
                                                     <a href="#" class="btn btn-success btn-icon-split">
                                                     <span class="icon text-white-50">
                                                         <i class="fas fa-check"></i>
                                                     </span>
-                                                        <span class="text">Accept</span>
+                                                        <button class="btn" style="color: white" type="submit">Accept</button>
                                                     </a>
+                                                    </form>
+                                                    <form th:method="post" th:action="@{/deny/contrib/{id}(id=${contribRequests.id})}">
                                                     <div class="my-2"></div>
                                                     <a href="#" class="btn btn-danger btn-icon-split">
                                                     <span class="icon text-white-50">
                                                         <i class="fas fa-trash"></i>
                                                     </span>
-                                                        <span class="text">Decline</span>
+                                                        <button class="btn" type="submit" style="color: white">Decline</button>
                                                     </a>
+                                                    </form>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>UptownBooks</td>
-                                                <td>Maria Silva</td>
-                                                <td>987654321</td>
-                                                <td>mariasilva@book.pt</td>
-                                                <td>2021/05/27</td>
-                                                <td>
-                                                    <a href="#" class="btn btn-success btn-icon-split">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-check"></i>
-                                                    </span>
-                                                        <span class="text">Accept</span>
-                                                    </a>
-                                                    <div class="my-2"></div>
-                                                    <a href="#" class="btn btn-danger btn-icon-split">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-trash"></i>
-                                                    </span>
-                                                        <span class="text">Decline</span>
-                                                    </a>
-                                                </td>
-                                            </tr>
-
                                             </tbody>
                                         </table>
                                     </div>
@@ -393,66 +374,48 @@
                                         <table class="table table-bordered" id="riderRequests" width="100%" cellspacing="0">
                                             <thead>
                                             <tr>
-                                                <th>Full Name</th>
-                                                <th>Phone Number</th>
+                                                <th>First Name</th>
+                                                <th>Last Name</th>
+                                                <th>Username</th>
                                                 <th>Email</th>
-                                                <th>CV</th>
                                                 <th>Accept/Decline</th>
                                             </tr>
                                             </thead>
                                             <tfoot>
                                             <tr>
-                                                <th>Full Name</th>
-                                                <th>Phone Number</th>
+                                                <th>First Name</th>
+                                                <th>Last Name</th>
+                                                <th>Username</th>
                                                 <th>Email</th>
-                                                <th>CV</th>
                                                 <th>Accept/Decline</th>
                                             </tr>
                                             </tfoot>
                                             <tbody>
-                                            <tr>
-                                                <td>Inês Monteiro</td>
-                                                <td>345678543</td>
-                                                <td>inesmonteiro@rider.pt</td>
-                                                <td>cv.pdf</td>
+                                            <tr th:each="riderRequests:${riderRequests}">
+                                                <td th:text="${riderRequests.user.firstName}"></td>
+                                                <td th:text="${riderRequests.user.lastName}"></td>
+                                                <td th:text="${riderRequests.user.username}"></td>
+                                                <td th:text="${riderRequests.user.email}"></td>
                                                 <td>
-                                                    <a href="#" class="btn btn-success btn-icon-split">
+                                                    <form th:method="post" th:action="@{/verify/rider/{id}(id=${riderRequests.id})}">
+                                                        <a href="#" class="btn btn-success btn-icon-split">
                                                     <span class="icon text-white-50">
                                                         <i class="fas fa-check"></i>
                                                     </span>
-                                                        <span class="text">Accept</span>
-                                                    </a>
-                                                    <div class="my-2"></div>
-                                                    <a href="#" class="btn btn-danger btn-icon-split">
+                                                            <button class="btn" style="color: white" type="submit">Accept</button>
+                                                        </a>
+                                                    </form>
+                                                    <form th:method="post" th:action="@{/deny/rider/{id}(id=${riderRequests.id})}">
+                                                        <div class="my-2"></div>
+                                                        <a href="#" class="btn btn-danger btn-icon-split">
                                                     <span class="icon text-white-50">
                                                         <i class="fas fa-trash"></i>
                                                     </span>
-                                                        <span class="text">Decline</span>
-                                                    </a>
+                                                            <button class="btn" type="submit" style="color: white">Decline</button>
+                                                        </a>
+                                                    </form>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>João Augusto</td>
-                                                <td>563178943</td>
-                                                <td>joaoaugusto@rider.pt</td>
-                                                <td>cv.pdf</td>
-                                                <td>
-                                                    <a href="#" class="btn btn-success btn-icon-split">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-check"></i>
-                                                    </span>
-                                                        <span class="text">Accept</span>
-                                                    </a>
-                                                    <div class="my-2"></div>
-                                                    <a href="#" class="btn btn-danger btn-icon-split">
-                                                    <span class="icon text-white-50">
-                                                        <i class="fas fa-trash"></i>
-                                                    </span>
-                                                        <span class="text">Decline</span>
-                                                    </a>
-                                                </td>
-                                            </tr>
-
                                             </tbody>
                                         </table>
                                     </div>
@@ -508,21 +471,21 @@
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script th:src="@{vendor/jquery/jquery.min.js}"></script>
-    <script th:src="@{vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
     <!-- Core plugin JavaScript-->
-    <script th:src="@{vendor/jquery-easing/jquery.easing.min.js}"></script>
+    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
 
     <!-- Custom scripts for all pages-->
-    <script th:src="@{js/sb-admin-2.min.js}"></script>
+    <script th:src="@{/js/sb-admin-2.min.js}"></script>
 
     <!-- Page level plugins -->
-    <script th:src="@{vendor/chart.js/Chart.min.js}"></script>
+    <script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
 
     <!-- Page level custom scripts -->
-    <script th:src="@{js/demo/chart-area-demo.js}"></script>
-    <script th:src="@{js/demo/chart-pie-demo.js}"></script>
+    <script th:src="@{/js/demo/chart-area-demo.js}"></script>
+    <script th:src="@{/js/demo/chart-pie-demo.js}"></script>
 
 </body>
 

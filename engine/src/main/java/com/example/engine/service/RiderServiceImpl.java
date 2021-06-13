@@ -9,6 +9,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RiderServiceImpl implements RiderService {
     @Autowired
@@ -39,9 +41,44 @@ public class RiderServiceImpl implements RiderService {
     }
 
     @Override
+    public List<Rider> search(String username) {
+        return repository.findRiderByVerifiedTrueAndUserUsernameContainingIgnoreCase(username);
+    }
+
+    @Override
+    public Rider verifyRider(int riderId) {
+        var riderToVerify = repository.findRiderById(riderId);
+        if (riderToVerify != null) {
+            riderToVerify.setVerified(true);
+            return repository.save(riderToVerify);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean denyRider(int riderId) {
+        var riderToDeny = repository.findRiderById(riderId);
+        if (riderToDeny != null) {
+            repository.delete(riderToDeny);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public Boolean isVerified(User user) {
         var rider = repository.getRiderByUserId(user.getId());
         return rider.getVerified();
+    }
+
+    @Override
+    public List<Rider> getAllRiders() {
+        return repository.findAllByVerifiedTrue();
+    }
+
+    @Override
+    public List<Rider> getAllRidersRequests() {
+        return repository.findAllByVerifiedFalse();
     }
 
 }

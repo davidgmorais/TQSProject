@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +40,15 @@ public class UserController {
     RiderService riderService;
 
     @PostMapping("/auth")
-    public ResponseEntity<String> authenticateUser(@RequestBody Map<String, String> body) {
-        if (!body.containsKey("username") || !body.containsKey("password")) {
-            return new ResponseEntity<>("Must provide username and password", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Map<String, String>> authenticateUser(@RequestBody Map<String, String> body) {
+        var usernameKey = "username";
+        if (!body.containsKey(usernameKey) || !body.containsKey("password")) {
+            return new ResponseEntity<>( Map.of("data", "Must provide username and password"), HttpStatus.BAD_REQUEST);
         }
 
         var auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(body.get("username"), body.get("password")));
-
+        logger.info("{}", auth);
         SecurityContextHolder.getContext().setAuthentication(auth);
         String jwt = jwtUtils.generateJwtToken(auth);
 
@@ -56,16 +58,21 @@ public class UserController {
         BeanUtils.copyProperties(jwtUser, user);
 
         if (user.getRole() == 1 && Boolean.FALSE.equals(riderService.isVerified(user))) {
-            return new ResponseEntity<>("Your rider's account request is under review", HttpStatus.OK);
+            return new ResponseEntity<>( Map.of("data", "Your rider's account request is under review"), HttpStatus.OK);
         } else if (user.getRole() == 2 && Boolean.FALSE.equals(contribService.isVerified(user))) {
-            return new ResponseEntity<>("Your contributor's account request is under review", HttpStatus.OK);
+            return new ResponseEntity<>( Map.of("data", "Your contributor's account request is under review"), HttpStatus.OK);
         }
 
         var responseHeader = new HttpHeaders();
         responseHeader.set("Authorization", jwt);
 
-        return new ResponseEntity<>("Authentication successful - Authorization token was sent in the header.",
-                responseHeader, HttpStatus.OK);
+        HashMap<String, String> responseBody = new HashMap<>();
+        responseBody.put("data", "Authentication successful - Authorization token was sent in the header.");
+        responseBody.put(usernameKey, user.getUsername());
+        responseBody.put("email", user.getEmail());
+        responseBody.put("role", String.valueOf(user.getRole()));
+
+        return new ResponseEntity<>(responseBody, responseHeader, HttpStatus.OK);
     }
 
     @PostMapping("/register/contrib")
