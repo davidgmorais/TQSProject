@@ -89,7 +89,6 @@ public class EngineController {
 
     @PostMapping(value = "/login")
     public String signIn(UserDTO userDTO, Model model) {
-        String role = null;
         HashMap<String, String> creds = new HashMap<>();
         creds.put("username", userDTO.getUsername());
         creds.put("password", userDTO.getPassword());
@@ -99,13 +98,11 @@ public class EngineController {
             if (authList != null && !authList.isEmpty()) {
                 String token = authList.get(0);
                 logger.info("Token to include on header: {}", token);
-                if (authentication.getBody() == null) {
+                var BODY = authentication.getBody();
+                if (BODY == null) {
                     return LOGIN_PAGE;
                 }
-                else {
-                    role = authentication.getBody().get("role");
-                }
-                
+                String role = BODY.get("role");
                 if (role.equals("1")) {
                     return INDEX_RIDER;
                 }
