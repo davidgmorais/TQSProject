@@ -41,7 +41,7 @@ public class UserController {
 
     @PostMapping("/auth")
     public ResponseEntity<Map<String, String>> authenticateUser(@RequestBody Map<String, String> body) {
-        final String usernameKey = "username";
+        var usernameKey = "username";
         if (!body.containsKey(usernameKey) || !body.containsKey("password")) {
             return new ResponseEntity<>( Map.of("data", "Must provide username and password"), HttpStatus.BAD_REQUEST);
         }

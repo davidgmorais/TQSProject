@@ -23,6 +23,7 @@ public class EngineController {
     public static final String SIGNUP_ERROR = "signup";
     public static final String INDEX_RIDER = "indexRider";
     public static final String INDEX_SERVICE = "indexService";
+    public static final String SEARCH_MODEL = "search";
 
     @Autowired
     UserController userController;
@@ -37,7 +38,7 @@ public class EngineController {
 
     @GetMapping("/")
     public String index(Model model, UserDTO userDTO) {
-        model.addAttribute("search", userDTO);
+        model.addAttribute(SEARCH_MODEL, userDTO);
         List<Contrib> contribRequests = contribController.listAllContributorRequests();
         List<Rider> riderRequests = riderController.listAllRidersRequests();
         model.addAttribute("contribRequests", contribRequests);
@@ -73,7 +74,7 @@ public class EngineController {
     public String searchPage(Model model,  UserDTO userDTO) {
         List<Contrib> resultsContrib = contribController.listAllContributors(userDTO.getUsername(), null);
         List<Rider> resultsRider = riderController.listAllRiders(userDTO.getUsername());
-        model.addAttribute("search", userDTO);
+        model.addAttribute(SEARCH_MODEL, userDTO);
         model.addAttribute("results", resultsContrib);
         model.addAttribute("resultsR", resultsRider);
         return "searchPage";
@@ -98,15 +99,18 @@ public class EngineController {
                 String token = authList.get(0);
                 logger.info("Token to include on header: {}", token);
                 String role = authentication.getBody().get("role");
+                if (authentication.getBody() == null) {
+                    return LOGIN_PAGE;
+                }
                 if (role.equals("1")) {
                     return INDEX_RIDER;
                 }
                 else if (role.equals("2")) {
                     return INDEX_SERVICE;
                 }
-                else {
-                    return INDEX_PAGE;
-                }
+
+                return INDEX_PAGE;
+
             }
 
         }
@@ -114,7 +118,6 @@ public class EngineController {
             model.addAttribute("applicationMsg", authentication.getBody());
             return "application";
         }
-
         return "application";
 
     }
@@ -175,7 +178,7 @@ public class EngineController {
 
     @GetMapping(value = "/services")
     public String servicesPage(Model model, UserDTO userDTO) {
-        model.addAttribute("search", userDTO);
+        model.addAttribute(SEARCH_MODEL, userDTO);
         List<Contrib> contribRequests = contribController.listAllContributorRequests();
         model.addAttribute("contribRequests", contribRequests);
         List<Contrib> contribList = contribController.listAllContributors(null, null);
@@ -185,7 +188,7 @@ public class EngineController {
 
     @GetMapping(value = "/riders")
     public String ridersPage(Model model, UserDTO userDTO) {
-        model.addAttribute("search", userDTO);
+        model.addAttribute(SEARCH_MODEL, userDTO);
         List<Rider> ridersRequests = riderController.listAllRidersRequests();
         model.addAttribute("riderRequests", ridersRequests);
         List<Rider> ridersList = riderController.listAllRiders(null);
