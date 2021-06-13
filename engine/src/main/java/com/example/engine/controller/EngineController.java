@@ -1,5 +1,6 @@
 package com.example.engine.controller;
 
+import com.example.engine.component.JwtUtils;
 import com.example.engine.dto.ContribDTO;
 import com.example.engine.dto.UserDTO;
 import com.example.engine.entity.Contrib;
@@ -24,6 +25,7 @@ public class EngineController {
     public static final String INDEX_RIDER = "indexRider";
     public static final String INDEX_SERVICE = "indexService";
     public static final String SEARCH_MODEL = "search";
+    public static String JWT;
 
     @Autowired
     UserController userController;
@@ -33,6 +35,9 @@ public class EngineController {
 
     @Autowired
     RiderController riderController;
+
+    @Autowired
+    JwtUtils jwtUtils;
 
     private static final Logger logger = LoggerFactory.getLogger(EngineController.class);
 
@@ -95,6 +100,7 @@ public class EngineController {
         ResponseEntity<Map<String, String>> authentication = userController.authenticateUser(creds);
         if (authentication.getHeaders().containsKey("Authorization")) {
             List<String> authList = authentication.getHeaders().get("Authorization");
+            JWT = authentication.getHeaders().get("Authorization").get(0);
             if (authList != null && !authList.isEmpty()) {
                 String token = authList.get(0);
                 logger.info("Token to include on header: {}", token);
@@ -104,10 +110,10 @@ public class EngineController {
                 }
                 String role = body.get("role");
                 if (role.equals("1")) {
-                    return INDEX_RIDER;
+                    return "redirect:/rider/dashboard";
                 }
                 else if (role.equals("2")) {
-                    return INDEX_SERVICE;
+                    return "redirect:/service/dashboard";
                 }
 
                 return INDEX_PAGE;
@@ -202,5 +208,25 @@ public class EngineController {
     public String riderIndex() {
         return INDEX_RIDER;
     }
+
+
+    @PostMapping(value = "/rider/dashboard/{log}/{lat}")
+    public String startShiftRider(@PathVariable String log, @PathVariable String lat) {
+        Map<String, String> location = new HashMap<String, String>() {{
+            put("latitude", log);
+            put("longitude", lat);
+        }};
+        JWT = JWT.replace("Bearer ", "");
+        riderController.startShift(JWT, location);
+        return "redirect:/rider/dashboard";
+    }
+
+    @PostMapping(value = "/rider/dashboard/end")
+    public String endShiftRider() {
+        JWT = JWT.replace("Bearer ", "");
+        riderController.endShift(JWT);
+        return "redirect:/rider/dashboard";
+    }
+
 
 }

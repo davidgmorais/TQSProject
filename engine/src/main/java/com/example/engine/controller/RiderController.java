@@ -64,6 +64,7 @@ public class RiderController {
 
         try {
             var shiftStarted = riderService.startShift(riderUsername, Double.parseDouble(location.get("latitude")), Double.parseDouble(location.get("longitude")));
+            logger.info(location.get("latitude"));
             logger.info("Shift started {}", shiftStarted);
             return shiftStarted ? new ResponseEntity<>("Shift started successfully.", HttpStatus.OK) :
                     new ResponseEntity<>("Rider info not found", HttpStatus.NOT_FOUND);
@@ -81,10 +82,9 @@ public class RiderController {
 
 
         var shiftEnded = riderService.endShift(riderUsername);
-        logger.info("Shift started {}", shiftEnded);
+        logger.info("Shift ended {}", shiftEnded);
         return shiftEnded ? new ResponseEntity<>("Shift ended successfully. Have a nice day!", HttpStatus.OK) :
                 new ResponseEntity<>("Rider info not found", HttpStatus.NOT_FOUND);
-
     }
 
     // add updateShift with location and order status
