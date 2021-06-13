@@ -54,7 +54,9 @@ public class RiderController {
 
     @PutMapping("/rider/shift/start")
     public ResponseEntity<String> startShift(@RequestHeader(value = "Authorization") String jwt, @RequestBody Map<String, String> location) {
-        if (!location.containsKey("latitude") || !location.containsKey("longitude")) {
+        String latitudeKey = "latitude";
+        String longitudeKey = "longitude";
+        if (!location.containsKey(latitudeKey) || !location.containsKey(longitudeKey)) {
             return new ResponseEntity<>("Invalid parameters", HttpStatus.BAD_REQUEST);
         }
 
@@ -63,8 +65,8 @@ public class RiderController {
         logger.info("Recognized rider {}", riderUsername);
 
         try {
-            var shiftStarted = riderService.startShift(riderUsername, Double.parseDouble(location.get("latitude")), Double.parseDouble(location.get("longitude")));
-            logger.info(location.get("latitude"));
+            var shiftStarted = riderService.startShift(riderUsername, Double.parseDouble(location.get(latitudeKey)), Double.parseDouble(location.get(longitudeKey)));
+            logger.info(location.get(latitudeKey));
             logger.info("Shift started {}", shiftStarted);
             return shiftStarted ? new ResponseEntity<>("Shift started successfully.", HttpStatus.OK) :
                     new ResponseEntity<>("Rider info not found", HttpStatus.NOT_FOUND);
