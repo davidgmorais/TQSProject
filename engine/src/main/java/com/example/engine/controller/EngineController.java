@@ -193,6 +193,7 @@ public class EngineController {
         return "ridersPage";
     }
 
+
     @GetMapping(value = "/rider/dashboard")
     public String riderIndex() {
         return INDEX_RIDER;
