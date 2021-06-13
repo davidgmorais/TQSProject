@@ -98,11 +98,11 @@ public class EngineController {
             if (authList != null && !authList.isEmpty()) {
                 String token = authList.get(0);
                 logger.info("Token to include on header: {}", token);
-                var BODY = authentication.getBody();
-                if (BODY == null) {
+                var body = authentication.getBody();
+                if (body == null) {
                     return LOGIN_PAGE;
                 }
-                String role = BODY.get("role");
+                String role = body.get("role");
                 if (role.equals("1")) {
                     return INDEX_RIDER;
                 }
