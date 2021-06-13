@@ -1,0 +1,30 @@
+.catalog {
+    text-align: left;
+    font-size: 20px;
+}
+.edit {
+    padding-top: 3%;
+}
+
+.catalog th {
+    background-color: #24598b;
+    color: white;
+}
+#bookCatalog {
+    padding-top: 3%;
+}
+
+h2 {
+    color: #24598b;
+}
+.space {
+    margin-left: 2%;
+}
+
+.modal-dialog{
+    overflow-y: initial !important
+}
+.modal-body{
+    height: 60vh;
+    overflow-y: auto;
+}

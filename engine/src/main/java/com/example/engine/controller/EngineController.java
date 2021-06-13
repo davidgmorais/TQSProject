@@ -21,6 +21,9 @@ public class EngineController {
     public static final String INDEX_PAGE = "redirect:/";
     public static final String LOGIN_PAGE = "redirect:/login";
     public static final String SIGNUP_ERROR = "signup";
+    public static final String INDEX_RIDER = "indexRider";
+    public static final String INDEX_SERVICE = "indexService";
+    public static final String SEARCH_MODEL = "search";
 
     @Autowired
     UserController userController;
@@ -34,7 +37,8 @@ public class EngineController {
     private static final Logger logger = LoggerFactory.getLogger(EngineController.class);
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, UserDTO userDTO) {
+        model.addAttribute(SEARCH_MODEL, userDTO);
         List<Contrib> contribRequests = contribController.listAllContributorRequests();
         List<Rider> riderRequests = riderController.listAllRidersRequests();
         model.addAttribute("contribRequests", contribRequests);
@@ -65,7 +69,17 @@ public class EngineController {
         riderController.verifyRider(id);
         return INDEX_PAGE;
     }
-    
+
+    @GetMapping("/search")
+    public String searchPage(Model model,  UserDTO userDTO) {
+        List<Contrib> resultsContrib = contribController.listAllContributors(userDTO.getUsername(), null);
+        List<Rider> resultsRider = riderController.listAllRiders(userDTO.getUsername());
+        model.addAttribute(SEARCH_MODEL, userDTO);
+        model.addAttribute("results", resultsContrib);
+        model.addAttribute("resultsR", resultsRider);
+        return "searchPage";
+    }
+
 
     @GetMapping(value = "/login")
     public String login(Model model, UserDTO userDTO) {
@@ -84,7 +98,20 @@ public class EngineController {
             if (authList != null && !authList.isEmpty()) {
                 String token = authList.get(0);
                 logger.info("Token to include on header: {}", token);
+                var body = authentication.getBody();
+                if (body == null) {
+                    return LOGIN_PAGE;
+                }
+                String role = body.get("role");
+                if (role.equals("1")) {
+                    return INDEX_RIDER;
+                }
+                else if (role.equals("2")) {
+                    return INDEX_SERVICE;
+                }
+
                 return INDEX_PAGE;
+
             }
 
         }
@@ -92,7 +119,6 @@ public class EngineController {
             model.addAttribute("applicationMsg", authentication.getBody());
             return "application";
         }
-
         return "application";
 
     }
@@ -143,7 +169,7 @@ public class EngineController {
 
     @GetMapping(value = "/service/dashboard")
     public String service() {
-        return "indexService";
+        return INDEX_SERVICE;
     }
 
     @GetMapping(value = "/service/statistics")
@@ -152,7 +178,8 @@ public class EngineController {
     }
 
     @GetMapping(value = "/services")
-    public String servicesPage(Model model) {
+    public String servicesPage(Model model, UserDTO userDTO) {
+        model.addAttribute(SEARCH_MODEL, userDTO);
         List<Contrib> contribRequests = contribController.listAllContributorRequests();
         model.addAttribute("contribRequests", contribRequests);
         List<Contrib> contribList = contribController.listAllContributors(null, null);
@@ -161,7 +188,8 @@ public class EngineController {
     }
 
     @GetMapping(value = "/riders")
-    public String ridersPage(Model model) {
+    public String ridersPage(Model model, UserDTO userDTO) {
+        model.addAttribute(SEARCH_MODEL, userDTO);
         List<Rider> ridersRequests = riderController.listAllRidersRequests();
         model.addAttribute("riderRequests", ridersRequests);
         List<Rider> ridersList = riderController.listAllRiders(null);
@@ -169,9 +197,10 @@ public class EngineController {
         return "ridersPage";
     }
 
+
     @GetMapping(value = "/rider/dashboard")
     public String riderIndex() {
-        return "indexRider";
+        return INDEX_RIDER;
     }
 
 }

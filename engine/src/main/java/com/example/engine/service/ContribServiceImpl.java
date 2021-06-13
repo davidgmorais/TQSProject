@@ -74,8 +74,8 @@ public class ContribServiceImpl implements ContribService{
 
     @Override
     public List<Contrib> search(Map<String, String> filters) {
-        String userKey = "username";
-        String serviceKey = "serviceName";
+        var userKey = "username";
+        var serviceKey = "serviceName";
         ArrayList<Contrib> results = new ArrayList<>();
 
         if (filters.containsKey(userKey) && filters.containsKey(serviceKey)) {

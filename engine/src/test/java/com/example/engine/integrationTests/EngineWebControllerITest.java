@@ -1,5 +1,6 @@
 package com.example.engine.integrationTests;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -9,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.engine.controller.ContribController;
 import com.example.engine.controller.UserController;
 import com.example.engine.dto.ContribDTO;
+import com.example.engine.entity.Contrib;
 import com.example.engine.entity.User;
 import com.example.engine.repository.ContribRepository;
 import com.example.engine.repository.RiderRepository;
@@ -36,27 +38,6 @@ class EngineWebControllerITest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    ContribController contribController;
-
-    @Autowired
-    UserController userController;
-
-    @Autowired
-    private UserRepository repository;
-
-    @Autowired
-    private RiderRepository riderRepository;
-
-    @Autowired
-    private ContribRepository contribRepository;
-
-    @AfterEach
-    public void resetDb() {
-        riderRepository.deleteAll();
-        contribRepository.deleteAll();
-        repository.deleteAll();
-    }
 
     @Test
     void whenNavigateToLogin_thenReturnContent_andStatusOk() throws Exception {
@@ -113,6 +94,17 @@ class EngineWebControllerITest {
                 .andExpect(content().string(containsString("Dashboard")));
     }
 
+    @Test
+    void whenNavigateToSearchPage_thenReturnContent_andStatusOk() throws Exception {
+        mockMvc.perform(get("/search")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("Search")));
+    }
+
+    @Test
+    void whenNavigateToRidersPage_thenReturnContent_andStatusOk() throws Exception {
+        mockMvc.perform(get("/riders")).andExpect(status().isOk())
+                .andExpect(content().string(containsString("Riders")));
+    }
 
 
 }
