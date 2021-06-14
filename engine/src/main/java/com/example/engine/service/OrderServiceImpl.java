@@ -36,12 +36,12 @@ public class OrderServiceImpl implements OrderService{
         if (contributor != null) {
             logger.info("Starting Order with value {}€ to be delivered at {}, {}...", orderToPlace.getValue(), orderToPlace.getDeliveryLat(), orderToPlace.getDeliveryLon());
 
-            Location deliveryLocation = new Location(orderToPlace.getDeliveryLat(), orderToPlace.getDeliveryLon());
+            var deliveryLocation = new Location(orderToPlace.getDeliveryLat(), orderToPlace.getDeliveryLon());
             locationRepository.save(deliveryLocation);
-            Location pickUpLocation = new Location(orderToPlace.getPickupLat(), orderToPlace.getPickupLon());
+            var pickUpLocation = new Location(orderToPlace.getPickupLat(), orderToPlace.getPickupLon());
             locationRepository.save(pickUpLocation);
 
-            Order order = new Order();
+            var order = new Order();
             order.setValue(orderToPlace.getValue());
             order.setDeliveryLocation(deliveryLocation);
             order.setServiceLocation(pickUpLocation);

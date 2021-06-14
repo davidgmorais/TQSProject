@@ -25,7 +25,7 @@ public class DispatchServiceImpl implements DispatchService {
     @Override
     public Order dispatchOrderToNearestRider(Long orderID) {
         logger.info("Dispatching a rider for you, please wait...");
-        Order order = orderService.getOrderByI(orderID);
+        var order = orderService.getOrderByI(orderID);
         if (order == null) {
             logger.error("Order {} cannot be found anywhere", orderID);
             return null;
@@ -37,7 +37,7 @@ public class DispatchServiceImpl implements DispatchService {
             return null;
         }
 
-        Rider nearestAvailableRider = Collections.min(availableRiders, Comparator.comparing(rider ->
+        var nearestAvailableRider = Collections.min(availableRiders, Comparator.comparing(rider ->
                 Math.sqrt(Math.pow(Math.abs(rider.getLocation()[0] - order.getServiceLocation().getLatitude()), 2) + Math.pow(Math.abs(rider.getLocation()[1] - order.getServiceLocation().getLongitude()), 2))   // rider distance to pickup location
                         + Math.sqrt(Math.pow(Math.abs(order.getServiceLocation().getLatitude() - order.getDeliveryLocation().getLatitude()), 2) + Math.pow(Math.abs(order.getServiceLocation().getLongitude() - order.getDeliveryLocation().getLongitude()), 2))   // order's distance from pickup location to delivery location
         ));
