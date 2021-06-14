@@ -27,7 +27,7 @@ public class EngineController {
     public static final String SEARCH_MODEL = "search";
     public static final String RIDER_DASHBOARD = "redirect:/rider/dashboard";
     private String jwt;
-    public static String status;
+    public String status;
 
     @Autowired
     UserController userController;
@@ -96,7 +96,7 @@ public class EngineController {
 
     @PostMapping(value = "/login")
     public String signIn(UserDTO userDTO, Model model) {
-        String authorizationKey = "Authorization";
+        var authorizationKey = "Authorization";
         HashMap<String, String> creds = new HashMap<>();
         creds.put("username", userDTO.getUsername());
         creds.put("password", userDTO.getPassword());

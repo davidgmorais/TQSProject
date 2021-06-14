@@ -54,8 +54,8 @@ public class RiderController {
 
     @PutMapping("/rider/shift/start")
     public ResponseEntity<String> startShift(@RequestHeader(value = "Authorization") String jwt, @RequestBody Map<String, String> location) {
-        String latitudeKey = "latitude";
-        String longitudeKey = "longitude";
+        var latitudeKey = "latitude";
+        var longitudeKey = "longitude";
         if (!location.containsKey(latitudeKey) || !location.containsKey(longitudeKey)) {
             return new ResponseEntity<>("Invalid parameters", HttpStatus.BAD_REQUEST);
         }
