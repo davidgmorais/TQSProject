@@ -56,7 +56,7 @@ class OrderController_mockServiceTest {
         when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(bob.getUsername());
         when(orderService.placeOrder(Mockito.anyString(), Mockito.any())).thenReturn(order);
 
-        mvc.perform(post("/api/contributor/order/place").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt").content(toJson(orderDTO)))
+        mvc.perform(post("/api/contributor/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt").content(toJson(orderDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.value", is(20.0)))
                 .andExpect(jsonPath("$.deliveryLocation.latitude", is(42.5)));
@@ -70,7 +70,7 @@ class OrderController_mockServiceTest {
         when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(bob.getUsername());
         when(orderService.placeOrder(Mockito.anyString(), Mockito.any())).thenReturn(null);
 
-        mvc.perform(post("/api/contributor/order/place").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt").content(toJson(orderDTO)))
+        mvc.perform(post("/api/contributor/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt").content(toJson(orderDTO)))
                 .andExpect(status().isBadRequest());
     }
 

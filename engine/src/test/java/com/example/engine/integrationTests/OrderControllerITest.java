@@ -98,7 +98,7 @@ class OrderControllerITest {
 
         OrderDTO order = new OrderDTO(20.0, 42.6, -7.1, 42.5, -7.0);
 
-        mvc.perform(post("/api/contributor/order/place").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt).content(toJson(order)))
+        mvc.perform(post("/api/contributor/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt).content(toJson(order)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.value", is(20.0)))
                 .andExpect(jsonPath("$.deliveryLocation.latitude", is(42.5)));
@@ -113,7 +113,7 @@ class OrderControllerITest {
     void whenPlacingAnOrder_andValidOrder_andInValidContrib_thenBadRequest() throws Exception {
         OrderDTO order = new OrderDTO(20.0, 42.6, -7.1, 42.5, -7.0);
 
-        mvc.perform(post("/api/contributor/order/place").contentType(MediaType.APPLICATION_JSON).content(toJson(order)))
+        mvc.perform(post("/api/contributor/order").contentType(MediaType.APPLICATION_JSON).content(toJson(order)))
                 .andExpect(status().isBadRequest());
 
         List<Order> foundOrders = repository.findAll();

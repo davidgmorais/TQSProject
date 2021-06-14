@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,9 +33,6 @@ class DispatcherService_UnitTest {
     @Mock(lenient = true)
     private OrderRepository orderRepository;
 
-    @Mock(lenient = true)
-    private RiderRepository riderRepository;
-
     @InjectMocks
     private DispatchServiceImpl dispatchService;
 
@@ -45,13 +43,6 @@ class DispatcherService_UnitTest {
         bob.setId(1);
 
         Contrib bobService = new Contrib(bob, "Bob's service");
-
-//        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 1);
-//        dakota.setId(2);
-//        Rider riderDakota = new Rider(dakota);
-//        riderDakota.setId(2);
-//        riderDakota.setVerified(true);
-//        riderDakota.setWorking(true);
 
         Order order = new Order(20.0, bobService, new Location(42.72, -7.24));
         order.setServiceLocation(new Location(40.0, -7.0));
@@ -84,11 +75,35 @@ class DispatcherService_UnitTest {
         riderBob.setVerified(true);
         riderBob.setWorking(true);
         when(riderService.getRidersToDispatch()).thenReturn(Collections.singletonList(riderBob));
-        when(riderRepository.getRiderByUserId(1)).thenReturn(riderBob);
 
         Order dispatchedOrder = dispatchService.dispatchOrderToNearestRider(1L);
         assertThat(dispatchedOrder).isNotNull().extracting(Order::getStatus).isEqualTo(OrderStatus.ASSIGNED);
         assertThat(dispatchedOrder).isNotNull().extracting(Order::getPickupRider).isEqualTo(riderBob);
+    }
+
+    @Test
+    void whenDispatchingOrder_andValidOrder_andMultipleAvailableRiders_thenReturnOrder() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 1);
+        bob.setId(1);
+        Rider riderBob = new Rider(bob);
+        riderBob.setId(3);
+        riderBob.setVerified(true);
+        riderBob.setWorking(true);
+        riderBob.setLocation(0.0, 0.0);
+
+
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 1);
+        dakota.setId(2);
+        Rider riderDakota = new Rider(dakota);
+        riderDakota.setId(2);
+        riderDakota.setVerified(true);
+        riderDakota.setWorking(true);
+        riderDakota.setLocation(40.1, -7.1);
+
+        when(riderService.getRidersToDispatch()).thenReturn(new ArrayList<>(Arrays.asList(riderBob, riderDakota)));
+        Order dispatchedOrder = dispatchService.dispatchOrderToNearestRider(1L);
+        assertThat(dispatchedOrder).isNotNull().extracting(Order::getStatus).isEqualTo(OrderStatus.ASSIGNED);
+        assertThat(dispatchedOrder.getPickupRider().getUser().getUsername()).isEqualTo(dakota.getUsername());
     }
 
 

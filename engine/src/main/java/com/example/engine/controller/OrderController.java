@@ -26,7 +26,7 @@ public class OrderController {
     @Autowired
     JwtUtils jwtUtils;
 
-    @PostMapping("/contributor/order/place")
+    @PostMapping("/contributor/order")
     public ResponseEntity<Order> placeOrder(@RequestHeader(value = "Authorization") String jwt, @RequestBody OrderDTO orderToPlace) {
         jwt = jwt.replace("Bearer ", "");
         logger.info("{}", jwt);

@@ -16,5 +16,4 @@ public interface RiderService {
     boolean denyRider(int riderId);
     boolean startShift(String riderUsername, Double currentLat, Double currentLon);
     boolean endShift(String riderUsername);
-
 }

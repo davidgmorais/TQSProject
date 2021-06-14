@@ -14,6 +14,7 @@ public interface RiderRepository extends JpaRepository<Rider, Long> {
     List<Rider> findAllByVerifiedFalse();
     List<Rider> findRiderByVerifiedTrueAndUserUsernameContainingIgnoreCase(String username);
 
-    @Query(value = "SELECT new Rider(r.user) FROM Rider r left outer join Order p on r.id = p.pickupRider.id where r.isWorking = true and p.pickupRider is null ")
+    @Query(value = "SELECT new Rider(r.id, r.verified, r.isWorking, r.locationLat, r.locationLon, r.user)" +
+            " FROM Rider r left outer join Order p on r.id = p.pickupRider.id where r.isWorking = true and p.pickupRider is null ")
     List<Rider> findRidersToDispatch();
 }

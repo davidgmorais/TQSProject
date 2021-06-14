@@ -33,6 +33,15 @@ public class Rider {
         this.isWorking = false;
     }
 
+    public Rider(int id, Boolean verified, Boolean isWorking, Double locationLat, Double locationLon, User user) {
+        this.id = id;
+        this.verified = verified;
+        this.isWorking = isWorking;
+        this.locationLat = locationLat;
+        this.locationLon = locationLon;
+        this.user = user;
+    }
+
     public int getId() {
         return id;
     }

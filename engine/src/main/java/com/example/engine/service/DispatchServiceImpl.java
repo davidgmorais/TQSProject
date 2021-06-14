@@ -3,8 +3,6 @@ package com.example.engine.service;
 import com.example.engine.entity.Order;
 import com.example.engine.entity.OrderStatus;
 import com.example.engine.entity.Rider;
-import com.example.engine.repository.OrderRepository;
-import com.example.engine.repository.RiderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +21,6 @@ public class DispatchServiceImpl implements DispatchService {
 
     @Autowired
     RiderService riderService;
-
-    @Autowired
-    OrderRepository orderRepository;
-
-    @Autowired
-    RiderRepository riderRepository;
-
 
     @Override
     public Order dispatchOrderToNearestRider(Long orderID) {
@@ -51,12 +42,14 @@ public class DispatchServiceImpl implements DispatchService {
                         + Math.sqrt(Math.pow(Math.abs(order.getServiceLocation().getLatitude() - order.getDeliveryLocation().getLatitude()), 2) + Math.pow(Math.abs(order.getServiceLocation().getLongitude() - order.getDeliveryLocation().getLongitude()), 2))   // order's distance from pickup location to delivery location
         ));
 
-        nearestAvailableRider = riderRepository.getRiderByUserId(nearestAvailableRider.getUser().getId());
+        if (nearestAvailableRider == null) {
+            return null;
+        }
 
         logger.info("Rider {} will pick up the order", nearestAvailableRider.getUser().getUsername());
         order.setPickupRider(nearestAvailableRider);
         order.setStatus(OrderStatus.ASSIGNED);
-        orderRepository.save(order);
+        orderService.saveOrder(order);
         return order;
 
     }
