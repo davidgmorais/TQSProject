@@ -270,8 +270,6 @@
                             </div>
                         </div>
                     </div>
-
-
                 </div>
 
                 <!-- Content Row -->
@@ -284,13 +282,18 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="row no-gutters align-items-center">
-                                            <div class="col-auto" style="text-align: center">
+                                            <div class="col-auto">
                                                 <form id="start" th:method="post" th:action="@{/rider/dashboard/}" >
                                                     <button class="btn btn-primary" type="submit">Start Shift</button>
                                                 </form>
+                                            </div>
+                                            <div class="col-auto" style="padding-left: 5%">
                                                 <form id="end" th:method="post" th:action="@{/rider/dashboard/end}" >
                                                     <button class="btn btn-secondary">End Shift</button>
                                                 </form>
+                                            </div>
+                                            <div class="col-auto font-weight-bold text-info text-uppercase mb-1" style="padding-left: 3%; padding-top: 2%">
+                                                <p id="statusEnded" th:text="${status}"></p>
                                             </div>
                                         </div>
                                     </div>
@@ -301,7 +304,6 @@
                             </div>
                         </div>
                     </div>
-
 
                     <!-- Area Chart -->
                     <div class="col-xl-8 col-lg-7" style="padding-top: 3%">
@@ -352,7 +354,6 @@
                                                 </div>
                                             </td>
                                         </tr>
-
                                         </tbody>
                                     </table>
                                 </div>
@@ -491,6 +492,14 @@
 
     function fail() {
 
+    }
+
+    function startShift() {
+        document.getElementById("status").innerText = "Working";
+    }
+
+    function endShift() {
+        document.getElementById("status").innerText = "Not working";
     }
 
 </script>

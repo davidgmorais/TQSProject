@@ -27,6 +27,7 @@ public class EngineController {
     public static final String SEARCH_MODEL = "search";
     public static final String RIDER_DASHBOARD = "redirect:/rider/dashboard";
     private String jwt;
+    public static String status;
 
     @Autowired
     UserController userController;
@@ -206,26 +207,28 @@ public class EngineController {
 
 
     @GetMapping(value = "/rider/dashboard")
-    public String riderIndex() {
+    public String riderIndex(Model model) {
+        model.addAttribute("status", status);
         return INDEX_RIDER;
     }
 
-
     @PostMapping(value = "/rider/dashboard/{log}/{lat}")
-    public String startShiftRider(@PathVariable String log, @PathVariable String lat) {
+    public String startShiftRider(@PathVariable String log, @PathVariable String lat, Model model) {
         Map<String, String> location = new HashMap<>();
         location.put("latitude", log);
         location.put("longitude", lat);
         logger.info("token {}", jwt);
         jwt = jwt.replace("Bearer ", "");
-        riderController.startShift(jwt, location);
+        ResponseEntity<String> startShift = riderController.startShift(jwt, location);
+        status = startShift.getBody();
         return RIDER_DASHBOARD;
     }
 
     @PostMapping(value = "/rider/dashboard/end")
-    public String endShiftRider() {
+    public String endShiftRider(Model model) {
         jwt = jwt.replace("Bearer ", "");
-        riderController.endShift(jwt);
+        ResponseEntity<String> endShift =riderController.endShift(jwt);
+        status = endShift.getBody();
         return RIDER_DASHBOARD;
     }
 
