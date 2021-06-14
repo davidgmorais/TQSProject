@@ -23,6 +23,12 @@ public class OrderServiceImpl implements OrderService{
     @Autowired
     ContribServiceImpl contribService;
 
+    @Autowired
+    RiderServiceImpl riderService;
+
+    @Autowired
+    DispatchService dispatchService;
+
     @Override
     public Order placeOrder(String contribUsername, OrderDTO orderToPlace) {
         var contributor = contribService.getContributorByUsername(contribUsername);
@@ -41,8 +47,16 @@ public class OrderServiceImpl implements OrderService{
             order.setServiceLocation(pickUpLocation);
             order.setServiceOwner(contributor);
             order.setStatus(OrderStatus.WAITING);
-            return orderRepository.save(order);
+            order = orderRepository.save(order);
+            var dispatchedOrder = dispatchService.dispatchOrderToNearestRider(order.getId());
+            return (dispatchedOrder != null) ? dispatchedOrder : order;
         }
         return null;
+    }
+
+
+    @Override
+    public Order getOrderByI(Long orderID) {
+        return orderRepository.findOrderById(orderID);
     }
 }

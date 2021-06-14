@@ -5,4 +5,5 @@ import com.example.engine.entity.Order;
 
 public interface OrderService {
     Order placeOrder(String contribUsername, OrderDTO orderToPlace);
+    Order getOrderByI(Long orderID);
 }

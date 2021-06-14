@@ -1,7 +1,6 @@
 package com.example.engine.entity;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "Package")
@@ -13,9 +12,6 @@ public class Order {
     @Column(name = "price", nullable = false)
     private Double value;
 
-    @Column(name = "tax")
-    private Double tax;
-
     @OneToOne
     @JoinColumn(name = "Rider_id")
     private Rider pickupRider;
@@ -24,7 +20,6 @@ public class Order {
     @JoinColumn(name = "Contrib_id", nullable = false)
     private Contrib serviceOwner;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
@@ -54,14 +49,6 @@ public class Order {
 
     public void setValue(Double value) {
         this.value = value;
-    }
-
-    public Double getTax() {
-        return tax;
-    }
-
-    public void setTax(Double tax) {
-        this.tax = tax;
     }
 
     public Rider getPickupRider() {
@@ -102,5 +89,9 @@ public class Order {
 
     public void setDeliveryLocation(Location deliveryLocation) {
         this.deliveryLocation = deliveryLocation;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

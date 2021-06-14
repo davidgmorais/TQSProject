@@ -5,10 +5,7 @@ import com.example.engine.EngineApplication;
 import com.example.engine.component.JwtUtils;
 import com.example.engine.dto.OrderDTO;
 import com.example.engine.entity.*;
-import com.example.engine.repository.ContribRepository;
-import com.example.engine.repository.LocationRepository;
-import com.example.engine.repository.OrderRepository;
-import com.example.engine.repository.UserRepository;
+import com.example.engine.repository.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -59,6 +56,9 @@ class OrderControllerITest {
     LocationRepository locationRepository;
 
     @Autowired
+    RiderRepository riderRepository;
+
+    @Autowired
     JwtUtils jwtUtils;
 
     @BeforeEach
@@ -81,11 +81,21 @@ class OrderControllerITest {
         repository.deleteAll();
         locationRepository.deleteAll();
         contribRepository.deleteAll();
+        riderRepository.deleteAll();
         userRepository.deleteAll();
     }
 
     @Test
     void whenPlacingAnOrder_andValidOrder_andValidContrib_thenCreateOrder() throws Exception {
+        User bob = new User("bob", "bob@email.com", "password", null, null, 1);
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        bob.setPassword(encoder.encode(bob.getPassword()));
+        userRepository.saveAndFlush(bob);
+        Rider riderBob = new Rider(bob);
+        riderBob.setVerified(true);
+        riderBob.setWorking(true);
+        riderRepository.saveAndFlush(riderBob);
+
         OrderDTO order = new OrderDTO(20.0, 42.6, -7.1, 42.5, -7.0);
 
         mvc.perform(post("/api/contributor/order/place").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt).content(toJson(order)))
@@ -94,13 +104,13 @@ class OrderControllerITest {
                 .andExpect(jsonPath("$.deliveryLocation.latitude", is(42.5)));
 
         List<Order> foundOrders = repository.findAll();
-        assertThat(foundOrders).extracting(Order::getStatus).containsOnly(OrderStatus.WAITING);
+        assertThat(foundOrders).extracting(Order::getStatus).containsOnly(OrderStatus.ASSIGNED);
         List<Location> locations = locationRepository.findAll();
         assertThat(locations).hasSize(2);
     }
 
     @Test
-    void whenPlacingAnOrder_andValidOrder_andInValidContrib_thenCreateOrder() throws Exception {
+    void whenPlacingAnOrder_andValidOrder_andInValidContrib_thenBadRequest() throws Exception {
         OrderDTO order = new OrderDTO(20.0, 42.6, -7.1, 42.5, -7.0);
 
         mvc.perform(post("/api/contributor/order/place").contentType(MediaType.APPLICATION_JSON).content(toJson(order)))

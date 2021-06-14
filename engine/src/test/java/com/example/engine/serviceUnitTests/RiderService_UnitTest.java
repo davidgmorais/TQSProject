@@ -37,6 +37,7 @@ class RiderService_UnitTest {
         Rider riderBob = new Rider(bob);
         riderBob.setId(1);
         riderBob.setVerified(true);
+        riderBob.setWorking(true);
 
         User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 1);
         dakota.setId(2);
@@ -54,6 +55,14 @@ class RiderService_UnitTest {
 
         Mockito.when(riderRepository.getRiderByUserUsername(bob.getUsername())).thenReturn(riderBob);
         Mockito.when(riderRepository.getRiderByUserUsername("NonExistingUsername")).thenReturn(null);
+
+        Mockito.when(riderRepository.findRidersToDispatch()).thenReturn(new ArrayList<>(Collections.singletonList(riderBob)));
+    }
+
+    @Test
+    void whenFindRidersToDispatch_andAvailableWorkingRiders_thenReturnRidersList() {
+        List<Rider> availableRiders = riderService.getRidersToDispatch();
+        assertThat(availableRiders).hasSize(1).extracting(Rider::isWorking).containsOnly(true);
     }
 
     @Test

@@ -105,4 +105,10 @@ public class RiderServiceImpl implements RiderService {
         return false;
     }
 
+    @Override
+    public List<Rider> getRidersToDispatch() {
+        return repository.findRidersToDispatch();
+    }
+
+
 }
