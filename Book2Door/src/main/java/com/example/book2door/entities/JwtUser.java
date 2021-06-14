@@ -22,16 +22,26 @@ public class JwtUser implements UserDetails {
         this.name = client.getName();
         this.email = client.getEmail();
         this.password = client.getPassword();
-        this.role = client.getRole();
-        this.authorities = Collections.singleton(new SimpleGrantedAuthority(ROLES[client.getRole()]));
+        this.role = 2;
+        this.authorities = Collections.singleton(new SimpleGrantedAuthority(ROLES[2]));
     }
+
     public JwtUser(Store store) {
         this.id = store.getId();
         this.name = store.getStoreName();
         this.email = store.getEmail();
         this.password = store.getPassword();
-        this.role = store.getRole();
-        this.authorities = Collections.singleton(new SimpleGrantedAuthority(ROLES[store.getRole()]));
+        this.role = 1;
+        this.authorities = Collections.singleton(new SimpleGrantedAuthority(ROLES[1]));
+    }
+
+    public JwtUser(Admin adm) {
+        this.id = (long)1;
+        this.email = adm.getEmail();
+        this.name ="Admin";
+        this.password = adm.getPassword();
+        this.role = 0;
+        this.authorities = Collections.singleton(new SimpleGrantedAuthority(ROLES[0]));
     }
     
     

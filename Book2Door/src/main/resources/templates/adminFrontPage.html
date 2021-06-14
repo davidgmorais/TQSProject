@@ -46,7 +46,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-12">
                     <nav class="navbar navbar-expand-lg">
-                        <a class="navbar-brand" th:href="@{/admin}">
+                        <a class="navbar-brand" th:href="@{/}">
                             <h3>Book2Door</h3>
                         </a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,10 +103,23 @@
                             <tr th:each="store: ${stores}">
                                 <td th:text="${store.storeName}"></td>
                                 <td th:text="${store.storeAddress}"></td>
-                                <td th:text="${store.storeEmail}"></td>
+                                <td th:text="${store.Email}"></td>
                                 <td th:text="${store.storePhone}"></td>
                                 <td th:text="${store.fullName}"></td>
-                                <td><button type="button" class="btn btn-success ">Accept</button><button type="button" class="btn btn-danger space">Decline</button></td>
+                                <td>
+                                    <form th:method="post" th:action="@{/admin/accept}">
+                                        <input hidden type="text" th:value="${store.id}" name="id">
+                                        <div>
+                                            <button  type="submit" class="btn btn-success ">Accept</button>
+                                        </div>
+                                    </form>
+                                    <form th:method="post" th:action="@{/admin/deny}">
+                                        <input hidden type="text" th:value="${store.id}" name="id">
+                                        <div>
+                                            <button  type="submit" class="btn btn-danger space">Decline</button>
+                                        </div>
+                                    </form>
+                                </td>
                             </tr>
                                 </tbody>
                         </table>
@@ -122,6 +135,8 @@
 
 
 <!-- ========================= JS here ========================= -->
+<script>
+</script>
 <script th:src="@{assets/js/bootstrap.5.0.0.alpha-2-min.js}"></script>
 <script th:src="@{assets/js/count-up.min.js}"></script>
 <script th:src="@{assets/js/wow.min.js}"></script>

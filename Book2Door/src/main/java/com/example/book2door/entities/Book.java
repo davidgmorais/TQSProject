@@ -13,10 +13,8 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique=true,name = "title", nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
-    @Column(name = "releaseYear")
-    private int releaseYear;
     @Column(name = "author", nullable = false)
     private String author;
     @Column(name = "synopsis")
@@ -29,26 +27,22 @@ public class Book {
     joinColumns = @JoinColumn(name = "book_sellers"), 
     inverseJoinColumns = @JoinColumn(name = "store_bookList"))
     public Set<Store> sellers = new HashSet<>();
-    @Column(name= "language")
-    private String language;
-    @Column(name= "stock", nullable = false)
-    private int stock=0;
-    @Column(name= "genres")
-    private ArrayList<String> genres = new ArrayList<>();
-    
-
+    @Column(name= "stock")
+    private int stock;
+    @Column(name= "popularity")
+    private int popularity;
 
     public Book() {
+        this.popularity=0;
     }
 
-    public Book(String title, String synopsis, int releaseYear, String author, double price, String language) {
+    public Book(String title, String synopsis, String author, double price, int stock) {
         this.synopsis = synopsis;
         this.title = title;
-        this.releaseYear = releaseYear;
         this.author = author;
         this.price = price;
-        this.language = language;
-        this.stock+=1;
+        this.stock=stock;
+        this.popularity=0;
     }
 
     public Long getId() {
@@ -72,13 +66,6 @@ public class Book {
         this.stock = stock;
     }
 
-    public int getReleaseYear() {
-        return this.releaseYear;
-    }
-
-    public void setReleaseYear(int releaseYear) {
-        this.releaseYear = releaseYear;
-    }
 
     public String getAuthor() {
         return this.author;
@@ -112,21 +99,7 @@ public class Book {
         this.sellers.add(seller);
     }
 
-    public String getLanguage() {
-        return this.language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public List<String> getGenres() {
-        return this.genres;
-    }
-
-    public void addGenres(String genres) {
-        this.genres.add(genres);
-    }
+   
 
     @Override
     public boolean equals(Object o) {
@@ -136,12 +109,12 @@ public class Book {
             return false;
         }
         var book = (Book) o;
-        return Objects.equals(id, book.id) && Objects.equals(title, book.title) && releaseYear == book.releaseYear && Objects.equals(author, book.author) && price == book.price && Objects.equals(sellers, book.sellers) && Objects.equals(language, book.language) && Objects.equals(genres, book.genres);
+        return Objects.equals(id, book.id) && Objects.equals(title, book.title) && Objects.equals(author, book.author) && price == book.price && Objects.equals(sellers, book.sellers);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, releaseYear, author, price, sellers, language, genres);
+        return Objects.hash(id, title, author, price, sellers);
     }
 
     
@@ -150,12 +123,8 @@ public class Book {
         return "{" +
             " id='" + getId() + "'" +
             ", title='" + getTitle() + "'" +
-            ", releaseYear='" + getReleaseYear() + "'" +
             ", author='" + getAuthor() + "'" +
             ", price='" + getPrice() + "'" +
-            ", sellers='" + getSellers() + "'" +
-            ", language='" + getLanguage() + "'" +
-            ", genres='" + getGenres() + "'" +
             "}";
     }
 

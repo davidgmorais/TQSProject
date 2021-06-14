@@ -92,7 +92,7 @@
                     <p th:text="${book.synopsis}"></p>
                     <h3>In Store:</h3>
                     <div th:each="seller: ${book.sellers}">
-                        <tr th:text="${seller}"></tr>
+                        <tr th:text="${seller.storeName}"></tr>
                     </div>
                     <br>
                     <h3>Price</h3>

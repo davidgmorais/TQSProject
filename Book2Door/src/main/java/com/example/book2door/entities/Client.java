@@ -56,10 +56,6 @@ public class Client {
         return this.role;
     }
 
-    public void setRole(int role){
-        this.role = role;
-    }
-
     public Long getId() {
         return this.id;
     }
@@ -143,20 +139,6 @@ public class Client {
     @Override
     public int hashCode() {
         return Objects.hash(id, email, name, password, phone, city, address, zipcode);
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-            " id='" + getId() + "'" +
-            ", email='" + getEmail() + "'" +
-            ", name='" + getName() + "'" +
-            ", password='" + getPassword() + "'" +
-            ", phone='" + getPhone() + "'" +
-            ", city='" + getCity() + "'" +
-            ", address='" + getAddress() + "'" +
-            ", zipcode='" + getzipcode() + "'" +
-            "}";
     }
 
 

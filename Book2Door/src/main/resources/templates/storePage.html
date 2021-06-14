@@ -92,11 +92,16 @@
                     <p >Delivery Fee</p>
                 </div>
                 <div>
-                    <h3>Books</h3>
-                    <div class="grid-container">
-                        <div class="grid-item-2"><a th:href="@{/book}"><img th:src="@{assets/img/book.jpg}"></a></div>
-                        <div class="grid-item-2"><img th:src="@{assets/img/book.jpg}"></div>
-                        <div class="grid-item-2"><img th:src="@{assets/img/book.jpg}"></div>
+                    <div class="books" th:object="${bookList}">
+                        <h3>Books</h3>
+                        <div class="grid-container">
+                            <div class="grid-item" th:each="book :${bookList}">
+                                <h5 th:text="${book.title}"></h5>
+                                <a th:href="@{/book?title={b}(b=${book.title})}">
+                                    <img th:src="@{assets/img/book.jpg}">
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

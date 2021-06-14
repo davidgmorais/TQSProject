@@ -57,10 +57,6 @@ class ControllerTests {
     }
 
 
-    @Test
-    void whenGetAdminStorePage() throws Exception {
-      Mockmvc.perform(get("/adminStore")).andExpect(status().isOk());
-    }
 
     @Test
     void whenGetOrderPage() throws Exception {

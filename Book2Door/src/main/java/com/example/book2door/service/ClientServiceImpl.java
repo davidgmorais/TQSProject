@@ -25,7 +25,7 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
 
     @Override
     public Client register(Client client) {
-        if (clientRepository.findClientByName(client.getName()) == null && clientRepository.findClientByEmail(client.getEmail()) == null) {
+        if (!client.getEmail().equalsIgnoreCase("admin@service.pt") && clientRepository.findClientByName(client.getName()) == null && clientRepository.findClientByEmail(client.getEmail()) == null) {
             return clientRepository.save(client);
         }
         return null;

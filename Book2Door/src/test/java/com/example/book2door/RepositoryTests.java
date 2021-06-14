@@ -30,9 +30,8 @@ class RepositoryTests {
 
     @BeforeEach
      void setUp() {
-        Book book = new Book("Branca De neve", "princess and dwarves", 1888, "bob", 12.99 , "Portugues");
+        Book book = new Book("Branca De neve", "princess and dwarves", "bob", 12.99 ,10);
         Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
-        book.addGenres("drama");
         book.getSellers().add(store);
         store.getBookList().add(book);
         ArrayList<Store> storeList = new ArrayList<>();
@@ -104,32 +103,32 @@ class RepositoryTests {
 
     @Test
      void whenSearchForStoresToAcceptAndTheyExist_ThenReturnStoreList(){
-        List<Store> found = storeRepository.findByAccepted(false);
+        List<Store> found = storeRepository.findByAccepted(0);
         Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
         assertThat(found).contains(store);
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))
-                .findByAccepted(Mockito.anyBoolean());
+                .findByAccepted(Mockito.anyInt());
     }
 
     @Test
      void whenSearchForStoresToAcceptAndTheyDontExist_ThenReturnStoreList(){
-        List<Store> found = storeRepository.findByAccepted(true);
+        List<Store> found = storeRepository.findByAccepted(1);
         assertThat(found).isEmpty();
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))
-                .findByAccepted(Mockito.anyBoolean());
+                .findByAccepted(Mockito.anyInt());
     }
 
     @Test
      void whenCreateStore_ThenStoreIsNotAccepted(){
         Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
-        assertThat(store.wasAccepted()).isFalse();
+        assertThat(store.wasAccepted()).isZero();
     }
 
     @Test
      void whenAcceptingStore_ThenStoreIsAccepted(){
         Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
         store.accept();
-        assertThat(store.wasAccepted()).isTrue();
+        assertThat(store.wasAccepted()).isEqualTo(1);
     }
 
     @Test

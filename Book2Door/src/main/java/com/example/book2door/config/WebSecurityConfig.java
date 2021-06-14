@@ -2,6 +2,7 @@ package com.example.book2door.config;
 
 import com.example.book2door.component.AuthEntryPoint;
 import com.example.book2door.filter.AuthTokenFilter;
+import com.example.book2door.service.AdminServiceImpl;
 import com.example.book2door.service.ClientServiceImpl;
 import com.example.book2door.service.StoreServiceImpl;
 
@@ -14,7 +15,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -30,6 +30,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     StoreServiceImpl storeDetailsService;
+
+    @Autowired
+    AdminServiceImpl adminDetailsService;
 
 
     @Bean
@@ -52,6 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
         auth.userDetailsService(storeDetailsService).passwordEncoder(bCryptPasswordEncoder());
+        auth.userDetailsService(adminDetailsService).passwordEncoder(bCryptPasswordEncoder());
     }
 
 
@@ -63,12 +67,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler()).and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .anyRequest().permitAll();
-
+        http
+        .authorizeRequests()
+        .antMatchers("/**").permitAll()
+        .anyRequest().authenticated()
+        .and()
+    .authorizeRequests();
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 

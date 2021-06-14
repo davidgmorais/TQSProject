@@ -26,7 +26,7 @@ public class StoreServiceImpl implements UserDetailsService, StoreService {
 
     @Override
     public Store register(Store store) {
-        if (storeRepository.findBystoreName(store.getStoreName()) == null && storeRepository.findBystoreEmail(store.getEmail()) == null) {
+        if (!store.getEmail().equalsIgnoreCase("admin@service.pt") && storeRepository.findBystoreName(store.getStoreName()) == null && storeRepository.findBystoreEmail(store.getEmail()) == null) {
             return storeRepository.save(store);
         }
         return null;

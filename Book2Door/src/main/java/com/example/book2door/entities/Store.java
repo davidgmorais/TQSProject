@@ -33,7 +33,7 @@ public class Store {
     @ManyToMany(mappedBy = "sellers")
     private Set<Book> bookList = new HashSet<>();
     @Column(name = "accepted")
-    private boolean accepted;
+    private int accepted;
     @Column(name = "numberOfRates")
     private Double numberOfRates=0.0;
     @Column(name = "totalRate")
@@ -41,6 +41,7 @@ public class Store {
     
 
     public Store() {
+        this.accepted =0;
         this.role=1;
     }
 
@@ -51,7 +52,7 @@ public class Store {
         this.password = password;
         this.storePhone = storePhone;
         this.storeEmail = storeEmail;
-        this.accepted = false;
+        this.accepted = 0;
         this.role=1;
     }
 
@@ -60,7 +61,10 @@ public class Store {
         return this.role;
     }
     public void accept(){
-        this.accepted=true;
+        this.accepted=1;
+    }
+    public void deny(){
+        this.accepted=2;
     }
 
 
@@ -75,7 +79,7 @@ public class Store {
         
     }
 
-    public boolean wasAccepted(){
+    public int wasAccepted(){
         return this.accepted;
     }
     
@@ -167,11 +171,9 @@ public class Store {
             ", storeName='" + getStoreName() + "'" +
             ", storeAddress='" + getStoreAddress() + "'" +
             ", fullName='" + getFullName() + "'" +
-            ", password='" + getPassword() + "'" +
             ", storePhone='" + getStorePhone() + "'" +
             ", storeEmail='" + getEmail() + "'" +
             ", rating='" + getRating() + "'" +
-            ", bookList='" + getBookList() + "'" +
             ", accepted='" + wasAccepted() + "'" +
             "}";
     }

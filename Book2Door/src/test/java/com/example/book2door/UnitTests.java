@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.example.book2door.controller.MyErrorController;
+import com.example.book2door.entities.Admin;
 import com.example.book2door.entities.Book;
+import com.example.book2door.entities.Client;
 import com.example.book2door.entities.Store;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
@@ -19,12 +22,9 @@ class UnitTests{
         book = new Book();
         book.setTitle("TestTitle");
         book.setAuthor("TestAuthor");
-        book.setLanguage("TestLang");
         book.setPrice(12.99);
-        book.setReleaseYear(1999);
         book.setStock(2);
         book.setSynopsis("TestSynop");
-        book.addGenres("TestGenre");
         store = new Store();
         book.addSeller(store);
         store.setStoreAddress("TestAdd");
@@ -41,23 +41,17 @@ class UnitTests{
      void testBookGetters(){
         final String title = book.getTitle();
         final String author = book.getAuthor();
-        final String lang = book.getLanguage();
         final double price = book.getPrice();
-        final int year = book.getReleaseYear();
         final int stock = book.getStock();
         final String syno = book.getSynopsis();
-        final List<String> genre = book.getGenres();
         final Set<Store> seller = book.getSellers();
         ArrayList<String> gl = new ArrayList<>();
         gl.add("TestGenre");
         assertThat(title).isEqualTo("TestTitle");
         assertThat(author).isEqualTo("TestAuthor");
-        assertThat(lang).isEqualTo("TestLang");
         assertThat(price).isEqualTo(12.99);
-        assertThat(year).isEqualTo(1999);
         assertThat(syno).isEqualTo("TestSynop");
         assertThat(stock).isEqualTo(2);
-        assertThat(genre).isEqualTo(gl);
         assertThat(seller).contains(store);
     }
 
@@ -87,7 +81,7 @@ class UnitTests{
     void testStoreToString()
     {
         Store store = new Store();
-        String expected = "{ id='null', storeName='null', storeAddress='null', fullName='null', password='null', storePhone='null', storeEmail='null', rating='0.0', bookList='[]', accepted='false'}"; 
+        String expected = "{ id='null', storeName='null', storeAddress='null', fullName='null', storePhone='null', storeEmail='null', rating='0.0', accepted='0'}"; 
         assertThat(expected).isEqualTo(store.toString());
 
     }
@@ -96,21 +90,64 @@ class UnitTests{
     void testBookToString()
     {
         Book book = new Book();
-        String expected = "{ id='null', title='null', releaseYear='0', author='null', price='0.0', sellers='[]', language='null', genres='[]'}"; 
+        String expected = "{ id='null', title='null', author='null', price='0.0'}"; 
         assertThat(expected).isEqualTo(book.toString());
     }
 
     @Test
     void testBookEquals()
     {
+        Store store = new Store();
         Book book = new Book();
+        book.getSellers().add(store);
         Book book2 = new Book();
+        book2.getSellers().add(store);
         Book book3 = book;
         book2.setTitle("asds");
         boolean equal1 = book.equals(new Book());
         boolean equal2 = book.equals(book3);
-        boolean Notequal1 = book.equals("s");
+        boolean Notequal1 = book.equals("book");
         boolean Notequal2 = book.equals(book2);
+        assertThat(Notequal1).isFalse();
+        assertThat(equal1).isFalse();
+        assertThat(equal2).isTrue();
+        assertThat(Notequal2).isFalse();
+    }
+
+    @Test
+    void testClientGettersAndSetters(){
+        Client client = new Client("a@a.a","a","aa","9","aveiro","aaa","aaaa");
+        Client c = new Client();
+        c.setName("a");
+        c.setEmail("a@a.a");
+        c.setCity("aveiro");
+        c.setAddress("aaa");
+        c.setPassword("aa");
+        c.setPhone("9");
+        c.setzipcode("aaaa");
+        boolean eq = c.equals(client);
+        assertThat(eq).isTrue();
+        assertThat(client.getEmail()).isEqualTo("a@a.a");
+        assertThat(client.getName()).isEqualTo("a");
+        assertThat(client.getPassword()).isEqualTo("aa");
+        assertThat(client.getPhone()).isEqualTo("9");
+        assertThat(client.getCity()).isEqualTo("aveiro");
+        assertThat(client.getAddress()).isEqualTo("aaa");
+        assertThat(client.getzipcode()).isEqualTo("aaaa");
+        assertThat(client.getRole()).isEqualTo(2);
+        assertThat(client.getId()).isNull();
+    }
+    
+    @Test
+    void testClientEquals(){
+        Client c1 = new Client();
+        Client c2 = new Client();
+        c2.setName("as");
+        Client c3 = c1;
+        boolean equal1 = c1.equals(new Client());
+        boolean equal2 = c1.equals(c3);
+        boolean Notequal1 = c1.equals("store");
+        boolean Notequal2 = c1.equals(c2);
         assertThat(Notequal1).isFalse();
         assertThat(equal1).isTrue();
         assertThat(equal2).isTrue();
@@ -118,15 +155,33 @@ class UnitTests{
     }
 
     @Test
+    void testErrorController(){
+        MyErrorController mErr = new MyErrorController();
+        assertThat(mErr.getErrorPath()).isNull();
+    }
+
+    @Test
+    void onCreateAdminVerify(){
+        Admin admin = new Admin();
+        assertThat(admin.getId()).isEqualTo((long)1);
+        assertThat(admin.getEmail()).isEqualTo("admin@service.pt");
+        assertThat(admin.getRole()).isZero();
+        assertThat(admin.getPassword()).isNotNull();
+    }
+
+    @Test
     void testStoreEquals()
     {
+        Book b = new Book();
         Store store = new Store();
+        store.getBookList().add(b);
         Store store2 = new Store();
         store2.setStoreName("as");
+        store2.getBookList().add(b);
         Store store3 = store;
         boolean equal1 = store.equals(new Store());
         boolean equal2 = store.equals(store3);
-        boolean Notequal1 = store.equals("s");
+        boolean Notequal1 = store.equals("store");
         boolean Notequal2 = store.equals(store2);
         assertThat(Notequal1).isFalse();
         assertThat(equal1).isTrue();
