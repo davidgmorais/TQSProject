@@ -27,7 +27,7 @@ public class EngineController {
     public static final String SEARCH_MODEL = "search";
     public static final String RIDER_DASHBOARD = "redirect:/rider/dashboard";
     private String jwt;
-    public String status;
+    private String status;
 
     @Autowired
     UserController userController;
