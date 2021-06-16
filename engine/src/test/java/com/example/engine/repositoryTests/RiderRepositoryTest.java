@@ -1,8 +1,7 @@
 package com.example.engine.repositoryTests;
 
-import com.example.engine.entity.Contrib;
-import com.example.engine.entity.Rider;
-import com.example.engine.entity.User;
+import com.example.engine.entity.*;
+import com.example.engine.repository.OrderRepository;
 import com.example.engine.repository.RiderRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +20,117 @@ class RiderRepositoryTest {
     @Autowired
     private RiderRepository riderRepository;
 
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Test
+    void whenFindingOrderById_andOrderExists_thenReturnOrder() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        Contrib bobService = new Contrib(bob, "service");
+        Location location = new Location(0.0, 0.0);
+        Order order = new Order(20.0, bobService, location);
+        order.setServiceLocation(location);
+
+        entityManager.persist(bob);
+        entityManager.persist(bobService);
+        entityManager.persist(location);
+        entityManager.persist(order);
+        entityManager.flush();
+
+        Order found = orderRepository.findOrderById(order.getId());
+        assertThat(found).isEqualTo(order);
+    }
+
+    @Test
+    void whenFindingOrderById_andOrderDoesNotExists_thenReturnNull() {
+        Order found = orderRepository.findOrderById(1L);
+        assertThat(found).isNull();
+    }
+
+    @Test
+    void whenGettingRidersToDispatch_andWorkingRiders_andAvailableRiders_thenReturnRiderList() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        Rider riderBob = new Rider(bob);
+        riderBob.setWorking(true);
+        Contrib bobService = new Contrib(bob, "service");
+        Location location = new Location(0.0, 0.0);
+        Order order = new Order(20.0, bobService, location);
+        order.setServiceLocation(location);
+
+        entityManager.persist(bob);
+        entityManager.persist(riderBob);
+        entityManager.persist(bobService);
+        entityManager.persist(location);
+        entityManager.persist(order);
+        entityManager.flush();
+
+        List<Rider> list = riderRepository.findRidersToDispatch();
+        assertThat(list).hasSize(1).extracting(Rider::getUser).extracting(User::getUsername).containsOnly(bob.getUsername());
+    }
+
+    @Test
+    void whenGettingRidersToDispatch_andWorkingRiders_andUnavailableRiders_thenReturnEmptyList() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        Rider riderBob = new Rider(bob);
+        riderBob.setWorking(true);
+        Contrib bobService = new Contrib(bob, "service");
+        Location location = new Location(0.0, 0.0);
+        Order order = new Order(20.0, bobService, location);
+        order.setServiceLocation(location);
+        order.setPickupRider(riderBob);
+
+        entityManager.persist(bob);
+        entityManager.persist(riderBob);
+        entityManager.persist(bobService);
+        entityManager.persist(location);
+        entityManager.persist(order);
+        entityManager.flush();
+
+        List<Rider> list = riderRepository.findRidersToDispatch();
+        assertThat(list).isEmpty();
+    }
+
+    @Test
+    void whenGettingRidersToDispatch_andNoWorkingRiders_andAvailableRiders_thenReturnEmptyList() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        Rider riderBob = new Rider(bob);
+        Contrib bobService = new Contrib(bob, "service");
+        Location location = new Location(0.0, 0.0);
+        Order order = new Order(20.0, bobService, location);
+        order.setServiceLocation(location);
+
+        entityManager.persist(bob);
+        entityManager.persist(riderBob);
+        entityManager.persist(bobService);
+        entityManager.persist(location);
+        entityManager.persist(order);
+        entityManager.flush();
+
+        List<Rider> list = riderRepository.findRidersToDispatch();
+        assertThat(list).isEmpty();
+    }
+
+    @Test
+    void whenGettingRidersToDispatch_andNoWorkingRiders_andNoAvailableRiders_thenReturnEmptyList() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        Rider riderBob = new Rider(bob);
+        Contrib bobService = new Contrib(bob, "service");
+        Location location = new Location(0.0, 0.0);
+        Order order = new Order(20.0, bobService, location);
+        order.setServiceLocation(location);
+        order.setPickupRider(riderBob);
+
+        entityManager.persist(bob);
+        entityManager.persist(riderBob);
+        entityManager.persist(bobService);
+        entityManager.persist(location);
+        entityManager.persist(order);
+        entityManager.flush();
+
+        List<Rider> list = riderRepository.findRidersToDispatch();
+        assertThat(list).isEmpty();
+    }
+
     @Test
     void whenFindRiderById_andValidID_thenReturnRider() {
         User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
@@ -35,7 +145,7 @@ class RiderRepositoryTest {
     }
 
     @Test
-    void whenFindContribById_andInvalidID_thenReturnNull() {
+    void whenFindRiderById_andInvalidID_thenReturnNull() {
         Rider fromDb = riderRepository.findRiderById(2);
         assertThat(fromDb).isNull();
     }
@@ -59,6 +169,28 @@ class RiderRepositoryTest {
         entityManager.persist(bob);
 
         Rider found = riderRepository.getRiderByUserId(bob.getId());
+        assertThat(found).isNull();
+    }
+
+    @Test
+    void whenGetRiderByUsernamme_andRiderExists_thenReturnRider() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        Rider riderBob = new Rider(bob);
+
+        entityManager.persist(bob);
+        entityManager.persist(riderBob);
+        entityManager.flush();
+
+        Rider found = riderRepository.getRiderByUserUsername(bob.getUsername());
+        assertThat(found).isEqualTo(riderBob);
+    }
+
+    @Test
+    void whenGetRiderByUsernname_andRiderDoesNotExists_thenReturnNull() {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        entityManager.persist(bob);
+
+        Rider found = riderRepository.getRiderByUserUsername(bob.getUsername());
         assertThat(found).isNull();
     }
 

@@ -99,4 +99,9 @@ public class ContribServiceImpl implements ContribService{
     public List<Contrib> getAllContributorsRequests() {
         return repository.findAllByVerifiedFalse();
     }
+
+    @Override
+    public Contrib getContributorByUsername(String username) {
+        return repository.getContribByUserUsername(username);
+    }
 }

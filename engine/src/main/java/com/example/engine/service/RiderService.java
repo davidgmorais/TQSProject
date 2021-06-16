@@ -11,7 +11,9 @@ public interface RiderService {
     List<Rider> getAllRiders();
     List<Rider> getAllRidersRequests();
     List<Rider> search(String username);
+    List<Rider> getRidersToDispatch();
     Rider verifyRider(int riderId);
     boolean denyRider(int riderId);
-
+    boolean startShift(String riderUsername, Double currentLat, Double currentLon);
+    boolean endShift(String riderUsername);
 }

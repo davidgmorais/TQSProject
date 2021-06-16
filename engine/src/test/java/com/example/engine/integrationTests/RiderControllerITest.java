@@ -2,15 +2,17 @@ package com.example.engine.integrationTests;
 
 import com.example.engine.EngineApplication;
 import com.example.engine.component.JwtUtils;
-import com.example.engine.entity.Contrib;
 import com.example.engine.entity.Rider;
 import com.example.engine.entity.User;
 import com.example.engine.repository.RiderRepository;
 import com.example.engine.repository.UserRepository;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,12 +26,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
@@ -180,6 +183,121 @@ class RiderControllerITest {
         assertThat(foundContribList).isEmpty();
         List<User> foundUsers = repository.findAll();
         assertThat(foundUsers).extracting(User::getUsername).containsOnly("admin");
+    }
+
+    @Test
+    void whenPutToStartShift_andValidRider_thenShiftStarted() throws Exception {
+        User bob = new User("bob", "bob@email.com", "password", null, null, 1);
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        bob.setPassword(encoder.encode(bob.getPassword()));
+        repository.saveAndFlush(bob);
+        Rider riderBob = new Rider(bob);
+        riderBob.setVerified(true);
+        riderRepository.saveAndFlush(riderBob);
+
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken("bob", "password"));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        String riderJwt = jwtUtils.generateJwtToken(auth);
+
+        mvc.perform(put("/api/rider/shift/start").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + riderJwt).content(toJson(Map.of("latitude", "0", "longitude", "0"))))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Shift started successfully."));
+        assertThat(riderRepository.getRiderByUserUsername(bob.getUsername()).isWorking()).isTrue();
+        assertThat(riderRepository.getRiderByUserUsername(bob.getUsername()).getLocation()).hasSize(2).containsOnly(0.0);
+    }
+
+    @Test
+    void whenPutToStartShift_andInvalidRole_thenReturnForbidden() throws Exception {
+        mvc.perform(put("/api/rider/shift/start").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt).content(toJson(Map.of("latitude", "0", "longitude", "0"))))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void whenPutToStartShift_andNoToken_thenReturnUnauthorized() throws Exception {
+        mvc.perform(put("/api/rider/shift/start").contentType(MediaType.APPLICATION_JSON).content(toJson(Map.of("latitude", "0", "longitude", "0"))))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"WrongParameter:longitude", "latitude:WrongParameter", "WrongParameter:wrongParameter"}, delimiter = ':')
+    void whenPutToStartShift_andInvalidParameters_thenReturnBadRequest(String firstParam, String secondParam) throws Exception {
+        User bob = new User("bob", "bob@email.com", "password", null, null, 1);
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        bob.setPassword(encoder.encode(bob.getPassword()));
+        repository.saveAndFlush(bob);
+        Rider riderBob = new Rider(bob);
+        riderBob.setVerified(true);
+        riderRepository.saveAndFlush(riderBob);
+
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken("bob", "password"));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        String riderJwt = jwtUtils.generateJwtToken(auth);
+
+        mvc.perform(put("/api/rider/shift/start").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + riderJwt).content(toJson(Map.of(firstParam, "0", secondParam, "0"))))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Invalid parameters"));
+    }
+
+    @Test
+    void whenPutToStartShift_andInvalidLocation_thenReturnBadRequest() throws Exception{
+        User bob = new User("bob", "bob@email.com", "password", null, null, 1);
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        bob.setPassword(encoder.encode(bob.getPassword()));
+        repository.saveAndFlush(bob);
+        Rider riderBob = new Rider(bob);
+        riderBob.setVerified(true);
+        riderRepository.saveAndFlush(riderBob);
+
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken("bob", "password"));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        String riderJwt = jwtUtils.generateJwtToken(auth);
+
+        mvc.perform(put("/api/rider/shift/start").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + riderJwt).content(toJson(Map.of("latitude", "0", "longitude", "c"))))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Invalid parameters"));
+    }
+
+    @Test
+    void whenPutToEndShift_andValidRider_thenShiftEnded() throws Exception {
+        User bob = new User("bob", "bob@email.com", "password", null, null, 1);
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        bob.setPassword(encoder.encode(bob.getPassword()));
+        repository.saveAndFlush(bob);
+        Rider riderBob = new Rider(bob);
+        riderBob.setVerified(true);
+        riderRepository.saveAndFlush(riderBob);
+
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken("bob", "password"));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        String riderJwt = jwtUtils.generateJwtToken(auth);
+
+        mvc.perform(put("/api/rider/shift/end").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + riderJwt))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Shift ended successfully. Have a nice day!"));
+        assertThat(riderRepository.getRiderByUserUsername(bob.getUsername()).isWorking()).isFalse();
+        assertThat(riderRepository.getRiderByUserUsername(bob.getUsername()).getLocation()).hasSize(2).containsOnlyNulls();
+    }
+
+    @Test
+    void whenPutToEndShift_andInvalidRole_thenReturnForbidden() throws Exception {
+        mvc.perform(put("/api/rider/shift/end").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void whenPutToEndShift_andNoToken_thenReturnUnauthorized() throws Exception {
+        mvc.perform(put("/api/rider/shift/end").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    static byte[] toJson(Object object) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return mapper.writeValueAsBytes(object);
     }
 
 

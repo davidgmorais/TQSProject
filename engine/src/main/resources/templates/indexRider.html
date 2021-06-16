@@ -12,21 +12,17 @@
     <title>Dashboard</title>
 
     <!-- Custom fonts for this template-->
-
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
-
     <link
             href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
             rel="stylesheet">
 
     <!-- Custom styles for this template-->
-
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
-
 
 </head>
 
-<body id="page-top">
+<body id="page-top" onload="initGeolocation()">
 
 <!-- Page Wrapper -->
 <div id="wrapper">
@@ -100,12 +96,12 @@
 
                 <!-- Topbar Search -->
                 <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                      class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                     <div class="input-group">
-                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                               aria-label="Search" aria-describedby="basic-addon2">
+                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search..."
+                               aria-label="Search" aria-describedby="basic-addon2" >
                         <div class="input-group-append">
-                            <button class="btn btn-primary" type="button">
+                            <button class="btn btn-primary" type="submit">
                                 <i class="fas fa-search fa-sm"></i>
                             </button>
                         </div>
@@ -177,7 +173,7 @@
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="mr-2 d-none d-lg-inline text-gray-600 small">Rider's Name</span>
                             <img class="img-profile rounded-circle"
-                                 th:src="@{img/undraw_profile.svg}">
+                                 th:src="@{/img/undraw_profile.svg}">
                         </a>
                         <!-- Dropdown - User Information -->
                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -217,8 +213,7 @@
                 <!-- Content Row -->
                 <div class="row">
 
-
-                    <!-- Total Stores -->
+                    <!-- Total Deliveries -->
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card border-left-primary shadow h-100 py-2">
                             <div class="card-body">
@@ -236,7 +231,7 @@
                         </div>
                     </div>
 
-                    <!-- Total Riders Card  -->
+                    <!-- Total Earnings  -->
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card border-left-success shadow h-100 py-2">
                             <div class="card-body">
@@ -253,13 +248,14 @@
                             </div>
                         </div>
                     </div>
+
                     <!-- Pending Store Requests Card -->
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card border-left-info shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pending Delivery Requests
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pending Deliveries
                                         </div>
                                         <div class="row no-gutters align-items-center">
                                             <div class="col-auto">
@@ -277,11 +273,43 @@
                 </div>
 
                 <!-- Content Row -->
-                <div id="row">
-                    <div class="col-xl-8 col-lg-7">
+
+                <div class="row">
+
+                    <div class="col-xl-8 col-lg-7" >
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col-auto">
+                                                <form id="start" th:method="post" th:action="@{/rider/dashboard/}" >
+                                                    <button class="btn btn-primary" type="submit">Start Shift</button>
+                                                </form>
+                                            </div>
+                                            <div class="col-auto" style="padding-left: 5%">
+                                                <form id="end" th:method="post" th:action="@{/rider/dashboard/end}" >
+                                                    <button class="btn btn-secondary">End Shift</button>
+                                                </form>
+                                            </div>
+                                            <div class="col-auto font-weight-bold text-info text-uppercase mb-1" style="padding-left: 3%; padding-top: 2%; padding-bottom: 0">
+                                                <p id="statusEnded" th:text="${status}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-briefcase fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Area Chart -->
+                    <div class="col-xl-8 col-lg-7" style="padding-top: 3%">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Next Deliveries</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Pending Deliveries</h6>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -326,13 +354,52 @@
                                                 </div>
                                             </td>
                                         </tr>
-
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
 
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+                <div class="row">
+
+                    <!-- Area Chart -->
+                    <div class="col-xl-8 col-lg-7">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">History of Deliveries</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="riderRequests" width="100%" cellspacing="0">
+                                        <thead>
+                                        <tr>
+                                            <th>Requester Name</th>
+                                            <th>Store</th>
+                                            <th>Order</th>
+                                        </tr>
+                                        </thead>
+                                        <tfoot>
+                                        <tr>
+                                            <th>Requester Name</th>
+                                            <th>Store</th>
+                                            <th>Order</th>
+                                        </tr>
+                                        </tfoot>
+                                        <tbody>
+                                        <tr>
+                                            <td>Inês Silva</td>
+                                            <td>UptownBook Aveiro</td>
+                                            <td>Moby Dick, Herman Melville</td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
@@ -380,57 +447,62 @@
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Indications map -->
-    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);">
-        <div class="modal-dialog">
-            <div class="modal-content" style="width: 650px">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModal_Label">Indications regarding the order</h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mapouter" >
-                        <div class="gmap_canvas">
-                            <iframe class="gmap_iframe" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Aveiro&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
-                            <a href="https://www.bgmi.org/">BGMI</a>
-                        </div>
-                        <style>.mapouter{position:relative;text-align:right;width:600px;height:500px;}.gmap_canvas {overflow:hidden;background:none!important;width:600px;height:500px;}.gmap_iframe {width:600px!important;height:500px!important;}</style>
-                    </div>
+<!-- Bootstrap core JavaScript-->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
 
-                </div>
-                <div class="modal-footer" style="text-align: center">
-                    <a href="#"><button type="button" class="btn btn-primary" >Picked up order</button></a>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- Core plugin JavaScript-->
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
 
+<!-- Custom scripts for all pages-->
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
 
+<!-- Page level plugins -->
+<script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
 
+<!-- Page level custom scripts -->
+<script th:src="@{/js/demo/chart-area-demo.js}"></script>
+<script th:src="@{/js/demo/chart-pie-demo.js}"></script>
 
-    <!-- Bootstrap core JavaScript-->
+<script>
+    var long;
+    var lat;
+    function initGeolocation()
+    {
+        if( navigator.geolocation )
+        {
+            // Call getCurrentPosition with success and failure callbacks
+            navigator.geolocation.getCurrentPosition( success, fail );
+        }
+        else
+        {
+            alert("Sorry, your browser does not support geolocation services.");
+        }
+    }
 
-    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
-    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    function success(position)
+    {
 
-    <!-- Core plugin JavaScript-->
-    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+        long = position.coords.longitude;
+        lat = position.coords.latitude;
+        document.getElementById('start').action = document.getElementById('start').action + long + '/' + lat;
+    }
 
-    <!-- Custom scripts for all pages-->
-    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    function fail() {
 
-    <!-- Page level plugins -->
-    <script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
+    }
 
-    <!-- Page level custom scripts -->
-    <script th:src="@{/js/demo/chart-area-demo.js}"></script>
-    <script th:src="@{/js/demo/chart-pie-demo.js}"></script>
+    function startShift() {
+        document.getElementById("status").innerText = "Working";
+    }
 
+    function endShift() {
+        document.getElementById("status").innerText = "Not working";
+    }
+
+</script>
 
 </body>
 

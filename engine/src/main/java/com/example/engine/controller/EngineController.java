@@ -1,5 +1,6 @@
 package com.example.engine.controller;
 
+import com.example.engine.component.JwtUtils;
 import com.example.engine.dto.ContribDTO;
 import com.example.engine.dto.UserDTO;
 import com.example.engine.entity.Contrib;
@@ -24,6 +25,9 @@ public class EngineController {
     public static final String INDEX_RIDER = "indexRider";
     public static final String INDEX_SERVICE = "indexService";
     public static final String SEARCH_MODEL = "search";
+    public static final String RIDER_DASHBOARD = "redirect:/rider/dashboard";
+    private String jwt;
+    private String status;
 
     @Autowired
     UserController userController;
@@ -33,6 +37,9 @@ public class EngineController {
 
     @Autowired
     RiderController riderController;
+
+    @Autowired
+    JwtUtils jwtUtils;
 
     private static final Logger logger = LoggerFactory.getLogger(EngineController.class);
 
@@ -89,25 +96,26 @@ public class EngineController {
 
     @PostMapping(value = "/login")
     public String signIn(UserDTO userDTO, Model model) {
+        var authorizationKey = "Authorization";
         HashMap<String, String> creds = new HashMap<>();
         creds.put("username", userDTO.getUsername());
         creds.put("password", userDTO.getPassword());
         ResponseEntity<Map<String, String>> authentication = userController.authenticateUser(creds);
-        if (authentication.getHeaders().containsKey("Authorization")) {
+        if (authentication.getHeaders().containsKey(authorizationKey)) {
             List<String> authList = authentication.getHeaders().get("Authorization");
             if (authList != null && !authList.isEmpty()) {
-                String token = authList.get(0);
-                logger.info("Token to include on header: {}", token);
+                jwt = authList.get(0);
+                logger.info("Token to include on header: {}", jwt);
                 var body = authentication.getBody();
                 if (body == null) {
                     return LOGIN_PAGE;
                 }
                 String role = body.get("role");
                 if (role.equals("1")) {
-                    return INDEX_RIDER;
+                    return RIDER_DASHBOARD;
                 }
                 else if (role.equals("2")) {
-                    return INDEX_SERVICE;
+                    return "redirect:/service/dashboard";
                 }
 
                 return INDEX_PAGE;
@@ -199,8 +207,30 @@ public class EngineController {
 
 
     @GetMapping(value = "/rider/dashboard")
-    public String riderIndex() {
+    public String riderIndex(Model model) {
+        model.addAttribute("status", status);
         return INDEX_RIDER;
     }
+
+    @PostMapping(value = "/rider/dashboard/{log}/{lat}")
+    public String startShiftRider(@PathVariable String log, @PathVariable String lat, Model model) {
+        Map<String, String> location = new HashMap<>();
+        location.put("latitude", log);
+        location.put("longitude", lat);
+        logger.info("token {}", jwt);
+        jwt = jwt.replace("Bearer ", "");
+        ResponseEntity<String> startShift = riderController.startShift(jwt, location);
+        status = startShift.getBody();
+        return RIDER_DASHBOARD;
+    }
+
+    @PostMapping(value = "/rider/dashboard/end")
+    public String endShiftRider(Model model) {
+        jwt = jwt.replace("Bearer ", "");
+        ResponseEntity<String> endShift =riderController.endShift(jwt);
+        status = endShift.getBody();
+        return RIDER_DASHBOARD;
+    }
+
 
 }
