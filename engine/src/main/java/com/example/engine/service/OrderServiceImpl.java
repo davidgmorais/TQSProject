@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.*;
+
 @Service
 public class OrderServiceImpl implements OrderService{
     private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
@@ -64,4 +66,97 @@ public class OrderServiceImpl implements OrderService{
     public Order saveOrder(Order order) {
         return orderRepository.save(order);
     }
+
+    @Override
+    public Order getOrderInfoForContrib(Long orderId, String contribUsername) {
+        var contrib = contribService.getContributorByUsername(contribUsername);
+        if (contrib == null) {
+            return null;
+        }
+
+        var order = getOrderByI(orderId);
+        if (order == null) {
+            return null;
+        }
+
+        return (order.getServiceOwner() == contrib) ? order : null;
+    }
+
+    @Override
+    public Order getOrderInfoForRider(Long orderId, String riderUsername) {
+        var rider = riderService.getRiderByUsername(riderUsername);
+        if (rider == null) {
+            return null;
+        }
+
+        var order = getOrderByI(orderId);
+        if (order == null) {
+            return null;
+        }
+        return (order.getPickupRider() == rider) ? order : null;
+    }
+
+    @Override
+    public List<Order> getOrderQueue() {
+        return orderRepository.findOrdersByPickupRiderIsNullOrderById();
+    }
+
+    @Override
+    public Order getCurrentOrderInfoForRider(String riderUsername) {
+        var rider = riderService.getRiderByUsername(riderUsername);
+        if (rider == null) {
+            return null;
+        }
+
+        return orderRepository.findOrderByPickupRiderUserUsernameAndStatusIn(
+                rider.getUser().getUsername(),
+                new HashSet<>(Arrays.asList(OrderStatus.ASSIGNED, OrderStatus.BEING_DELIVERED)));
+    }
+
+    @Override
+    public List<Order> getRidersOrderHistory(String riderUsername) {
+        var rider = riderService.getRiderByUsername(riderUsername);
+        if (rider == null) {
+            return new ArrayList<>();
+        }
+
+        return orderRepository.findAllByPickupRiderUserUsername(rider.getUser().getUsername());
+    }
+
+    @Override
+    public Order updateCurrentOrderLocation(String riderUsername, Double latitude, Double longitude) {
+        var rider = riderService.getRiderByUsername(riderUsername);
+        if (rider == null) {
+            return null;
+        }
+        rider.setLocation(latitude, longitude);
+        riderService.save(rider);
+        return this.getCurrentOrderInfoForRider(riderUsername);
+    }
+
+    @Override
+    public Order updateCurrentOrderStatus(String riderUsername, String status) {
+        var rider = riderService.getRiderByUsername(riderUsername);
+        if (rider == null) {
+            return null;
+        }
+        var order = this.getCurrentOrderInfoForRider(riderUsername);
+
+        switch (status.toUpperCase(Locale.ROOT)) {
+            case "BEING_DELIVERED":
+                rider.setLocation(order.getServiceLocation().getLatitude(), order.getServiceLocation().getLongitude());
+                order.setStatus(OrderStatus.BEING_DELIVERED);
+                break;
+            case "DELIVERED":
+                rider.setLocation(order.getDeliveryLocation().getLatitude(), order.getDeliveryLocation().getLongitude());
+                order.setStatus(OrderStatus.DELIVERED);
+                dispatchService.dispatchNextOrderInQueue(rider.getUser().getUsername());
+                break;
+            default:
+                return null;
+        }
+        riderService.save(rider);
+        return orderRepository.save(order);
+    }
+
 }

@@ -106,6 +106,16 @@ public class RiderServiceImpl implements RiderService {
     }
 
     @Override
+    public Rider getRiderByUsername(String riderUsername) {
+        return repository.getRiderByUserUsername(riderUsername);
+    }
+
+    @Override
+    public Rider save(Rider rider) {
+        return repository.save(rider);
+    }
+
+    @Override
     public List<Rider> getRidersToDispatch() {
         return repository.findRidersToDispatch();
     }
