@@ -112,7 +112,7 @@
     </div>
 
 </section>
-<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin: 0;
+<div th:object="${book}" class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin: 0;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -126,9 +126,9 @@
             <div class="modal-body">
                 Go to your cart if you want to go to checkout.
             </div>
-            <div class="modal-footer" style="text-align: center">
+            <divclass="modal-footer" style="text-align: center">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <a th:href="@{/cart}"><button type="button" class="btn btn-primary" style="background-color: #91e0d2ff; border-color: #91e0d2ff;" >Go to Cart</button></a>
+                <a th:href="@{/cart/add?id={id}(id=${book.id})}"><button type="button" class="btn btn-primary" style="background-color: #91e0d2ff; border-color: #91e0d2ff;" >Go to Cart</button></a>
             </div>
         </div>
     </div>

@@ -95,21 +95,15 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>Moby Dick, Herman Melville<br><a>Remove</a></td>
-                            <td>1</td>
-                            <td>15$</td>
-                        </tr>
-                        <tr>
-                            <td>Lolita, Vladimir Nabokov<br><a>Remove</a></td>
-                            <td>1</td>
-                            <td>12$</td>
-                        </tr>
-                        <tr>
-                            <td>Dune, Frank Herbert<br><a>Remove</a></td>
-                            <td>1</td>
-                            <td>18$</td>
-                        </tr>
+                       
+                        <div th:object="${books}">
+                            <tr th:each="book: ${books}">
+                                <th th:text="${book.key.title}" ></th>
+                                <th th:text=${book.value} ></th>
+                                <th th:text="${book.key.price}" ></th>
+                                <br><a th:href="@{/cart/remove?id={id}(id=${book.key.id})}">Remove</a>
+                            </tr>
+                        </div>
                         </tbody>
                     </table>
                     </div>
@@ -119,7 +113,7 @@
                             <tbody>
                             <tr>
                                 <td>Total</td>
-                                <td>45$</td>
+                                <td th:text="${total}"></td>
                             </tr>
                             </tbody>
                         </table>

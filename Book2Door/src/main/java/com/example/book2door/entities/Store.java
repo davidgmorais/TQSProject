@@ -14,7 +14,7 @@ public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true,nullable = false, name = "storeName")
+    @Column(nullable = false, name = "storeName")
     private String storeName;
     @Column(unique = true,nullable = false, name = "storeAddress")
     private String storeAddress;

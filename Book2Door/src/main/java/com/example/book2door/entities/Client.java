@@ -1,8 +1,9 @@
 package com.example.book2door.entities;
 
-import java.util.Objects;
+import java.util.*;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,6 +35,9 @@ public class Client {
     private String zipcode;
     @Column(name = "role", nullable = false)
     private int role;
+    @Column(name= "cart", nullable = true)
+    @ElementCollection()
+    private List<Long> cart = new ArrayList<>();
 
 
     public Client() {
@@ -60,6 +64,9 @@ public class Client {
         return this.id;
     }
 
+    public List<Long> getCart(){
+        return this.cart;
+    }
     
     public String getEmail() {
         return this.email;
@@ -141,6 +148,22 @@ public class Client {
         return Objects.hash(id, email, name, password, phone, city, address, zipcode);
     }
 
+
+    @Override
+    public String toString() {
+        return "{" +
+            " id='" + getId() + "'" +
+            ", email='" + getEmail() + "'" +
+            ", name='" + getName() + "'" +
+            ", password='" + getPassword() + "'" +
+            ", phone='" + getPhone() + "'" +
+            ", city='" + getCity() + "'" +
+            ", address='" + getAddress() + "'" +
+            ", zipcode='" + getzipcode() + "'" +
+            ", role='" + getRole() + "'" +
+            ", cart='" + getCart() + "'" +
+            "}";
+    }
 
     
 }

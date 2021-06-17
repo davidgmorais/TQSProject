@@ -95,5 +95,17 @@ public class JwtUser implements UserDetails {
         return this.name;
     }
 
+    @Override
+    public String toString() {
+        return "{" +
+            " id='" + getId() + "'" +
+            ", name='" + getUsername() + "'" +
+            ", email='" + getEmail() + "'" +
+            ", password='" + getPassword() + "'" +
+            ", role='" + getRole() + "'" +
+            ", authorities='" + getAuthorities() + "'" +
+            "}";
+    }
+
 
 }
