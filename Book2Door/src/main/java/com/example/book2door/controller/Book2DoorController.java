@@ -298,7 +298,12 @@ public class Book2DoorController {
         store.deny();
         storeRepository.save(store);
         return REDIRECT_ADMIN;
-    }    
+    }
+
+    @GetMapping(value = "/location")
+    public String searchLocation() {
+        return "searchPageLocation";
+    }
     
     @GetMapping(value="/order")
     public String orderProcess()

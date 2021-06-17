@@ -98,10 +98,10 @@
                 <div class="input-group input-group-lg">
 
                 <span class="input-group-text" id="inputGroup-sizing-lg"><a onclick="getLocation()"><i class="fas fa-map-marker-alt"></i></a></span>
-                    <input type="text" id="searchTextField" class="form-control" placeholder="Enter your location" onclick="initAutocomplete()" aria-label="address" aria-describedby="addon-wrapping" >
+                    <input type="text" id="addressLocation" class="form-control" placeholder="Enter your location" onclick="initAutocomplete()" aria-label="address" aria-describedby="addon-wrapping" >
                 </div>
               </p>
-                <a th:href="@{/search}"><button class="main-btn btn-hover wow fadeInUp" data-wow-delay=".6s">Find books</button></a>
+                <a th:href="@{/}" id="findBookAction" onclick="findBooks()"><button class="main-btn btn-hover wow fadeInUp" data-wow-delay=".6s">Find books</button></a>
             </div>
             </div>
             <div class="col-lg-4">
@@ -122,18 +122,17 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Choose where you want your order delivered at!</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Your current location</h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <!-- MAP -->
                     <p id="address">Address: </p>
                     <div id="googleMap" style="width:100%;height:400px;"></div>
-
                 </div>
                 <div class="modal-footer" style="text-align: center">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <a th:href="@{/search}"><button type="button" class="btn btn-primary" style="background-color: #91e0d2ff; border-color: #91e0d2ff;" >Confirm</button></a>
+                    <button type="button" class="btn btn-primary" style="background-color: #91e0d2ff; border-color: #91e0d2ff;" onclick="confirmAddress()" data-dismiss="modal">Confirm</button></a>
                 </div>
             </div>
         </div>
@@ -277,6 +276,8 @@
 
         var lat;
         var long;
+        var address = document.getElementById("address");
+        var add;
         function showPosition(position) {
             $("#myModal").modal("toggle");
             var x = "Latitude: " + position.coords.latitude +
@@ -284,18 +285,31 @@
             lat = position.coords.latitude;
             long = position.coords.longitude;
             initMap();
-            var address = document.getElementById("address");
             var geocoder  = new google.maps.Geocoder();             // create a geocoder object
             var location  = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);    // turn coordinates into an object
             geocoder.geocode({'latLng': location}, function (results, status) {
                 if (status == google.maps.GeocoderStatus.OK) {           // if geocode success
-                    var add = results[0].formatted_address;         // if address found, pass to processing function
-                    console.log(add);
+                    add = results[0].formatted_address;         // if address found, pass to processing function
                     address.innerHTML = add;
                 }
             });
 
 
+        }
+
+        function confirmAddress() {
+
+            document.getElementById("addressLocation").value = add;
+
+        }
+
+        function findBooks() {
+            if (document.getElementById("addressLocation").value == "") {
+                document.getElementById("findBookAction").href = '/location';
+            }
+            else {
+                document.getElementById("findBookAction").href = '/search';
+            }
         }
 
         function initMap() {
