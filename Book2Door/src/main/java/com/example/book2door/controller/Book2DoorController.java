@@ -69,10 +69,21 @@ public class Book2DoorController {
 
 
     @GetMapping(value="/")
-    public String index()
-    {    
+    public String index(Model model)
+    {
+        Set<Store> stores = storeRepository.findAllTopTwelveByAccepted(1);
+        model.addAttribute("stores",stores);
         return "index";
+    }
 
+    @PostMapping(value = "/")
+    public String index(@RequestParam String param, Model model) {
+        var store = storeRepository.findBystoreName(param);
+        if(store!=null){
+            model.addAttribute("store",store);
+            return "redirect:/store?name="+param;
+        }
+        return "redirect:/";
     }
 
     @GetMapping(value="/login")
@@ -120,7 +131,7 @@ public class Book2DoorController {
                         return REDIRECT_ADMIN;
                     }
                     else if (role.equals("1")) {
-                        return "redirect:/storeDashboard";
+                        return "redirect:/store/dashboard";
                     }
                     else{
                         return "redirect:/";
@@ -295,7 +306,7 @@ public class Book2DoorController {
         return "orderPage";
     }
 
-    @GetMapping(value="/storeDashboard")
+    @GetMapping(value="/store/dashboard")
     public String adminStore(Model model)
     {
         JwtUser Jwtstore =(JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -307,7 +318,7 @@ public class Book2DoorController {
         return "adminStorePage";
     }
 
-    @PostMapping(value="/storeDashboard")
+    @PostMapping(value="/store/dashboard")
     public String addBookToStore(@RequestParam String title, @RequestParam String synopsis, @RequestParam String author,
     @RequestParam int stock, @RequestParam double price)
     {   
@@ -327,7 +338,7 @@ public class Book2DoorController {
             store.getBookList().add(book);
             storeRepository.save(store);
         }
-        return "redirect:/storeDashboard";
+        return "redirect:/store/dashboard";
     }
 
 

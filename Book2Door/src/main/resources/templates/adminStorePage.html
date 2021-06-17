@@ -6,16 +6,16 @@
     <title>Book2Door - Your Store</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" th:href="@{assets/img/favicon.png}"/>
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/assets/img/favicon.png}"/>
     <!-- Place favicon.ico in the root directory -->
 
     <!-- ========================= CSS here ========================= -->
-    <link rel="stylesheet" th:href="@{assets/css/bootstrap-5.0.0-alpha-2.min.css}" />
-    <link rel="stylesheet" th:href="@{assets/css/LineIcons.2.0.css}" />
-    <link rel="stylesheet" th:href="@{assets/css/animate.css}" />
-    <link rel="stylesheet" th:href="@{assets/css/main.css}" />
-    <link rel="stylesheet" th:href="@{assets/css/custom.css}" />
-    <link rel="stylesheet" th:href="@{assets/css/adminStore.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap-5.0.0-alpha-2.min.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/LineIcons.2.0.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/animate.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/custom.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/adminStore.css}" />
 </head>
 <body>
 
@@ -46,7 +46,7 @@
             <div class="row align-items-center">
                 <div class="col-lg-12">
                     <nav class="navbar navbar-expand-lg">
-                        <a class="navbar-brand" th:href="@{/storeDashboard}">
+                        <a class="navbar-brand" th:href="@{/store/dashboard}">
                             <h3>Book2Door</h3>
                         </a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@
 <!-- ========================= hero-section start ========================= -->
 <section id="home" class="hero-section">
     <div class="hero-shape">
-        <img th:src="@{assets/img/hero/hero-shape.svg}" alt="" class="shape">
+        <img th:src="@{/assets/img/hero/hero-shape.svg}" alt="" class="shape">
     </div>
     <div class="container">
         <div class="row align-items-center">
@@ -100,15 +100,15 @@
                             </thead>
                             <div th:object="${bookList}">
                                 <tr th:each="book: ${bookList}">
-                                    <th th:text="${book.title}" ></th>
-                                    <th th:text="${book.author}"></th>
-                                    <th th:text="${book.synopsis}"></th>
-                                    <th th:text="${book.price}" ></th>
-                                    <th th:text="${book.stock}"></th>
+                                    <td th:text="${book.title}" ></td>
+                                    <td th:text="${book.author}"></td>
+                                    <td th:text="${book.synopsis}"></td>
+                                    <td th:text="${book.price}" ></td>
+                                    <td th:text="${book.stock}"></td>
                                 </tr>
                             </div>
                         </table>
-                        <button type="button" class="main-btn btn-hover wow fadeInUp" >Next</button>
+                        <!--<button type="button" class="main-btn btn-hover wow fadeInUp">Next</button>-->
                     </div>
                     <div class="edit" style="text-align: center">
                         <button style="background-color: #24598b !important; border-color: #24598b !important;" type="button" class="main-btn btn-hover wow fadeInUp" data-toggle="modal" data-target="#myModal" data-wow-delay=".6s"><i class="fas fa-cart-plus"></i>Add Books</button>
@@ -135,7 +135,7 @@
             <div class="modal-body" style="overflow-y: scroll">
                 <div id="addedBooks"></div>
                 <br>
-                <form th:action="@{/storeDashboard}" name="addBookToStore" id="myForm" method="post">
+                <form th:action="@{/store/dashboard}" name="addBookToStore" id="myForm" method="post">
                     <div class="mb-3">
                         <label for="bookName" class="form-label">Book Name</label>
                         <input name="title" type="text" class="form-control" id="bookName">
@@ -192,9 +192,9 @@
     }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script th:src="@{assets/js/bootstrap.5.0.0.alpha-2-min.js}"></script>
-<script th:src="@{assets/js/count-up.min.js}"></script>
-<script th:src="@{assets/js/wow.min.js}"></script>
-<script th:src="@{assets/js/main.js}"></script>
+<script th:src="@{/assets/js/bootstrap.5.0.0.alpha-2-min.js}"></script>
+<script th:src="@{/assets/js/count-up.min.js}"></script>
+<script th:src="@{/assets/js/wow.min.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
 </body>
 </html>

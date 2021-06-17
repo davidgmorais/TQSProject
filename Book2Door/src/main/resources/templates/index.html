@@ -15,6 +15,7 @@
     <link rel="stylesheet" th:href="@{assets/css/LineIcons.2.0.css}" />
     <link rel="stylesheet" th:href="@{assets/css/animate.css}" />
     <link rel="stylesheet" th:href="@{assets/css/main.css}" />
+      <link rel="stylesheet" th:href="@{assets/css/stores.css}" />
   </head>
   <body>
 
@@ -98,13 +99,9 @@
 
                 <span class="input-group-text" id="inputGroup-sizing-lg"><a onclick="getLocation()"><i class="fas fa-map-marker-alt"></i></a></span>
                     <input type="text" id="searchTextField" class="form-control" placeholder="Enter your location" onclick="initAutocomplete()" aria-label="address" aria-describedby="addon-wrapping" >
-
-                    <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fas fa-map-marker-alt"></i></span>
-                    <input type="text" class="form-control" placeholder="Enter your location" aria-label="address" aria-describedby="addon-wrapping">
-
                 </div>
               </p>
-                <a th:href="@{/search}" ><button class="main-btn btn-hover wow fadeInUp" data-wow-delay=".6s">Find books</button></a>
+                <a th:href="@{/search}"><button class="main-btn btn-hover wow fadeInUp" data-wow-delay=".6s">Find books</button></a>
             </div>
             </div>
             <div class="col-lg-4">
@@ -151,7 +148,7 @@
 						<div class="delivery-content">
 							<div class="section-title">
 								<span class="wow fadeInUp" data-wow-delay=".2s">How does it work?</span>
-								<h1 class="mb-35 wow fadeInUp" data-wow-delay=".4s">Order Now, Receive Within xmins</h1>
+								<h1 class="mb-35 wow fadeInUp" data-wow-delay=".4s">Order Now, Receive Within 15 Minutes</h1>
 								<p class="mb-35 wow fadeInUp" data-wow-delay=".6s">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore hdht dolore magna aliquyam erat, sed diam voluptua.</p>
 							</div>
 						</div>
@@ -176,6 +173,17 @@
 							<div class="section-title">
 								<span class="wow fadeInUp" data-wow-delay=".2s">Stores</span>
 								<p class="mb-35 wow fadeInUp" data-wow-delay=".6s">Search for books in the following stores!</p>
+                                <div class="stores" th:object="${stores}">
+                                    <div class="grid-container">
+                                        <div class="grid-item"th:each="store: ${stores}">
+                                            <h3 th:text="${store.storeName}"></h3>
+                                            <a th:href="@{/store?name={s}(s=${store.storeName})}">
+                                                <img th:src="@{assets/img/store.jpg}" style="max-width: 350px">
+                                                <br>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
 							</div>
 						</div>
 					</div>
@@ -184,7 +192,7 @@
 		</section>
 
     <!-- ========================= footer start ========================= -->
-    <footer id="footer" class="footer pt-100 pb-70">
+    <footer id="footer" class="footer pt-100 pb-70" style="padding-top: 3%">
 			<div class="footer-shape">
 
 			</div>
