@@ -101,7 +101,11 @@
                     <input type="text" id="addressLocation" class="form-control" placeholder="Enter your location" onclick="initAutocomplete()" aria-label="address" aria-describedby="addon-wrapping" >
                 </div>
               </p>
-                <a th:href="@{/}" id="findBookAction" onclick="findBooks()"><button class="main-btn btn-hover wow fadeInUp" data-wow-delay=".6s">Find books</button></a>
+                <form th:action="@{/search/location}" id="findBookAction" method="post">
+                    <a>
+                        <button class="main-btn btn-hover wow fadeInUp" data-wow-delay=".6s" type="submit" th:field="*{address}">Find books</button>
+                    </a>
+                </form>
             </div>
             </div>
             <div class="col-lg-4">
@@ -304,12 +308,7 @@
         }
 
         function findBooks() {
-            if (document.getElementById("addressLocation").value == "") {
-                document.getElementById("findBookAction").href = '/location';
-            }
-            else {
-                document.getElementById("findBookAction").href = '/search';
-            }
+
         }
 
         function initMap() {

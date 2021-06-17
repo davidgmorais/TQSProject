@@ -28,10 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,10 +66,11 @@ public class Book2DoorController {
 
 
     @GetMapping(value="/")
-    public String index(Model model)
+    public String index(Model model, String address)
     {
         Set<Store> stores = storeRepository.findAllTopTwelveByAccepted(1);
         model.addAttribute("stores",stores);
+        model.addAttribute("address", address);
         return "index";
     }
 
@@ -152,13 +150,20 @@ public class Book2DoorController {
     @GetMapping(value="/search")
     public String order(Model model)
     {
-        
+
         Set<Store> stores = storeRepository.findAllTopTwelveByAccepted(1);
         model.addAttribute("stores",stores);
         Set<Book> books = bookRepository.findAllTopTwelveByPopularity(0);
         model.addAttribute("books",books);
         
         return "searchPage";
+    }
+
+
+    @PostMapping(value = "/search/location")
+    public String searchLocation(@ModelAttribute String address) {
+        return "redirect:/search";
+
     }
 
     @PostMapping(value="/search")
