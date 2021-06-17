@@ -4,6 +4,8 @@ import com.example.engine.component.JwtUtils;
 import com.example.engine.dto.ContribDTO;
 import com.example.engine.dto.UserDTO;
 import com.example.engine.entity.Contrib;
+import com.example.engine.entity.Order;
+import com.example.engine.entity.OrderStatus;
 import com.example.engine.entity.Rider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +42,10 @@ public class EngineController {
 
     @Autowired
     JwtUtils jwtUtils;
+    
+    @Autowired
+    OrderController orderController;
+
 
     private static final Logger logger = LoggerFactory.getLogger(EngineController.class);
 
@@ -209,6 +215,9 @@ public class EngineController {
     @GetMapping(value = "/rider/dashboard")
     public String riderIndex(Model model) {
         model.addAttribute("status", status);
+        jwt = jwt.replace("Bearer ", "");
+        //OrderStatus orderStatus = orderController.getRidersCurrentOrderStatus(jwt).getBody().getStatus();
+        //model.addAttribute("status", orderStatus);
         return INDEX_RIDER;
     }
 
@@ -232,5 +241,23 @@ public class EngineController {
         return RIDER_DASHBOARD;
     }
 
+    @PostMapping(value = "/update/order/{status}")
+    public String updateOrderStatus(@PathVariable String status) {
+        jwt = jwt.replace("Bearer ", "");
+        System.out.println(status);
+        if (status.equals("received")) {
+            status = OrderStatus.WAITING.name();
+        }
+        else if (status.equals("picked")) {
+            status = OrderStatus.BEING_DELIVERED.name();
+        }
+        else if (status.equals("delivered")) {
+            status = OrderStatus.DELIVERED.name();
+        }
+        Map<String, String> update = new HashMap<>();
+        update.put("status", status);
+        orderController.updateRidersCurrentOrderStatus(jwt, update);
+        return RIDER_DASHBOARD;
+    }
 
 }

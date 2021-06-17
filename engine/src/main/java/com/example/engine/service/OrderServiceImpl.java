@@ -137,11 +137,11 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public Order updateCurrentOrderStatus(String riderUsername, String status) {
         var rider = riderService.getRiderByUsername(riderUsername);
+
         if (rider == null) {
             return null;
         }
         var order = this.getCurrentOrderInfoForRider(riderUsername);
-
         switch (status.toUpperCase(Locale.ROOT)) {
             case "BEING_DELIVERED":
                 rider.setLocation(order.getServiceLocation().getLatitude(), order.getServiceLocation().getLongitude());
