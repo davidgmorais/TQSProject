@@ -37,13 +37,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserControllerITests {
     @Autowired
     private MockMvc mvc;
-
     @Autowired
     private UserRepository repository;
-
     @Autowired
     private ContribRepository contribRepository;
-
     @Autowired
     private RiderRepository riderRepository;
 

@@ -28,8 +28,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -73,13 +72,13 @@ class ContribControllerITest {
     }
 
     @Test
-    void whenPostToValidation_andValidContribId_thenValidateContributorRequest() throws Exception {
+    void whenPutToValidation_andValidContribId_thenValidateContributorRequest() throws Exception {
         User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
         Contrib bobService = new Contrib(bob, "Bob Service");
         repository.saveAndFlush(bob);
         contribRepository.saveAndFlush(bobService);
 
-        mvc.perform(post("/api/admin/requests/contributors/verify/" + bobService.getId()).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
+        mvc.perform(put("/api/admin/requests/contributors/verify/" + bobService.getId()).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isAccepted())
                 .andExpect(content().string("Contributors request accepted"));
 
@@ -89,8 +88,8 @@ class ContribControllerITest {
     }
 
     @Test
-    void whenPostToValidation_andInvalidContribId_thenNotFound() throws Exception {
-        mvc.perform(post("/api/admin/requests/contributors/verify/" + 1).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
+    void whenPutToValidation_andInvalidContribId_thenNotFound() throws Exception {
+        mvc.perform(put("/api/admin/requests/contributors/verify/" + 1).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("This service's request does not exist"));
 
@@ -99,13 +98,13 @@ class ContribControllerITest {
     }
 
     @Test
-    void whenPostToDeny_andValidContribId_thenDenyContributorRequest() throws Exception {
+    void whenPutToDeny_andValidContribId_thenDenyContributorRequest() throws Exception {
         User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
         Contrib bobService = new Contrib(bob, "Bob Service");
         repository.saveAndFlush(bob);
         contribRepository.saveAndFlush(bobService);
 
-        mvc.perform(post("/api/admin/requests/contributors/deny/" + bobService.getId()).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
+        mvc.perform(put("/api/admin/requests/contributors/deny/" + bobService.getId()).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isAccepted())
                 .andExpect(content().string("Contributor's request denied"));
 
@@ -117,8 +116,8 @@ class ContribControllerITest {
     }
 
     @Test
-    void whenPostToDeny_andInvalidContribId_thenNotFound() throws Exception {
-        mvc.perform(post("/api/admin/requests/contributors/deny/" + 1).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
+    void whenPutToDeny_andInvalidContribId_thenNotFound() throws Exception {
+        mvc.perform(put("/api/admin/requests/contributors/deny/" + 1).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("This service's request does not exist"));
 

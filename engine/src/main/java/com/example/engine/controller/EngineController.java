@@ -2,9 +2,10 @@ package com.example.engine.controller;
 
 import com.example.engine.component.JwtUtils;
 import com.example.engine.dto.ContribDTO;
+import com.example.engine.dto.CredentialsDTO;
+import com.example.engine.dto.LocationDTO;
 import com.example.engine.dto.UserDTO;
 import com.example.engine.entity.Contrib;
-import com.example.engine.entity.Order;
 import com.example.engine.entity.OrderStatus;
 import com.example.engine.entity.Rider;
 import org.slf4j.Logger;
@@ -103,9 +104,7 @@ public class EngineController {
     @PostMapping(value = "/login")
     public String signIn(UserDTO userDTO, Model model) {
         var authorizationKey = "Authorization";
-        HashMap<String, String> creds = new HashMap<>();
-        creds.put("username", userDTO.getUsername());
-        creds.put("password", userDTO.getPassword());
+        CredentialsDTO creds = new CredentialsDTO(userDTO.getUsername(), userDTO.getPassword());
         ResponseEntity<Map<String, String>> authentication = userController.authenticateUser(creds);
         if (authentication.getHeaders().containsKey(authorizationKey)) {
             List<String> authList = authentication.getHeaders().get("Authorization");
@@ -215,17 +214,17 @@ public class EngineController {
     @GetMapping(value = "/rider/dashboard")
     public String riderIndex(Model model) {
         model.addAttribute("status", status);
-        jwt = jwt.replace("Bearer ", "");
+        if (jwt != null) {
+            jwt = jwt.replace("Bearer ", "");
+        }
         //OrderStatus orderStatus = orderController.getRidersCurrentOrderStatus(jwt).getBody().getStatus();
         //model.addAttribute("status", orderStatus);
         return INDEX_RIDER;
     }
 
     @PostMapping(value = "/rider/dashboard/{log}/{lat}")
-    public String startShiftRider(@PathVariable String log, @PathVariable String lat, Model model) {
-        Map<String, String> location = new HashMap<>();
-        location.put("latitude", log);
-        location.put("longitude", lat);
+    public String startShiftRider(@PathVariable Double log, @PathVariable Double lat, Model model) {
+        LocationDTO location = new LocationDTO(lat, log);
         logger.info("token {}", jwt);
         jwt = jwt.replace("Bearer ", "");
         ResponseEntity<String> startShift = riderController.startShift(jwt, location);
