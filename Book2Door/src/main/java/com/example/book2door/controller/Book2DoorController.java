@@ -214,6 +214,7 @@ public class Book2DoorController {
     @GetMapping(value="/cart")
     public String cart(Model model)
     {
+
         JwtUser jwtClient= (JwtUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var client = clientRepository.findClientByEmail(jwtClient.getEmail());
         List<Long> booksOnCart = client.getCart();
@@ -329,7 +330,8 @@ public class Book2DoorController {
     
     @GetMapping(value="/order")
     public String orderProcess(Long storeId, Model model)
-    {   
+    {
+
         JwtUser jwtClient= (JwtUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var client = clientRepository.findClientByEmail(jwtClient.getEmail());
         List<Long> booksOnCart = client.getCart();
@@ -346,12 +348,14 @@ public class Book2DoorController {
         var order = new BookOrder(client.getAddress(), books, total,storeRepository.getById(storeId).getStoreAddress());
         orderRepository.save(order);
 
+
         return "orderPage";
     }
 
     @GetMapping(value="/store/dashboard")
     public String adminStore(Model model)
     {
+
         JwtUser jwtstore =(JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         var store = storeRepository.findBystoreEmail(jwtstore.getEmail());
         Set<Book> bookList = store.getBookList();
