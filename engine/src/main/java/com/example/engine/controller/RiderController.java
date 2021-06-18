@@ -85,6 +85,7 @@ public class RiderController {
             @ApiResponse(code = 200, message = "Rider's shift started successfully."),
             @ApiResponse(code = 400, message = "Invalid parameters passed in the body."),
             @ApiResponse(code = 401, message = "Unauthorized rider."),
+            @ApiResponse(code = 404, message = "Invalid rider or rider does not exist."),
             @ApiResponse(code = 405, message = "Wrong credentials provided - authentication failed.")
     })
     @PutMapping("/rider/shift/start")
@@ -106,8 +107,16 @@ public class RiderController {
 
     }
 
+    @ApiOperation(value = "End a shift as a rider", response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Rider's shift ended successfully."),
+            @ApiResponse(code = 401, message = "Unauthorized rider."),
+            @ApiResponse(code = 404, message = "Invalid rider or rider does not exist."),
+            @ApiResponse(code = 405, message = "Wrong credentials provided - authentication failed.")
+    })
     @PutMapping("/rider/shift/end")
-    public ResponseEntity<String> endShift(@RequestHeader(value = "Authorization") String jwt) {
+    public ResponseEntity<String> endShift(
+            @ApiParam(name = "Authorization", value = "JWT token used for authentication and to fetch the corresponding rider's username.", required = true, example = "Bearer RiderJWTTokenString") @RequestHeader(value = "Authorization") String jwt) {
         jwt = jwt.replace("Bearer ", "");
         String riderUsername = jwtUtils.getUsernameFromJwt(jwt);
         logger.info("Recognized rider {}", riderUsername);

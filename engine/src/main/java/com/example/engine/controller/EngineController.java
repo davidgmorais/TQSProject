@@ -243,15 +243,19 @@ public class EngineController {
     @PostMapping(value = "/update/order/{status}")
     public String updateOrderStatus(@PathVariable String status) {
         jwt = jwt.replace("Bearer ", "");
-        System.out.println(status);
-        if (status.equals("received")) {
-            status = OrderStatus.WAITING.name();
-        }
-        else if (status.equals("picked")) {
-            status = OrderStatus.BEING_DELIVERED.name();
-        }
-        else if (status.equals("delivered")) {
-            status = OrderStatus.DELIVERED.name();
+
+        switch (status) {
+            case "received":
+                status = OrderStatus.WAITING.name();
+                break;
+            case "picked":
+                status = OrderStatus.BEING_DELIVERED.name();
+                break;
+            case "delivered":
+                status = OrderStatus.DELIVERED.name();
+                break;
+            default:
+                return RIDER_DASHBOARD;
         }
         Map<String, String> update = new HashMap<>();
         update.put("status", status);
