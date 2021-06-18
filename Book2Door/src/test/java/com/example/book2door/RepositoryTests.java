@@ -8,16 +8,18 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.book2door.entities.Admin;
 import com.example.book2door.entities.Book;
 import com.example.book2door.entities.Store;
+import com.example.book2door.repository.AdminRepository;
 import com.example.book2door.repository.BookRepository;
 import com.example.book2door.repository.StoreRepository;
-
 
 @ExtendWith(MockitoExtension.class)
 class RepositoryTests {
@@ -27,6 +29,9 @@ class RepositoryTests {
 
     @Mock(lenient = true)
     private StoreRepository storeRepository;
+
+    @Mock(lenient = true)
+    private AdminRepository adminRepository;
 
     @BeforeEach
      void setUp() {
@@ -40,7 +45,7 @@ class RepositoryTests {
         Mockito.when(storeRepository.findBystoreEmail(store.getEmail())).thenReturn(store);
         Mockito.when(storeRepository.findBystoreName(store.getStoreName())).thenReturn(store);
         Mockito.when(storeRepository.findByAccepted(store.wasAccepted())).thenReturn(storeList);
-       
+        Mockito.when(adminRepository.findByEmail("admin@service.pt")).thenReturn(new Admin());
     }
 
     
@@ -138,7 +143,10 @@ class RepositoryTests {
         assertThat(store.getId()).isEqualTo(storeFromEmail.getId()); 
     }
 
-    
+    @Test
+    void whenLoadAdminByEmailAndItsRightEmailReturnJwtUser(){
+      assertThat(adminRepository.findByEmail("admin@service.pt")).isNotNull();
+    }
 
 
 

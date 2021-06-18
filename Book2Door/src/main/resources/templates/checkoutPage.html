@@ -96,8 +96,8 @@
                     </div>
                     <p><i th:text="${total}" class="fas fa-money-bill-wave-alt"></i> </p>
                 </div>
-                <div id="placeOrder">
-                    <a th:href="@{/order}"><button class="main-btn btn-hover wow fadeInUp order">Place Order</button></a>
+                <div id="placeOrder" th:object="${store}">
+                    <a th:href="@{/order?storeId={id}(id=${store.id})}"><button class="main-btn btn-hover wow fadeInUp order">Place Order</button></a>
                 </div>
             </div>
         </div>

@@ -2,6 +2,7 @@ package com.example.book2door.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,12 +12,15 @@ import com.example.book2door.entities.Admin;
 import com.example.book2door.entities.Book;
 import com.example.book2door.entities.Client;
 import com.example.book2door.entities.JwtUser;
+import com.example.book2door.entities.BookOrder;
 import com.example.book2door.entities.Store;
 import com.example.book2door.repository.AdminRepository;
 import com.example.book2door.repository.BookRepository;
 import com.example.book2door.repository.ClientRepository;
+import com.example.book2door.repository.OrderRepository;
 import com.example.book2door.repository.StoreRepository;
 import com.example.book2door.service.ClientService;
+import com.example.book2door.service.StoreService;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +49,9 @@ public class Book2DoorController {
     private static final String EMAIL_CONST = "email" ;
     private static final String REDIRECT_ADMIN = "redirect:/admin";
     private static final String AUTH_SUCCESS = "Authentication successful - Authorization token was sent in the header.";
-    
+    private static final String MODEL_BOOKS_ATTR = "books";
+    private static final String MODEL_STORE_ATTR = "store";
+
     @Autowired
     JwtUtils jwtUtils;
     
@@ -56,7 +62,14 @@ public class Book2DoorController {
     ClientRepository clientRepository;
 
     @Autowired
+    OrderRepository orderRepository;
+
+
+    @Autowired
     ClientService clientService;
+
+    @Autowired
+    StoreService storeService;
 
     @Autowired
     StoreRepository storeRepository;
@@ -90,27 +103,25 @@ public class Book2DoorController {
     @PostMapping(value = "/signup")
     public String signup(@RequestParam String name,@RequestParam String email,@RequestParam String zipcode,
     @RequestParam String password,@RequestParam String city,@RequestParam String address,@RequestParam String phone) {
-        var c =clientRepository.findClientByEmail(email);
         String encodedPassword = new BCryptPasswordEncoder().encode(password);
-        if(c == null){
-            var client = new Client(email,name, encodedPassword,phone,city, address,zipcode);
-            clientRepository.save(client);
-            return REDIRECT_LOGIN;
-        }
+        var client = new Client(email,name, encodedPassword,phone,city, address,zipcode);
         
-        return "signup";
+        return clientService.register(client)==null? "signup" : REDIRECT_LOGIN;
     }
 
     @PostMapping(value = "/log")
     public String log(@RequestParam String email,@RequestParam String password) {
         boolean isStore = storeRepository.findBystoreEmail(email)!=null;
+        if(storeRepository.findBystoreEmail(email).wasAccepted()==2 || storeRepository.findBystoreEmail(email).wasAccepted() ==0){
+            return "error";
+        }
         HashMap<String, String> creds = new HashMap<>();
         creds.put(EMAIL_CONST, email);
         creds.put(PASS, password);
         ResponseEntity<Map<String, String>> authentication = authenticateClient(creds,isStore);
         if (authentication.getHeaders().containsKey(AUTHO)) {
             List<String> authList = authentication.getHeaders().get(AUTHO);
-            if (authList != null && !authList.isEmpty()) {
+            if (authList != null) {
                 String token = authList.get(0);
                 logger.info("Token to include on header: {}", token);
                 var body= authentication.getBody();
@@ -141,11 +152,10 @@ public class Book2DoorController {
     @GetMapping(value="/search")
     public String order(Model model)
     {
-        
         Set<Store> stores = storeRepository.findAllTopTwelveByAccepted(1);
         model.addAttribute("stores",stores);
         Set<Book> books = bookRepository.findAllTopTwelveByPopularity(0);
-        model.addAttribute("books",books);
+        model.addAttribute(MODEL_BOOKS_ATTR,books);
         
         return "searchPage";
     }
@@ -155,7 +165,7 @@ public class Book2DoorController {
     {
         var store = storeRepository.findBystoreName(param);
         if(store!=null){
-            model.addAttribute("store",store);
+            model.addAttribute(MODEL_STORE_ATTR,store);
             return "redirect:/store?name="+param;
         }
         var book = bookRepository.findByTitle(param);
@@ -172,7 +182,7 @@ public class Book2DoorController {
         var store = storeRepository.findBystoreName(name);
         var bookList = store.getBookList();
         model.addAttribute("bookList", bookList);
-        model.addAttribute("store",store);
+        model.addAttribute(MODEL_STORE_ATTR,store);
         
         return "storePage";
     }
@@ -188,8 +198,8 @@ public class Book2DoorController {
     @GetMapping(value="/cart")
     public String cart(Model model)
     {
-        JwtUser JwtClient= (JwtUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Client client = clientRepository.findClientByEmail(JwtClient.getEmail());
+        JwtUser jwtClient= (JwtUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var client = clientRepository.findClientByEmail(jwtClient.getEmail());
         List<Long> booksOnCart = client.getCart();
         double total=0;
         Map<Book,Integer> books = new HashMap<>();
@@ -197,10 +207,10 @@ public class Book2DoorController {
         for(Long id : booksOnCart){
             book = bookRepository.findById(id).orElse(null);
             books.merge(book,1, Integer::sum);
-            total+=book.getPrice();  
+            total+=book==null? 0: book.getPrice();  
         }
         model.addAttribute("total",total);
-        model.addAttribute("books",books);
+        model.addAttribute(MODEL_BOOKS_ATTR,books);
         return "cartPage";
     }
 
@@ -208,8 +218,8 @@ public class Book2DoorController {
     @GetMapping(value="/cart/remove")
     public String removeFromCart(@RequestParam long id, Model model)
     {
-        JwtUser JwtClient= (JwtUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Client client = clientRepository.findClientByEmail(JwtClient.getEmail());
+        JwtUser jwtClient= (JwtUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var client = clientRepository.findClientByEmail(jwtClient.getEmail());
         client.getCart().remove(id);
         clientRepository.save(client);
         return "redirect:/cart";
@@ -217,8 +227,8 @@ public class Book2DoorController {
     @GetMapping(value="/cart/add")
     public String addToCart(@RequestParam long id, Model model)
     {
-        JwtUser JwtClient= (JwtUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Client client = clientRepository.findClientByEmail(JwtClient.getEmail());
+        JwtUser jwtClient= (JwtUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var client = clientRepository.findClientByEmail(jwtClient.getEmail());
         client.getCart().add(id);
         clientRepository.save(client);
         return "redirect:/cart";
@@ -229,21 +239,31 @@ public class Book2DoorController {
     @GetMapping(value="/checkout")
     public String checkout(Model model)
     {
-        JwtUser JwtClient= (JwtUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Client client = clientRepository.findClientByEmail(JwtClient.getEmail());
+        JwtUser jwtClient= (JwtUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var client = clientRepository.findClientByEmail(jwtClient.getEmail());
         List<Long> booksOnCart = client.getCart();
         double total=0;
-        Book book;
         List<Book> books= new ArrayList<>();
+        Set<Store> bookSellers= new HashSet<>();
         for(Long id : booksOnCart){
-            book = bookRepository.findById(id).orElse(null);
-            books.add(book);
-            total+=book.getPrice();
+            var book = bookRepository.findById(id).orElse(null);
+            if(book!=null){
+                books.add(book);
+                total+=book.getPrice();
+                bookSellers=book.getSellers();
+            }
+        }
+        List<Store> stores;
+        if(bookSellers!=null){
+            stores= new ArrayList<>(bookSellers);
+        }
+        else{
+            stores = new ArrayList<>();
         }
         model.addAttribute("total",total);
-        model.addAttribute("books",books);
+        model.addAttribute(MODEL_BOOKS_ATTR, books);
         model.addAttribute("client",client);
-
+        model.addAttribute(MODEL_STORE_ATTR,stores.get(0));
         return "checkoutPage";
     }
 
@@ -256,13 +276,10 @@ public class Book2DoorController {
     @PostMapping(value = "/addStore")
     public String createStore(@RequestParam String storeName,@RequestParam String storeAddress,@RequestParam String storePhone,
     @RequestParam String storeEmail,@RequestParam String fullName,@RequestParam String password) {
-        var s = storeRepository.findBystoreEmail(storeEmail);
         String encodedPassword = new BCryptPasswordEncoder().encode(password);
-        if(s==null){
-            storeRepository.save(new Store(storeName,storeAddress,fullName,encodedPassword,storePhone,storeEmail));
-            return REDIRECT_LOGIN;
-        }
-        return "addStorePage";
+        var store = new Store(storeName,storeAddress,fullName,encodedPassword,storePhone,storeEmail);
+        return storeService.register(store)==null? "addStorePage" : REDIRECT_LOGIN;
+        
     }
 
 
@@ -290,19 +307,34 @@ public class Book2DoorController {
     }    
     
     @GetMapping(value="/order")
-    public String orderProcess()
-    {
+    public String orderProcess(Long storeId, Model model)
+    {   
+        JwtUser jwtClient= (JwtUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var client = clientRepository.findClientByEmail(jwtClient.getEmail());
+        List<Long> booksOnCart = client.getCart();
+        double total=0;
+        Book book;
+        List<String> books= new ArrayList<>();
+        for(Long id : booksOnCart){
+            book = bookRepository.findById(id).orElse(null);
+            if(book!=null){
+                books.add(book.getTitle());
+                total+=book.getPrice();
+            }
+        }
+        var order = new BookOrder(client.getAddress(), books, total,storeRepository.getById(storeId).getStoreAddress());
+        orderRepository.save(order);
+
         return "orderPage";
     }
 
     @GetMapping(value="/storeDashboard")
     public String adminStore(Model model)
     {
-        JwtUser Jwtstore =(JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(Jwtstore.getEmail());
-        var store = storeRepository.findBystoreEmail(Jwtstore.getEmail());
+        JwtUser jwtstore =(JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var store = storeRepository.findBystoreEmail(jwtstore.getEmail());
         Set<Book> bookList = store.getBookList();
-        model.addAttribute("store", store);
+        model.addAttribute(MODEL_STORE_ATTR, store);
         model.addAttribute("bookList", bookList);
         return "adminStorePage";
     }
@@ -312,8 +344,8 @@ public class Book2DoorController {
     @RequestParam int stock, @RequestParam double price)
     {   
         var book= bookRepository.findByTitle(title);
-        JwtUser Jwtstore =(JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        var store = storeRepository.findBystoreEmail(Jwtstore.getEmail());
+        JwtUser jwtstore =(JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var store = storeRepository.findBystoreEmail(jwtstore.getEmail());
         if(book==null){
             book = new Book(title,synopsis,author,price,stock);
             book.getSellers().add(store);

@@ -1,16 +1,22 @@
 package com.example.book2door;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.example.book2door.component.JwtUtils;
 import com.example.book2door.controller.MyErrorController;
 import com.example.book2door.entities.Admin;
 import com.example.book2door.entities.Book;
+import com.example.book2door.entities.BookOrder;
 import com.example.book2door.entities.Client;
+import com.example.book2door.entities.JwtUser;
 import com.example.book2door.entities.Store;
 import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.Test;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.junit.jupiter.api.BeforeEach;
 
 class UnitTests{
@@ -74,6 +80,10 @@ class UnitTests{
         Set<Book> bookList = store.getBookList();
         assertThat(bookList.contains(book)).isTrue();
         assertThat(new Store()).isEqualTo(new Store());
+        store.deny();
+        assertThat(store.wasAccepted()).isEqualTo(2);
+        store.accept();
+        assertThat(store.wasAccepted()).isEqualTo(1);
         
     }   
 
@@ -136,6 +146,7 @@ class UnitTests{
         assertThat(client.getzipcode()).isEqualTo("aaaa");
         assertThat(client.getRole()).isEqualTo(2);
         assertThat(client.getId()).isNull();
+        assertThat(client.getCart()).isEmpty();
     }
     
     @Test
@@ -189,6 +200,55 @@ class UnitTests{
         assertThat(Notequal2).isFalse();
     }
 
+
+    @Test
+    void testBookOrder(){
+        List<String> books = null;
+        BookOrder bookorder = new BookOrder("rua do braçal",books,10.9,"forum aveiro");
+        assertThat(bookorder.getBooks()).isNull();
+        assertThat(bookorder.getClientAddress()).isEqualTo("rua do braçal");
+        assertThat(bookorder.getStoreAddress()).isEqualTo("forum aveiro");
+        assertThat(bookorder.getTotal()).isEqualTo(10.9);
+    }
+
+    @Test
+    void testJwtutils(){
+        JwtUtils ju = new JwtUtils();
+        assertThat(ju.validateJwtToken("a")).isFalse();
+
+    }
+
+    @Test
+    void testJwtUserClient(){
+        Client client = new Client("email", "name", "password",  "phone",  "city", "address",  "zipcode");
+        JwtUser jwtuser = new JwtUser(client);
+        assertThat(jwtuser.getEmail()).isEqualTo("email");
+        assertThat(jwtuser.getPassword()).isEqualTo("password");
+        assertThat(jwtuser.getRole()).isEqualTo(client.getRole());
+        assertThat(jwtuser.getUsername()).isEqualTo("name");
+        assertThat(jwtuser.getAuthorities()).isEqualTo(Collections.singleton(new SimpleGrantedAuthority("ROLE_CLIENT")));
+        assertThat(jwtuser.isAccountNonExpired()).isTrue();
+        assertThat(jwtuser.isAccountNonLocked()).isTrue();
+        assertThat(jwtuser.isCredentialsNonExpired()).isTrue();
+        assertThat(jwtuser.isEnabled()).isTrue();
+    }
+    @Test
+    void testJwtUserStore(){
+        JwtUser jwtuser = new JwtUser(store);
+        assertThat(jwtuser.getEmail()).isEqualTo("TestEmail");
+        assertThat(jwtuser.getPassword()).isEqualTo("Test");
+        assertThat(jwtuser.getRole()).isEqualTo(store.getRole());
+        assertThat(jwtuser.getUsername()).isEqualTo("TestStoreName");
+    }
+
+    @Test
+    void testJwtUserAdmin(){
+        JwtUser jwtuser = new JwtUser(new Admin());
+        assertThat(jwtuser.getEmail()).isEqualTo("admin@service.pt");
+        assertThat(jwtuser.getRole()).isZero();
+        assertThat(jwtuser.getUsername()).isEqualTo("Admin");
+        assertThat(jwtuser.getId()).isEqualTo((long)1);
+    }
 
 
 }

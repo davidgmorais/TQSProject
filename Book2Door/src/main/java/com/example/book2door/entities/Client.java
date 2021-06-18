@@ -149,21 +149,5 @@ public class Client {
     }
 
 
-    @Override
-    public String toString() {
-        return "{" +
-            " id='" + getId() + "'" +
-            ", email='" + getEmail() + "'" +
-            ", name='" + getName() + "'" +
-            ", password='" + getPassword() + "'" +
-            ", phone='" + getPhone() + "'" +
-            ", city='" + getCity() + "'" +
-            ", address='" + getAddress() + "'" +
-            ", zipcode='" + getzipcode() + "'" +
-            ", role='" + getRole() + "'" +
-            ", cart='" + getCart() + "'" +
-            "}";
-    }
-
     
 }
