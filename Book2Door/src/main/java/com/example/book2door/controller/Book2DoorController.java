@@ -32,10 +32,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,10 +79,22 @@ public class Book2DoorController {
 
 
     @GetMapping(value="/")
-    public String index()
-    {    
+    public String index(Model model, String address)
+    {
+        Set<Store> stores = storeRepository.findAllTopTwelveByAccepted(1);
+        model.addAttribute("stores",stores);
+        model.addAttribute("address", address);
         return "index";
+    }
 
+    @PostMapping(value = "/")
+    public String index(@RequestParam String param, Model model) {
+        var store = storeRepository.findBystoreName(param);
+        if(store!=null){
+            model.addAttribute("store",store);
+            return "redirect:/store?name="+param;
+        }
+        return "redirect:/";
     }
 
     @GetMapping(value="/login")
@@ -131,7 +140,7 @@ public class Book2DoorController {
                         return REDIRECT_ADMIN;
                     }
                     else if (role.equals("1")) {
-                        return "redirect:/storeDashboard";
+                        return "redirect:/store/dashboard";
                     }
                     else{
                         return "redirect:/";
@@ -158,6 +167,13 @@ public class Book2DoorController {
         model.addAttribute(MODEL_BOOKS_ATTR,books);
         
         return "searchPage";
+    }
+
+
+    @PostMapping(value = "/search/location")
+    public String searchLocation(@ModelAttribute String address) {
+        return "redirect:/search";
+
     }
 
     @PostMapping(value="/search")
@@ -304,7 +320,12 @@ public class Book2DoorController {
         store.deny();
         storeRepository.save(store);
         return REDIRECT_ADMIN;
-    }    
+    }
+
+    @GetMapping(value = "/location")
+    public String searchLocation() {
+        return "searchPageLocation";
+    }
     
     @GetMapping(value="/order")
     public String orderProcess(Long storeId, Model model)
@@ -328,7 +349,7 @@ public class Book2DoorController {
         return "orderPage";
     }
 
-    @GetMapping(value="/storeDashboard")
+    @GetMapping(value="/store/dashboard")
     public String adminStore(Model model)
     {
         JwtUser jwtstore =(JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -339,7 +360,7 @@ public class Book2DoorController {
         return "adminStorePage";
     }
 
-    @PostMapping(value="/storeDashboard")
+    @PostMapping(value="/store/dashboard")
     public String addBookToStore(@RequestParam String title, @RequestParam String synopsis, @RequestParam String author,
     @RequestParam int stock, @RequestParam double price)
     {   
@@ -359,7 +380,7 @@ public class Book2DoorController {
             store.getBookList().add(book);
             storeRepository.save(store);
         }
-        return "redirect:/storeDashboard";
+        return "redirect:/store/dashboard";
     }
 
 
