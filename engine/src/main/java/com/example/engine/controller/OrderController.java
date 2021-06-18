@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/api")
@@ -26,17 +26,100 @@ public class OrderController {
     @Autowired
     JwtUtils jwtUtils;
 
-    @PostMapping("/contributor/order/place")
-    public ResponseEntity<Order> placeOrder(@RequestHeader(value = "Authorization") String jwt, @RequestBody OrderDTO orderToPlace) {
-        jwt = jwt.replace("Bearer ", "");
+    @PostMapping("/order/{contribId}")
+    public ResponseEntity<Order> placeOrder(@PathVariable int contribId, @RequestBody OrderDTO orderToPlace) {
+        var order = orderService.placeOrder(contribId, orderToPlace);
+        logger.info("order {}", order);
+        return (order != null) ? new ResponseEntity<>(order, HttpStatus.CREATED) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    // add get info for public
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<Order> getOrderInfo(@PathVariable Long orderId) {
+        var order = orderService.getOrderByI(orderId);
+        return (order != null) ? new ResponseEntity<>(order, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/contributor/order/{orderId}")
+    public ResponseEntity<Order> getOrderStatus(@PathVariable Long orderId, @RequestHeader(value = "Authorization") String jwt) {
+        jwt = this.trimToken(jwt);
         logger.info("{}", jwt);
         String contribUsername = jwtUtils.getUsernameFromJwt(jwt);
         logger.info("Recognized service {}", contribUsername);
 
-        var order = orderService.placeOrder(contribUsername, orderToPlace);
+        var order = orderService.getOrderInfoForContrib(orderId, contribUsername);
         logger.info("order {}", order);
 
-        return (order != null) ? new ResponseEntity<>(order, HttpStatus.CREATED) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return (order != null) ? new ResponseEntity<>(order, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    // add get mapping to /contributor/order to return all orders history of a contributor
+
+    @GetMapping("/rider/order/current")
+    public ResponseEntity<Order> getRidersCurrentOrderStatus(@RequestHeader(value = "Authorization") String jwt) {
+        jwt = this.trimToken(jwt);
+        logger.info("{}", jwt);
+        String riderUsername = jwtUtils.getUsernameFromJwt(jwt);
+        logger.info("Recognized rider {}", riderUsername);
+
+        var order = orderService.getCurrentOrderInfoForRider(riderUsername);
+        logger.info("Order {}", order);
+
+        return (order != null) ? new ResponseEntity<>(order, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/rider/order/{orderId}")
+    public ResponseEntity<Order> getRidersCurrentOrderStatus(@RequestHeader(value = "Authorization") String jwt, @PathVariable Long orderId) {
+        jwt = this.trimToken(jwt);
+        logger.info("{}", jwt);
+        String riderUsername = jwtUtils.getUsernameFromJwt(jwt);
+        logger.info("Rider username {}", riderUsername);
+
+        var order = orderService.getOrderInfoForRider(orderId, riderUsername);
+        logger.info("Order {}", order);
+
+        return (order != null) ? new ResponseEntity<>(order, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PutMapping("/rider/order/current")
+    public ResponseEntity<Order> updateRidersCurrentOrderStatus(@RequestHeader(value = "Authorization") String jwt,
+                                                                @RequestBody Map<String, String> status) {
+        jwt = this.trimToken(jwt);
+        logger.info("{}", jwt);
+        String riderUsername = jwtUtils.getUsernameFromJwt(jwt);
+        logger.info("Rider username {}", riderUsername);
+
+        String latitudeKey = "latitude";
+        String longitudeKey = "longitude";
+        String statusKey = "status";
+
+        if (status.keySet().containsAll(Arrays.asList(latitudeKey, longitudeKey, statusKey))) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Order order;
+        if (status.keySet().containsAll(Arrays.asList(latitudeKey, longitudeKey))) {
+            try {
+                order = orderService.updateCurrentOrderLocation(
+                        riderUsername, Double.parseDouble(status.get(latitudeKey)), Double.parseDouble(status.get(longitudeKey)));
+                logger.info("location updated");
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+        } else if (status.containsKey(statusKey) && !(status.containsKey(latitudeKey) || status.containsKey(longitudeKey))) {
+            order = orderService.updateCurrentOrderStatus(riderUsername, status.get(statusKey));
+            logger.info("status (and consequently location) updated {}", order);
+
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return (order != null) ? new ResponseEntity<>(order, HttpStatus.ACCEPTED) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    private String trimToken(String token) {
+        return token.replace("Bearer ", "");
     }
 
 }
