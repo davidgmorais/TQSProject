@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -39,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
 class OrderControllerITest {
-    private String jwt;
+    private int contribId;
     @Autowired
     private MockMvc mvc;
 
@@ -72,11 +73,7 @@ class OrderControllerITest {
         Contrib contrib = new Contrib(user, "Service name");
         userRepository.saveAndFlush(user);
         contribRepository.saveAndFlush(contrib);
-
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken("contrib", "password"));
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        jwt = jwtUtils.generateJwtToken(auth);
+        contribId = contrib.getId();
     }
 
     @AfterEach
@@ -100,8 +97,9 @@ class OrderControllerITest {
         riderRepository.saveAndFlush(riderBob);
 
         OrderDTO order = new OrderDTO(20.0, 42.6, -7.1, 42.5, -7.0);
+        System.out.println(contribId);
 
-        mvc.perform(post("/api/contributor/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt).content(toJson(order)))
+        mvc.perform(post("/api/order/" + contribId).contentType(MediaType.APPLICATION_JSON).content(toJson(order)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.value", is(20.0)))
                 .andExpect(jsonPath("$.deliveryLocation.latitude", is(42.5)));
@@ -116,7 +114,7 @@ class OrderControllerITest {
     void whenPlacingAnOrder_andValidOrder_andInValidContrib_thenBadRequest() throws Exception {
         OrderDTO order = new OrderDTO(20.0, 42.6, -7.1, 42.5, -7.0);
 
-        mvc.perform(post("/api/contributor/order").contentType(MediaType.APPLICATION_JSON).content(toJson(order)))
+        mvc.perform(post("/api/order/-1").contentType(MediaType.APPLICATION_JSON).content(toJson(order)))
                 .andExpect(status().isBadRequest());
 
         List<Order> foundOrders = repository.findAll();
@@ -519,6 +517,32 @@ class OrderControllerITest {
         Order dispatchedOrder = repository.findOrderById(order2.getId());
         assertThat(dispatchedOrder.getPickupRider().getId()).isEqualTo(riderBob.getId());
         assertThat(dispatchedOrder.getStatus()).isEqualTo(OrderStatus.ASSIGNED);
+    }
+
+    @Test
+    void whenGetOrderInfo_andOrderIsValid_thenReturnOrder() throws Exception {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        userRepository.saveAndFlush(bob);
+        Contrib bobService = new Contrib(bob, "Bob's Store");
+        contribRepository.saveAndFlush(bobService);
+        Location deliveryLocation = new Location(42.5, -7.0);
+        locationRepository.saveAndFlush(deliveryLocation);
+        Location serviceLocation = new Location(41.5, -7.6);
+        locationRepository.saveAndFlush(serviceLocation);
+        Order order = new Order(20.0, bobService, deliveryLocation);
+        order.setServiceLocation(serviceLocation);
+        repository.saveAndFlush(order);
+
+        mvc.perform(get("/api/order/" + order.getId()).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(order.getId().intValue())))
+                .andExpect(jsonPath("$.serviceOwner.storeName", is(bobService.getStoreName())));
+    }
+
+    @Test
+    void whenGetOrderInfo_andOrderIsInvalid_thenReturnNull() throws Exception {
+        mvc.perform(get("/api/order/" + -10).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
 

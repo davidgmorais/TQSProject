@@ -26,17 +26,18 @@ public class OrderController {
     @Autowired
     JwtUtils jwtUtils;
 
-    @PostMapping("/contributor/order")
-    public ResponseEntity<Order> placeOrder(@RequestHeader(value = "Authorization") String jwt, @RequestBody OrderDTO orderToPlace) {
-        jwt = this.trimToken(jwt);
-        logger.info("{}", jwt);
-        String contribUsername = jwtUtils.getUsernameFromJwt(jwt);
-        logger.info("Recognized service {}", contribUsername);
-
-        var order = orderService.placeOrder(contribUsername, orderToPlace);
+    @PostMapping("/order/{contribId}")
+    public ResponseEntity<Order> placeOrder(@PathVariable int contribId, @RequestBody OrderDTO orderToPlace) {
+        var order = orderService.placeOrder(contribId, orderToPlace);
         logger.info("order {}", order);
-
         return (order != null) ? new ResponseEntity<>(order, HttpStatus.CREATED) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    // add get info for public
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<Order> getOrderInfo(@PathVariable Long orderId) {
+        var order = orderService.getOrderByI(orderId);
+        return (order != null) ? new ResponseEntity<>(order, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/contributor/order/{orderId}")

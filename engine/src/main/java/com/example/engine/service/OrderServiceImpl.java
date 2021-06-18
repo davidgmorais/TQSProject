@@ -32,8 +32,8 @@ public class OrderServiceImpl implements OrderService{
     DispatchService dispatchService;
 
     @Override
-    public Order placeOrder(String contribUsername, OrderDTO orderToPlace) {
-        var contributor = contribService.getContributorByUsername(contribUsername);
+    public Order placeOrder(int contribId, OrderDTO orderToPlace) {
+        var contributor = contribService.getContributorById(contribId);
         logger.info("Contributor found {}", contributor);
         if (contributor != null) {
             logger.info("Starting Order with value {}€ to be delivered at {}, {}...", orderToPlace.getValue(), orderToPlace.getDeliveryLat(), orderToPlace.getDeliveryLon());

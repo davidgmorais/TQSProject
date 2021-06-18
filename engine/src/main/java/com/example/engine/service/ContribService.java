@@ -16,4 +16,5 @@ public interface ContribService {
     Boolean isVerified(User user);
     List<Contrib> search(Map<String, String> filters);
     Contrib getContributorByUsername(String username);
+    Contrib getContributorById(int contribId);
 }

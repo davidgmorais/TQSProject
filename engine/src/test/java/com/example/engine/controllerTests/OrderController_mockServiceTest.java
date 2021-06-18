@@ -25,7 +25,7 @@ import java.util.HashMap;
 import static org.hamcrest.CoreMatchers.is;
 
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,9 +53,9 @@ class OrderController_mockServiceTest {
         Order order = new Order(20.0, bobService, new Location(42.5, -7.0));
 
         when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(bob.getUsername());
-        when(orderService.placeOrder(Mockito.anyString(), Mockito.any())).thenReturn(order);
+        when(orderService.placeOrder(Mockito.anyInt(), Mockito.any())).thenReturn(order);
 
-        mvc.perform(post("/api/contributor/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt").content(toJson(orderDTO)))
+        mvc.perform(post("/api/order/" + bobService.getId()).contentType(MediaType.APPLICATION_JSON).content(toJson(orderDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.value", is(20.0)))
                 .andExpect(jsonPath("$.deliveryLocation.latitude", is(42.5)));
@@ -67,9 +67,9 @@ class OrderController_mockServiceTest {
         OrderDTO orderDTO = new OrderDTO(20.0, 42.6, -7.1, 42.5, -7.0);
 
         when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(bob.getUsername());
-        when(orderService.placeOrder(Mockito.anyString(), Mockito.any())).thenReturn(null);
+        when(orderService.placeOrder(Mockito.anyInt(), Mockito.any())).thenReturn(null);
 
-        mvc.perform(post("/api/contributor/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt").content(toJson(orderDTO)))
+        mvc.perform(post("/api/order/1").contentType(MediaType.APPLICATION_JSON).content(toJson(orderDTO)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -207,6 +207,29 @@ class OrderController_mockServiceTest {
                 .andExpect(jsonPath("$.status", is(OrderStatus.WAITING.toString())))
                 .andExpect(jsonPath("$.pickupRider.id", is(riderDakota.getId())))
                 .andExpect(jsonPath("$.serviceOwner.storeName", is(bobService.getStoreName())));
+    }
+
+    @Test
+    void whenGetOrderInfo_andOrderIsValid_thenReturnOrder() throws Exception {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        Contrib bobService = new Contrib(bob, "Bob's Store");
+        Order order = new Order(20.0, bobService, new Location(42.5, -7.0));
+        order.setId(1L);
+
+        when(orderService.getOrderByI(1L)).thenReturn(order);
+        mvc.perform(get("/api/order/" + order.getId()).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.serviceOwner.storeName", is(order.getServiceOwner().getStoreName())));
+        verify(orderService, times(1)).getOrderByI(Mockito.anyLong());
+    }
+
+    @Test
+    void whenGetOrderInfo_andOrderIsInvalid_thenReturnNull() throws Exception {
+        when(orderService.getOrderByI(100L)).thenReturn(null);
+        mvc.perform(get("/api/order/" + 100).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+        verify(orderService, times(1)).getOrderByI(Mockito.anyLong());
     }
 
 

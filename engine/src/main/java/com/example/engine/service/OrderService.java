@@ -6,7 +6,7 @@ import com.example.engine.entity.Order;
 import java.util.List;
 
 public interface OrderService {
-    Order placeOrder(String contribUsername, OrderDTO orderToPlace);
+    Order placeOrder(int contribId, OrderDTO orderToPlace);
     Order getOrderByI(Long orderID);
     Order saveOrder(Order order);
     Order getOrderInfoForContrib(Long orderId, String contribUsername);

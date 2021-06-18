@@ -47,11 +47,13 @@ class OrderService_UnitTest {
         User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
         bob.setId(1);
         Contrib bobService = new Contrib(bob, "Bob's Service");
+        bobService.setId(1);
         bobService.setVerified(true);
 
         User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 2);
         dakota.setId(2);
         Contrib dakotaService = new Contrib(dakota, "Dakota's Service");
+        dakotaService.setId(2);
         dakotaService.setVerified(true);
 
         Rider riderBob = new Rider(bob);
@@ -74,6 +76,9 @@ class OrderService_UnitTest {
         when(contribService.getContributorByUsername(bob.getUsername())).thenReturn(bobService);
         when(contribService.getContributorByUsername(dakota.getUsername())).thenReturn(dakotaService);
         when(contribService.getContributorByUsername("NonExistingContributor")).thenReturn(null);
+        when(contribService.getContributorById(bobService.getId())).thenReturn(bobService);
+        when(contribService.getContributorById(dakotaService.getId())).thenReturn(dakotaService);
+        when(contribService.getContributorById(-1)).thenReturn(null);
 
         when(riderService.getRidersToDispatch()).thenReturn(Collections.singletonList(riderBob));
         when(riderService.getRiderByUsername(bob.getUsername())).thenReturn(riderBob);
@@ -106,7 +111,7 @@ class OrderService_UnitTest {
     @Test
     void whenPlaceOrder_andContribIsValid_thenPlaceOrder() {
         OrderDTO orderDTO = new OrderDTO(20.0, 42.6, -7.1, 42.72, -7.24);
-        Order orderPlaced = orderService.placeOrder("bob", orderDTO);
+        Order orderPlaced = orderService.placeOrder(1, orderDTO);
         System.out.println(orderPlaced);
         assertThat(orderPlaced).isNotNull().extracting(Order::getStatus).isEqualTo(OrderStatus.WAITING);
     }
@@ -114,7 +119,7 @@ class OrderService_UnitTest {
     @Test
     void whenPlaceOrder_andContribIsInvalid_thenReturnNull() {
         OrderDTO orderDTO = new OrderDTO(20.0, 42.6, -7.1, 42.72, -7.24);
-        Order orderPlaced = orderService.placeOrder("NonExistingContributor", orderDTO);
+        Order orderPlaced = orderService.placeOrder(-1, orderDTO);
         assertThat(orderPlaced).isNull();
     }
 

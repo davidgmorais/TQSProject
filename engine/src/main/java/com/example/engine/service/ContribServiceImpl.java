@@ -104,4 +104,9 @@ public class ContribServiceImpl implements ContribService{
     public Contrib getContributorByUsername(String username) {
         return repository.getContribByUserUsername(username);
     }
+
+    @Override
+    public Contrib getContributorById(int contribId) {
+        return repository.findContribById(contribId);
+    }
 }
