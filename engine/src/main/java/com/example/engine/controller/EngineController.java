@@ -22,7 +22,7 @@ import java.util.Map;
 
 @Controller
 public class EngineController {
-    public static final String INDEX_PAGE = "redirect:/";
+    public static final String INDEX_PAGE = "redirect:/admin";
     public static final String LOGIN_PAGE = "redirect:/login";
     public static final String SIGNUP_ERROR = "signup";
     public static final String INDEX_RIDER = "indexRider";
@@ -50,13 +50,24 @@ public class EngineController {
 
     private static final Logger logger = LoggerFactory.getLogger(EngineController.class);
 
-    @GetMapping("/")
+    @GetMapping("/admin")
     public String index(Model model, UserDTO userDTO) {
         model.addAttribute(SEARCH_MODEL, userDTO);
+
+        //contrib
         List<Contrib> contribRequests = contribController.listAllContributorRequests();
-        List<Rider> riderRequests = riderController.listAllRidersRequests();
+        List<Contrib> contribList = contribController.listAllContributors(null, null);
+        model.addAttribute("contribRequestsSize", contribRequests.size());
         model.addAttribute("contribRequests", contribRequests);
+        model.addAttribute("contribListSize", contribList.size());
+
+        //riders
+        List<Rider> riderRequests = riderController.listAllRidersRequests();
+        List<Rider> ridersList = riderController.listAllRiders(null);
+        model.addAttribute("riderListSize", ridersList.size());
+        model.addAttribute("riderRequestsSize", riderRequests.size());
         model.addAttribute("riderRequests", riderRequests);
+
         return "index";
     }
 
@@ -215,7 +226,7 @@ public class EngineController {
     public String riderIndex(Model model) {
         model.addAttribute("status", status);
         if (jwt != null) {
-            jwt = jwt.replace("Bearer ", "");
+            jwt = this.trimToken(jwt);
         }
         //OrderStatus orderStatus = orderController.getRidersCurrentOrderStatus(jwt).getBody().getStatus();
         //model.addAttribute("status", orderStatus);
@@ -226,7 +237,7 @@ public class EngineController {
     public String startShiftRider(@PathVariable Double log, @PathVariable Double lat, Model model) {
         LocationDTO location = new LocationDTO(lat, log);
         logger.info("token {}", jwt);
-        jwt = jwt.replace("Bearer ", "");
+        jwt = this.trimToken(jwt);
         ResponseEntity<String> startShift = riderController.startShift(jwt, location);
         status = startShift.getBody();
         return RIDER_DASHBOARD;
@@ -234,7 +245,7 @@ public class EngineController {
 
     @PostMapping(value = "/rider/dashboard/end")
     public String endShiftRider(Model model) {
-        jwt = jwt.replace("Bearer ", "");
+        jwt = this.trimToken(jwt);
         ResponseEntity<String> endShift =riderController.endShift(jwt);
         status = endShift.getBody();
         return RIDER_DASHBOARD;
@@ -242,25 +253,30 @@ public class EngineController {
 
     @PostMapping(value = "/update/order/{status}")
     public String updateOrderStatus(@PathVariable String status) {
-        jwt = jwt.replace("Bearer ", "");
-
-        switch (status) {
-            case "received":
-                status = OrderStatus.WAITING.name();
-                break;
-            case "picked":
-                status = OrderStatus.BEING_DELIVERED.name();
-                break;
-            case "delivered":
-                status = OrderStatus.DELIVERED.name();
-                break;
-            default:
-                return RIDER_DASHBOARD;
+        jwt = this.trimToken(jwt);
+        System.out.println(status);
+        if (status.equals("received")) {
+            status = OrderStatus.WAITING.name();
+        }
+        else if (status.equals("picked")) {
+            status = OrderStatus.BEING_DELIVERED.name();
+        }
+        else if (status.equals("delivered")) {
+            status = OrderStatus.DELIVERED.name();
         }
         Map<String, String> update = new HashMap<>();
         update.put("status", status);
         orderController.updateRidersCurrentOrderStatus(jwt, update);
         return RIDER_DASHBOARD;
+    }
+
+    @GetMapping(value = "/rider/rating")
+    public String riderRating() {
+        return "riderRating";
+    }
+
+    private String trimToken(String token) {
+        return token.replace("Bearer ", "");
     }
 
 }

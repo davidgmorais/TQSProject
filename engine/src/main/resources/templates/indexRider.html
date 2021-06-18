@@ -31,7 +31,7 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/rider/dashboard}">
             <div class="sidebar-brand-text mx-3">Engine</div>
         </a>
 
@@ -54,8 +54,8 @@
         </div>
 
         <!-- Nav Item -->
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/service-statistics}">
+        <li class="nav-item"> <!--TODO -->
+            <a class="nav-link" href="#">
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Statistics</span></a>
         </li>
@@ -63,9 +63,9 @@
 
         <!-- Nav Item -->
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" th:href="@{/rider/rating}">
                 <i class="fas fa-star fa-chart-area"></i>
-                <span>Reviews</span></a>
+                <span>Rating</span></a>
         </li>
 
 
@@ -94,19 +94,6 @@
                     <i class="fa fa-bars"></i>
                 </button>
 
-                <!-- Topbar Search -->
-                <form
-                      class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                    <div class="input-group">
-                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search..."
-                               aria-label="Search" aria-describedby="basic-addon2" >
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit">
-                                <i class="fas fa-search fa-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
 
                 <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">

@@ -69,8 +69,8 @@ class EngineWebControllerITest {
     }
 
     @Test
-    void whenNavigateToRiderIndex_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/rider/dashboard")).andExpect(status().isOk())
+    void whenNavigateToRiderRating_thenReturnContent_andStatusOk() throws Exception {
+        mockMvc.perform(get("/rider/rating")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Dashboard")));
     }
 
@@ -94,7 +94,7 @@ class EngineWebControllerITest {
 
     @Test
     void whenNavigateToAdminIndex_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/")).andExpect(status().isOk())
+        mockMvc.perform(get("/admin")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Dashboard")));
     }
 
