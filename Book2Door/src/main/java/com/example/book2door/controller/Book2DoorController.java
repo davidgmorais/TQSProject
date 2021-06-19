@@ -119,7 +119,7 @@ public class Book2DoorController {
         String encodedPassword = new BCryptPasswordEncoder().encode(password);
         var client = new Client(email,name, encodedPassword,phone,city, address,zipcode);
         
-        return clientService.register(client)==null? "signup" : REDIRECT_LOGIN;
+        return clientService.register(client)==null? "redirect:/signup" : REDIRECT_LOGIN;
     }
 
     @PostMapping(value = "/log")
@@ -309,7 +309,7 @@ public class Book2DoorController {
     @RequestParam String storeEmail,@RequestParam String fullName,@RequestParam String password) {
         String encodedPassword = new BCryptPasswordEncoder().encode(password);
         var store = new Store(storeName,storeAddress,fullName,encodedPassword,storePhone,storeEmail);
-        return storeService.register(store)==null? "addStorePage" : REDIRECT_LOGIN;
+        return storeService.register(store)==null? "redirect:/addStore" : REDIRECT_LOGIN;
         
     }
 

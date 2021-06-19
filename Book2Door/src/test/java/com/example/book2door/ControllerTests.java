@@ -53,7 +53,7 @@ class ControllerTests {
             .param("password", "clientpw")
             .param("city","city")
             .param("address", "address")
-            .param("phone","phone")).andExpect(status().is(302));
+            .param("phone","phone")).andExpect(status().isOk());
     }
 
     @Test
@@ -71,7 +71,7 @@ class ControllerTests {
 
 
     @Test
-    void whenAddStoreWithInvalidCredentialsThenRenderSignup() throws Exception{
+    void whenAddStoreWithValidCredentialsThenRenderSignup() throws Exception{
         this.Mockmvc.perform(post("/addStore")
             .param("storeName", "TestStoreName")
             .param("storeEmail", "TestStore@service.pt")
