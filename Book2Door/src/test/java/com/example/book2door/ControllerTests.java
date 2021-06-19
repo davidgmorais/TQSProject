@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.example.book2door.entities.Admin;
+import com.example.book2door.entities.Client;
+import com.example.book2door.repository.ClientRepository;
 import com.example.book2door.service.AdminServiceImpl;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +35,8 @@ class ControllerTests {
     private WebApplicationContext webApplicationContext;
     @Autowired
     AdminServiceImpl adminService;
+    @Autowired
+    ClientRepository clientRepository;
 
     @BeforeEach()
     public void setup()
@@ -203,7 +207,7 @@ class ControllerTests {
     void whenUsingSearchToFindABookThenRedirectToBookPage() throws Exception{
         this.Mockmvc.perform(post("/search")
             .param("param","TestBook"))
-            .andExpect(status().is(200));
+            .andExpect(status().is(302));
     }
 
     @Test
@@ -217,7 +221,7 @@ class ControllerTests {
     void whenUsingSearchToFindAStoreThenRedirectToStorePage() throws Exception{
         this.Mockmvc.perform(post("/search")
             .param("param","TestStoreName"))
-            .andExpect(status().is(200));
+            .andExpect(status().is(302));
     }
 
 
@@ -286,7 +290,10 @@ class ControllerTests {
 
     @Test
     @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
-    void whenClientRemovesBookToCartCheckCart() throws Exception{
+    void whenClientRemovesBookFromCartCheckCart() throws Exception{
+        Client c =clientRepository.findClientByEmail("client@a.pt");
+        c.getCart().add((long)1);
+        clientRepository.save(c);
         this.Mockmvc.perform(get("/cart/remove")
         .param("id","1"))
         .andExpect(status().is(302));   
