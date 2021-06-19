@@ -132,9 +132,9 @@ public class OrderController {
         String riderUsername = jwtUtils.getUsernameFromJwt(jwt);
         logger.info("Rider username {}", riderUsername);
 
-        String latitudeKey = "latitude";
-        String longitudeKey = "longitude";
-        String statusKey = "status";
+        var latitudeKey = "latitude";
+        var longitudeKey = "longitude";
+        var statusKey = "status";
 
         if (status.keySet().containsAll(Arrays.asList(latitudeKey, longitudeKey, statusKey))) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

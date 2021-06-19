@@ -129,7 +129,7 @@ public class EngineController {
     @PostMapping(value = "/login")
     public String signIn(UserDTO userDTO, Model model) {
         var authorizationKey = "Authorization";
-        CredentialsDTO creds = new CredentialsDTO(userDTO.getUsername(), userDTO.getPassword());
+        var creds = new CredentialsDTO(userDTO.getUsername(), userDTO.getPassword());
         ResponseEntity<Map<String, String>> authentication = userController.authenticateUser(creds);
         if (authentication.getHeaders().containsKey(authorizationKey)) {
             List<String> authList = authentication.getHeaders().get("Authorization");
@@ -250,8 +250,7 @@ public class EngineController {
         if (jwt != null) {
             jwt = this.trimToken(jwt);
         }
-        //OrderStatus orderStatus = orderController.getRidersCurrentOrderStatus(jwt).getBody().getStatus();
-        //model.addAttribute("status", orderStatus);
+
         return INDEX_RIDER;
     }
 
@@ -279,15 +278,19 @@ public class EngineController {
     @PostMapping(value = "/update/order/{status}")
     public String updateOrderStatus(@PathVariable String status) {
         jwt = this.trimToken(jwt);
-        System.out.println(status);
-        if (status.equals("received")) {
-            status = OrderStatus.WAITING.name();
-        }
-        else if (status.equals("picked")) {
-            status = OrderStatus.BEING_DELIVERED.name();
-        }
-        else if (status.equals("delivered")) {
-            status = OrderStatus.DELIVERED.name();
+        logger.info(status);
+        switch (status) {
+            case "received":
+                status = OrderStatus.WAITING.name();
+                break;
+            case "picked":
+                status = OrderStatus.BEING_DELIVERED.name();
+                break;
+            case "delivered":
+                status = OrderStatus.DELIVERED.name();
+                break;
+            default:
+                return RIDER_DASHBOARD;
         }
         Map<String, String> update = new HashMap<>();
         update.put("status", status);
