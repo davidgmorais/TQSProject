@@ -294,7 +294,7 @@ public class Book2DoorController {
         model.addAttribute(TOTAL,total);
         model.addAttribute(MODEL_BOOKS_ATTR, books);
         model.addAttribute("client",client);
-        model.addAttribute(MODEL_STORE_ATTR,stores.size()>0? stores.get(0):new Store());
+        model.addAttribute(MODEL_STORE_ATTR,stores.isEmpty()? new Store():stores.get(0));
         return "checkoutPage";
     }
 
