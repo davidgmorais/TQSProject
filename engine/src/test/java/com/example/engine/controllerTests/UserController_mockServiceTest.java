@@ -31,16 +31,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class UserController_mockServiceTest {
     @Autowired
     private MockMvc mvc;
-
     @MockBean
     private ContribServiceImpl contribService;
-
     @MockBean
     private RiderServiceImpl riderService;
-
     @MockBean
     private UserServiceImpl userService;
-
     @MockBean
     private JwtUtils jwtUtils;
 

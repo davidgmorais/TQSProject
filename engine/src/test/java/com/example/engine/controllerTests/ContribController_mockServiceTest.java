@@ -18,8 +18,7 @@ import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ContribController.class)
@@ -39,22 +38,22 @@ class ContribController_mockServiceTest {
     private JwtUtils jwtUtils;
 
     @Test
-    void whenPostToVerify_andContribIdIsValid_thenVerifyContrib() throws Exception {
+    void whenPutToVerify_andContribIdIsValid_thenVerifyContrib() throws Exception {
         User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
         Contrib bobService = new Contrib(bob, "Bob's Store");
         when(contribService.verifyContributor(bobService.getId())).thenReturn(bobService);
 
-        mvc.perform(post("/api/admin/requests/contributors/verify/" + bobService.getId()).contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(put("/api/admin/requests/contributors/verify/" + bobService.getId()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isAccepted())
                 .andExpect(content().string("Contributors request accepted"));
         verify(contribService, times(1)).verifyContributor(Mockito.anyInt());
     }
 
     @Test
-    void whenPostToVerify_andContribIdIsInvalid_thenNotFound() throws Exception {
+    void whenPutToVerify_andContribIdIsInvalid_thenNotFound() throws Exception {
         when(contribService.verifyContributor(1)).thenReturn(null);
 
-        mvc.perform(post("/api/admin/requests/contributors/verify/" + 1).contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(put("/api/admin/requests/contributors/verify/" + 1).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("This service's request does not exist"));
         verify(contribService, times(1)).verifyContributor(Mockito.anyInt());

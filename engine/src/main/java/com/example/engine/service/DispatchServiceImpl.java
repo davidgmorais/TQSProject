@@ -42,15 +42,34 @@ public class DispatchServiceImpl implements DispatchService {
                         + Math.sqrt(Math.pow(Math.abs(order.getServiceLocation().getLatitude() - order.getDeliveryLocation().getLatitude()), 2) + Math.pow(Math.abs(order.getServiceLocation().getLongitude() - order.getDeliveryLocation().getLongitude()), 2))   // order's distance from pickup location to delivery location
         ));
 
-        if (nearestAvailableRider == null) {
-            return null;
-        }
-
         logger.info("Rider {} will pick up the order", nearestAvailableRider.getUser().getUsername());
         order.setPickupRider(nearestAvailableRider);
         order.setStatus(OrderStatus.ASSIGNED);
         orderService.saveOrder(order);
         return order;
 
+    }
+
+    @Override
+    public Order dispatchNextOrderInQueue(String username) {
+        var rider = riderService.getRiderByUsername(username);
+        if (rider == null) {
+            logger.info("Rider {} does not exist", username);
+            return null;
+        }
+
+        logger.info("Dispatching next order in the queue");
+        List<Order> orderQueue = orderService.getOrderQueue();
+
+        if (orderQueue.isEmpty()) {
+            logger.info("No queued orders");
+            return null;
+        }
+
+        var head = orderQueue.get(0);
+        logger.info("Assigning order {}", head.getId());
+        head.setPickupRider(rider);
+        head.setStatus(OrderStatus.ASSIGNED);
+        return orderService.saveOrder(head);
     }
 }

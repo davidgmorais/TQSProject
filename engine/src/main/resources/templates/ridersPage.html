@@ -34,7 +34,7 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/admin}">
             <div class="sidebar-brand-text mx-3">Engine</div>
         </a>
 
@@ -43,7 +43,7 @@
 
         <!-- Nav Item - Dashboard -->
         <li class="nav-item active">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" th:href="@{/admin}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span></a>
         </li>
@@ -235,6 +235,7 @@
                                             <th>Last Name</th>
                                             <th>Username</th>
                                             <th>Email</th>
+                                            <th>Overall Rating</th>
                                         </tr>
                                         </thead>
                                         <tfoot>
@@ -243,6 +244,7 @@
                                             <th>Last Name</th>
                                             <th>Username</th>
                                             <th>Email</th>
+                                            <th>Overall Rating</th>
                                         </tr>
                                         </tfoot>
                                         <tbody>
@@ -251,7 +253,7 @@
                                             <td th:text="${riderList.user.lastName}"></td>
                                             <td th:text="${riderList.user.username}"></td>
                                             <td th:text="${riderList.user.email}"></td>
-
+                                            <td>5 stars</td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -263,7 +265,7 @@
                 </div>
 
 
-                </div>
+
 
                 <div class="row">
 
@@ -330,7 +332,7 @@
                 </div>
                 <!-- /.container-fluid -->
 
-
+            </div>
             </div>
             <!-- End of Main Content -->
 

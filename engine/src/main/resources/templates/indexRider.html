@@ -31,7 +31,7 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/rider/dashboard}">
             <div class="sidebar-brand-text mx-3">Engine</div>
         </a>
 
@@ -54,8 +54,8 @@
         </div>
 
         <!-- Nav Item -->
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/service-statistics}">
+        <li class="nav-item"> <!--TODO -->
+            <a class="nav-link" href="#">
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Statistics</span></a>
         </li>
@@ -63,9 +63,9 @@
 
         <!-- Nav Item -->
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" th:href="@{/rider/rating}">
                 <i class="fas fa-star fa-chart-area"></i>
-                <span>Reviews</span></a>
+                <span>Rating</span></a>
         </li>
 
 
@@ -94,19 +94,6 @@
                     <i class="fa fa-bars"></i>
                 </button>
 
-                <!-- Topbar Search -->
-                <form
-                      class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                    <div class="input-group">
-                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search..."
-                               aria-label="Search" aria-describedby="basic-addon2" >
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit">
-                                <i class="fas fa-search fa-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
 
                 <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
@@ -309,7 +296,7 @@
                     <div class="col-xl-8 col-lg-7" style="padding-top: 3%">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Pending Deliveries</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Current Order</h6>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -321,17 +308,9 @@
                                             <th>Order</th>
                                             <th>Map Indication</th>
                                             <th>Tracking</th>
+                                            <th>Status</th>
                                         </tr>
                                         </thead>
-                                        <tfoot>
-                                        <tr>
-                                            <th>Requester Name</th>
-                                            <th>Store</th>
-                                            <th>Order</th>
-                                            <th>Map Indication</th>
-                                            <th>Tracking</th>
-                                        </tr>
-                                        </tfoot>
                                         <tbody>
                                         <tr>
                                             <td>Inês Silva</td>
@@ -339,20 +318,25 @@
                                             <td>Moby Dick, Herman Melville</td>
                                             <td>Store: Rua fmemjem, Aveiro <br>Address: Rua medmee <br><a style="cursor: pointer; color: #3b5998; font-weight: bold" data-toggle="modal" data-target="#myModal">Indications here</a></td>
                                             <td>
+                                                <form id="updateStatus" method="post" th:action="@{update/order/}">
                                                 <div class="dropdown mb-4">
-                                                    <button class="btn btn-primary dropdown-toggle" type="button"
-                                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                                            aria-expanded="false">
-                                                        Track
-                                                    </button>
-                                                    <div class="dropdown-menu animated--fade-in"
-                                                         aria-labelledby="dropdownMenuButton">
-                                                        <a class="dropdown-item selected" href="#">Received order</a>
-                                                        <a class="dropdown-item" href="#">Picked up order</a>
-                                                        <a class="dropdown-item" href="#">Order delivered</a>
+                                                    <div class="dropdown mb-4">
+                                                        <button class="btn btn-primary dropdown-toggle" type="button"
+                                                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                            Track
+                                                        </button>
+                                                        <div class="dropdown-menu animated--fade-in"
+                                                             aria-labelledby="dropdownMenuButton" id="selectStatus">
+                                                            <button class="dropdown-item selected" name="Received order" type="submit" id="received">Received order</button>
+                                                            <button class="dropdown-item" name="Picked up order" type="submit" id="picked">Picked up order</button>
+                                                            <button class="dropdown-item" name="Order delivered" type="submit" id="delivered">Order delivered</button>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                </form>
                                             </td>
+                                            <td th:field="${status}"></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -467,6 +451,25 @@
 <script th:src="@{/js/demo/chart-pie-demo.js}"></script>
 
 <script>
+    var statusStr;
+    document.getElementById('received').addEventListener('click', function() {
+        console.log(this.innerText);
+        statusStr = 'received';
+        document.getElementById('updateStatus').action = 'http://localhost:8080/update/order/received';
+
+    });
+
+    document.getElementById('picked').addEventListener('click', function() {
+        statusStr = 'picked';
+        document.getElementById('updateStatus').action = 'http://localhost:8080/update/order/picked';
+
+    });
+
+    document.getElementById('delivered').addEventListener('click', function() {
+        statusStr = 'delivered';
+        document.getElementById('updateStatus').action = 'http://localhost:8080/update/order/delivered';
+    });
+
     var long;
     var lat;
     function initGeolocation()
