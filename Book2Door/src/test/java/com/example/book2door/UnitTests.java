@@ -13,15 +13,23 @@ import com.example.book2door.entities.BookOrder;
 import com.example.book2door.entities.Client;
 import com.example.book2door.entities.JwtUser;
 import com.example.book2door.entities.Store;
+import com.example.book2door.service.StoreServiceImpl;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.junit.jupiter.api.BeforeEach;
 
 class UnitTests{
     Book book;
     Store store;
+
+    @Autowired
+    StoreServiceImpl storeService;
 
     @BeforeEach
     void setUp() {
@@ -41,6 +49,13 @@ class UnitTests{
         store.setStorePhone("123123123");
         store.setRating(5.0);
         store.getBookList().add(book);
+    }
+
+    @Test
+    void testStoreService(){
+        assertThrows(NullPointerException.class, () -> {
+            storeService.register(store);
+          });
     }
 
     @Test
@@ -198,6 +213,11 @@ class UnitTests{
         assertThat(equal1).isTrue();
         assertThat(equal2).isTrue();
         assertThat(Notequal2).isFalse();
+
+        Book bookOne = new Book("Branca De neve", "princess and dwarves", "bob", 12.99 ,10);
+        Book bookTwo = bookOne;
+        boolean eq =bookOne.equals(bookTwo);
+        assertThat(eq).isTrue();
     }
 
 
@@ -248,6 +268,17 @@ class UnitTests{
         assertThat(jwtuser.getRole()).isZero();
         assertThat(jwtuser.getUsername()).isEqualTo("Admin");
         assertThat(jwtuser.getId()).isEqualTo((long)1);
+    }
+    @Test
+    void applicationContextLoadedTest(){
+        JwtUser jwtuser = new JwtUser(new Admin());
+        assertEquals(0,jwtuser.getRole());
+    }
+    @Test
+    void applicationStartTest() {
+        JwtUser jwtuser = new JwtUser(new Admin());
+        assertEquals(0,jwtuser.getRole());
+        Book2DoorApplication.main(new String[] {});
     }
 
 

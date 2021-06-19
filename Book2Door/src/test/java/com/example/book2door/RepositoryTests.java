@@ -16,10 +16,12 @@ import java.util.List;
 
 import com.example.book2door.entities.Admin;
 import com.example.book2door.entities.Book;
+import com.example.book2door.entities.JwtUser;
 import com.example.book2door.entities.Store;
 import com.example.book2door.repository.AdminRepository;
 import com.example.book2door.repository.BookRepository;
 import com.example.book2door.repository.StoreRepository;
+import com.example.book2door.service.StoreServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class RepositoryTests {
@@ -32,6 +34,9 @@ class RepositoryTests {
 
     @Mock(lenient = true)
     private AdminRepository adminRepository;
+    @Mock(lenient= true)
+    StoreServiceImpl storeService;
+
 
     @BeforeEach
      void setUp() {
@@ -46,9 +51,20 @@ class RepositoryTests {
         Mockito.when(storeRepository.findBystoreName(store.getStoreName())).thenReturn(store);
         Mockito.when(storeRepository.findByAccepted(store.wasAccepted())).thenReturn(storeList);
         Mockito.when(adminRepository.findByEmail("admin@service.pt")).thenReturn(new Admin());
+        Mockito.when(storeService.loadUserByUsername("fnac@fnac.pt")).thenReturn(new JwtUser(store));
+        Mockito.when(storeService.register(store)).thenReturn(store);
     }
 
-    
+
+    @Test
+    void whenStoreServiceLoadByUsernameThenReturnStore(){
+       assertThat(storeService.loadUserByUsername("fnac@fnac.pt")).isNotNull();
+    }
+    @Test
+    void whenStoreServiceRegisterThenReturnStore(){
+      Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
+      assertThat(storeService.register(store)).isNotNull();
+    }
     
     @Test
      void whenSearchStoreByEmailAndStoreExistsOnDB_ThenReturnStore(){

@@ -26,6 +26,10 @@ public class ClientServiceImpl implements UserDetailsService, ClientService {
         if (client != null) {
             return new JwtUser(client);
         }
+        var store = storeRepository.findBystoreEmail(email);
+        if (store != null) {
+            return new JwtUser(store);
+        }
         throw new UsernameNotFoundException(email);
     }
 
