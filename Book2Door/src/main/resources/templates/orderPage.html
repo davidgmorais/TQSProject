@@ -16,6 +16,7 @@
     <link rel="stylesheet" th:href="@{assets/css/main.css}" />
     <link rel="stylesheet" th:href="@{assets/css/custom.css}" />
     <link rel="stylesheet" th:href="@{assets/css/bookPage.css}" />
+    <link rel="stylesheet" th:href="@{assets/css/order.css}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
@@ -83,7 +84,7 @@
     </div>
     <div class="container book">
         <h3 class="wow fadeInUp" data-wow-delay=".2s">Follow your Order</h3>
-        <p>Estimated time of arrival: 16:40-16:55</p>
+        <p id="estimatedTime">Estimated time of arrival: 16:40-16:55</p>
         <div id="orderPlaced">
             <div class="row align-items-center">
                 <div class="col-lg-6">
@@ -135,23 +136,34 @@
                 </div>
             </div>
         </div>
-        <div id="orderReview" style="display: none">
+        <div id="orderReview" style="display: none; text-align: center">
             <div class="row align-items-center">
-                <div class="col-lg-6">
                     <div class="hero-content">
-                        <div style="text-align: center; padding-top: 5%">
-                            <h1 style="color: #91e0d2ff">Review your order</h1>
-
+                        <div style="text-align: center; padding-top: 10%">
+                            <h1 style="color: #91e0d2ff">Review your rider and order!</h1>
                         </div>
                     </div>
+                    <div id="riderReview"  class="row align-items-center">
+                        <ul id="childWrapper" style="text-align: center">
+                            <li><i class="fas fa-thumbs-down fa-3x"></i></li>
+                            <li><h2>Rider</h2></li>
+                            <li><i class="fas fa-thumbs-up fa-3x"></i></li>
+                        </ul>
+                    </div>
+                <div id="storeReview" class="row align-items-center">
+                    <ul id="childWrapper2" style="text-align: center">
+                        <li><i class="fas fa-thumbs-down fa-3x"></i></li>
+                        <li><h2>Store</h2></li>
+                        <li><i class="fas fa-thumbs-up fa-3x"></i></li>
+                    </ul>
+
                 </div>
-                <div class="col-lg-6">
-                    <h3>Store</h3>
-                    <h3>Rider</h3>
-                    <img th:src="@{assets/img/orderPickedUp.png}">
-                </div>
+
+
             </div>
         </div>
+    </div>
+
     </div>
 </section>
 
@@ -175,11 +187,12 @@
     function changeDiv3() {
         document.getElementById("orderMap").style.display = "none";
         document.getElementById("orderReview").style.display = "flex";
+        document.getElementById("estimatedTime").style.display = "none";
     }
 
-    let change = setTimeout(changeDiv, 5000);
-    let change2 = setTimeout(changeDiv2, 10000);
-    let change3 = setTimeout(changeDiv3, 20000);
+    let change = setTimeout(changeDiv, 1000);
+    let change2 = setTimeout(changeDiv2, 2000);
+    let change3 = setTimeout(changeDiv3, 3000);
 
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
