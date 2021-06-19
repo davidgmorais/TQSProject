@@ -257,7 +257,7 @@ public class EngineController {
     @ApiOperation(value = "Start shift as a rider.", response = String.class)
     @PostMapping(value = "/rider/dashboard/{log}/{lat}")
     public String startShiftRider(@PathVariable Double log, @PathVariable Double lat, Model model) {
-        LocationDTO location = new LocationDTO(lat, log);
+        var location = new LocationDTO(lat, log);
         logger.info("token {}", jwt);
         jwt = this.trimToken(jwt);
         ResponseEntity<String> startShift = riderController.startShift(jwt, location);
@@ -290,7 +290,6 @@ public class EngineController {
                 status = OrderStatus.DELIVERED.name();
                 break;
             default:
-                return RIDER_DASHBOARD;
         }
         Map<String, String> update = new HashMap<>();
         update.put("status", status);
