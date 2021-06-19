@@ -53,7 +53,7 @@ class ControllerTests {
             .param("password", "clientpw")
             .param("city","city")
             .param("address", "address")
-            .param("phone","phone")).andExpect(status().isOk());
+            .param("phone","phone")).andExpect(status().is(302));
     }
 
     @Test
@@ -65,7 +65,7 @@ class ControllerTests {
             .param("password", "pass")
             .param("city","city")
             .param("address", "address")
-            .param("phone","phone")).andExpect(status().is(200));
+            .param("phone","phone")).andExpect(status().is(302));
     }
 
 
