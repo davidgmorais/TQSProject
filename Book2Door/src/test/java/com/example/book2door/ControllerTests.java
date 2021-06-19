@@ -4,6 +4,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.example.book2door.entities.Admin;
+import com.example.book2door.service.AdminServiceImpl;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -28,80 +31,26 @@ class ControllerTests {
     private MockMvc Mockmvc;
     @Autowired
     private WebApplicationContext webApplicationContext;
+    @Autowired
+    AdminServiceImpl adminService;
+
     @BeforeEach()
     public void setup()
     {
-        //Init MockMvc Object and build
+        Admin adm = new Admin();
+        adminService.register(adm);
         Mockmvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
-
-    @Test
-    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
-    void whenClientChecksCartThenCheckModel() throws Exception{
-        this.Mockmvc.perform(get("/cart"))
-        .andExpect(status().is(200))
-        .andExpect(model().attributeExists("books"))
-        .andExpect(model().attributeExists("total"));
-        
-    }
-
-    @Test
-    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
-    void whenClientAddsBookToCartCheckCart() throws Exception{
-        this.Mockmvc.perform(get("/cart/add")
-        .param("id","1"))
-        .andExpect(status().is(302));
-    }
-
-
-
-    @Test
-    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
-    void whenClientGoesToCheckoutThenVerifyModels() throws Exception{
-        this.Mockmvc.perform(get("/checkout"))
-        .andExpect(status().is(200))
-        .andExpect(model().attributeExists("store"))
-        .andExpect(model().attributeExists("books"))
-        .andExpect(model().attributeExists("client"))
-        .andExpect(model().attributeExists("total"));
-        
-    }
-
-
-
-    @Test
-    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
-    void whenClientRemovesBookToCartCheckCart() throws Exception{
-        this.Mockmvc.perform(get("/cart/remove")
-        .param("id","1"))
-        .andExpect(status().is(302));   
-    }
-
-    @Test
-    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
-    void whenFinishesOrderThenCreateOrder() throws Exception{
-        this.Mockmvc.perform(get("/order")
-        .param("storeId","1"))
-        .andExpect(status().is(200));
-    }
-
-
-    @Test
-    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="store@store.pt")
-    void whenStoreAccessDashBoardThenReturn200() throws Exception{
-        this.Mockmvc.perform(get("/store/dashboard"))
-        .andExpect(status().is(200));
-    }
 
 
     @Test
     void whenSignUpWithValidCredentialsThenNewUserIsCreated() throws Exception{
         this.Mockmvc.perform(post("/signup")
             .param("name", "ant")
-            .param("email", "ant@ua.pt")
+            .param("email", "client@a.pt")
             .param("zipcode","a")
-            .param("password", "pass")
+            .param("password", "clientpw")
             .param("city","city")
             .param("address", "address")
             .param("phone","phone")).andExpect(status().is(302));
@@ -120,6 +69,7 @@ class ControllerTests {
     }
 
 
+
     @Test
     void whenAddStoreWithInvalidCredentialsThenRenderSignup() throws Exception{
         this.Mockmvc.perform(post("/addStore")
@@ -130,11 +80,45 @@ class ControllerTests {
             .param("storeAddress", "TestStoreAddress")
             .param("storePhone","TestStorePhone")).andExpect(status().is(302));
     }
+
+    @Test
+    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="TestStore@service.pt")
+    void whenStoreAccessDashBoardThenReturn200() throws Exception{
+        this.Mockmvc.perform(get("/store/dashboard"))
+        .andExpect(status().is(200));
+    }
+
+    @Test
+    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="TestStore@service.pt")
+    void whenStoreAccessDashBoardToAddBookThenRedirect() throws Exception{
+        this.Mockmvc.perform(post("/store/dashboard")
+        .param("title","TestBook")
+        .param("synopsis","Synopsis")
+        .param("stock","10")
+        .param("author","author")
+        .param("price","12.99"))
+        .andExpect(status().is(302));
+    }
+
+    @Test
+    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
+    void whenClientGoesToCheckoutThenVerifyModels() throws Exception{
+        this.Mockmvc.perform(get("/checkout"))
+        .andExpect(status().is(200))
+        .andExpect(model().attributeExists("store"))
+        .andExpect(model().attributeExists("books"))
+        .andExpect(model().attributeExists("client"))
+        .andExpect(model().attributeExists("total"));
+        
+    }
+
+
+
     @Test
     void whenLoginClientWithRightDataRedirect() throws Exception{
         this.Mockmvc.perform(post("/log")
             .param("email", "client@a.pt")
-            .param("password", "pass")).andExpect(status().is(302));
+            .param("password", "clientpw")).andExpect(status().is(302));
     }
 
     @Test
@@ -151,8 +135,8 @@ class ControllerTests {
     @Test
     void whenLoginStoreWithRightDataRedirect() throws Exception{
         this.Mockmvc.perform(post("/log")
-            .param("email", "store@store.pt")
-            .param("password", "StorePass")).andExpect(status().is(302));
+            .param("email", "TestStore@service.pt")
+            .param("password", "TestStorePassWord")).andExpect(status().is(302));
     }
     @Test
     void whenAdminWantsToAcceptStoresThenCheckIfModelHasAttributeStores() throws Exception{
@@ -160,12 +144,21 @@ class ControllerTests {
         .andExpect(status().is(200))
         .andExpect(model().attributeExists("stores"));
     }
+
     @Test
     void whenLoginAdminWithRightDataRedirect() throws Exception{
         this.Mockmvc.perform(post("/log")
             .param("email", "admin@service.pt")
             .param("password", "serviceAdminPassword")).andExpect(status().is(302));
     }
+
+    @Test
+    void whenDenyStoreCheckStatus() throws Exception{
+        this.Mockmvc.perform(post("/admin/deny")
+            .param("id", "1"))
+            .andExpect(status().is(302));     
+    }
+
     @Test
     void whenStoreIsAcceptedCheckStatus() throws Exception{
         this.Mockmvc.perform(post("/admin/accept")
@@ -175,19 +168,11 @@ class ControllerTests {
     }
 
 
-    @Test
-    void whenDenyStoreCheckStatus() throws Exception{
-        this.Mockmvc.perform(post("/admin/deny")
-            .param("id", "1"))
-            .andExpect(status().is(302));     
-    }
-
-
 
     @Test
     void whenPostOnIndexPage() throws Exception{
         this.Mockmvc.perform(post("/")
-            .param("param", "fnac")).andExpect(status().is(302));
+            .param("param", "TestStoreName")).andExpect(status().is(302));
     }
 
     @Test
@@ -217,7 +202,7 @@ class ControllerTests {
     @Test
     void whenUsingSearchToFindABookThenRedirectToBookPage() throws Exception{
         this.Mockmvc.perform(post("/search")
-            .param("param","Moby dick"))
+            .param("param","TestBook"))
             .andExpect(status().is(200));
     }
 
@@ -231,7 +216,7 @@ class ControllerTests {
     @Test
     void whenUsingSearchToFindAStoreThenRedirectToStorePage() throws Exception{
         this.Mockmvc.perform(post("/search")
-            .param("param","fnac"))
+            .param("param","TestStoreName"))
             .andExpect(status().is(200));
     }
 
@@ -239,7 +224,7 @@ class ControllerTests {
     @Test
     void whenSearchStoreVerifyModelAttribute() throws Exception{
         this.Mockmvc.perform(get("/store")
-            .param("name","StoreName"))
+            .param("name","TestStoreName"))
             .andExpect(status().isOk())
             .andExpect(model().attributeExists("bookList"))
             .andExpect(model().attributeExists("store"));
@@ -281,5 +266,37 @@ class ControllerTests {
       Mockmvc.perform(get("/addStore")).andExpect(status().isOk());
     }
 
+    @Test
+    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
+    void whenClientChecksCartThenCheckModel() throws Exception{
+        this.Mockmvc.perform(get("/cart"))
+        .andExpect(status().is(200))
+        .andExpect(model().attributeExists("books"))
+        .andExpect(model().attributeExists("total"));
+        
+    }
 
+    @Test
+    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
+    void whenClientAddsBookToCartCheckCart() throws Exception{
+        this.Mockmvc.perform(get("/cart/add")
+        .param("id","1"))
+        .andExpect(status().is(302));
+    }
+
+    @Test
+    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
+    void whenClientRemovesBookToCartCheckCart() throws Exception{
+        this.Mockmvc.perform(get("/cart/remove")
+        .param("id","1"))
+        .andExpect(status().is(302));   
+    }
+
+    @Test
+    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
+    void whenFinishesOrderThenCreateOrder() throws Exception{
+        this.Mockmvc.perform(get("/order")
+        .param("storeId","1"))
+        .andExpect(status().is(200));
+    }
 }
