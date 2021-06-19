@@ -137,32 +137,32 @@ class RiderControllerITest {
     }
 
     @Test
-    void whenPostToVerify_andRiderIdIsValid_thenVerifyRider() throws Exception {
+    void whenPutToVerify_andRiderIdIsValid_thenVerifyRider() throws Exception {
         User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 1);
         Rider riderBob = new Rider(bob);
         repository.saveAndFlush(bob);
         riderRepository.saveAndFlush(riderBob);
 
-        mvc.perform(post("/api/admin/requests/riders/verify/" + riderBob.getId()).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
+        mvc.perform(put("/api/admin/requests/riders/verify/" + riderBob.getId()).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isAccepted())
                 .andExpect(content().string("Rider request accepted"));
     }
 
     @Test
-    void whenPostToVerify_andRiderIdIsInvalid_thenNotFound() throws Exception {
-        mvc.perform(post("/api/admin/requests/riders/verify/" + 1).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
+    void whenPutToVerify_andRiderIdIsInvalid_thenNotFound() throws Exception {
+        mvc.perform(put("/api/admin/requests/riders/verify/" + 1).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("This rider's request does not exist"));
     }
 
     @Test
-    void whenPostToDeny_andValidRiderId_thenDenyRiderRequest() throws Exception {
+    void whenPutToDeny_andValidRiderId_thenDenyRiderRequest() throws Exception {
         User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
         Rider riderBob = new Rider(bob);
         repository.saveAndFlush(bob);
         riderRepository.saveAndFlush(riderBob);
 
-        mvc.perform(post("/api/admin/requests/riders/deny/" + riderBob.getId()).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
+        mvc.perform(put("/api/admin/requests/riders/deny/" + riderBob.getId()).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isAccepted())
                 .andExpect(content().string("Rider's request denied"));
 
@@ -174,8 +174,8 @@ class RiderControllerITest {
     }
 
     @Test
-    void whenPostToDeny_andInvalidRiderId_thenNotFound() throws Exception {
-        mvc.perform(post("/api/admin/requests/riders/deny/" + 1).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
+    void whenPuttToDeny_andInvalidRiderId_thenNotFound() throws Exception {
+        mvc.perform(put("/api/admin/requests/riders/deny/" + 1).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + jwt))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("This rider's request does not exist"));
 
@@ -256,8 +256,7 @@ class RiderControllerITest {
         String riderJwt = jwtUtils.generateJwtToken(auth);
 
         mvc.perform(put("/api/rider/shift/start").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + riderJwt).content(toJson(Map.of("latitude", "0", "longitude", "c"))))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Invalid parameters"));
+                .andExpect(status().isBadRequest());
     }
 
     @Test

@@ -22,6 +22,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -68,8 +69,8 @@ class EngineWebControllerITest {
     }
 
     @Test
-    void whenNavigateToRiderIndex_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/rider/dashboard")).andExpect(status().isOk())
+    void whenNavigateToRiderRating_thenReturnContent_andStatusOk() throws Exception {
+        mockMvc.perform(get("/rider/rating")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Dashboard")));
     }
 
@@ -93,7 +94,7 @@ class EngineWebControllerITest {
 
     @Test
     void whenNavigateToAdminIndex_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/")).andExpect(status().isOk())
+        mockMvc.perform(get("/admin")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Dashboard")));
     }
 

@@ -2,11 +2,13 @@ package com.example.engine.controller;
 
 import com.example.engine.component.JwtUtils;
 import com.example.engine.dto.ContribDTO;
+import com.example.engine.dto.CredentialsDTO;
 import com.example.engine.dto.UserDTO;
 import com.example.engine.entity.JwtUser;
 import com.example.engine.entity.User;
 import com.example.engine.service.ContribService;
 import com.example.engine.service.RiderService;
+import io.swagger.annotations.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -24,30 +26,37 @@ import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api")
+@Api( tags = "Authentication Manager")
+@SwaggerDefinition(tags = {
+        @Tag(name = "Authentication Manager", description = "Operations pertinent to the creation and authentication of users in the engine.")
+})
 public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-
     @Autowired
     AuthenticationManager authenticationManager;
-
     @Autowired
     JwtUtils jwtUtils;
-
     @Autowired
     ContribService contribService;
-
     @Autowired
     RiderService riderService;
 
+    @ApiOperation(value = "Authenticate an user using the provided username and password", response = Map.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "User authentication was successfully"),
+            @ApiResponse(code = 400, message = "Bad request - username and password were not provided"),
+            @ApiResponse(code = 405, message = "Wrong credentials provided - authentication failed.")
+    })
     @PostMapping("/auth")
-    public ResponseEntity<Map<String, String>> authenticateUser(@RequestBody Map<String, String> body) {
+    public ResponseEntity<Map<String, String>> authenticateUser(
+            @ApiParam(name = "Credentials", type = "CredentialsDTO", value = "User's credentials to authenticate", required = true) @RequestBody CredentialsDTO credentials) {
         var usernameKey = "username";
-        if (!body.containsKey(usernameKey) || !body.containsKey("password")) {
+        if (credentials.getUsername() == null || credentials.getPassword() == null) {
             return new ResponseEntity<>( Map.of("data", "Must provide username and password"), HttpStatus.BAD_REQUEST);
         }
 
         var auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(body.get("username"), body.get("password")));
+                new UsernamePasswordAuthenticationToken(credentials.getUsername(), credentials.getPassword()));
         logger.info("{}", auth);
         SecurityContextHolder.getContext().setAuthentication(auth);
         String jwt = jwtUtils.generateJwtToken(auth);
@@ -75,16 +84,30 @@ public class UserController {
         return new ResponseEntity<>(responseBody, responseHeader, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Register a user as a contributor so that its service can benefit from the engine's dispatch service.", response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Service was created successfully and is under revision."),
+            @ApiResponse(code = 400, message = "A user with the provided username already exists in the engine."),
+            @ApiResponse(code = 405, message = "The provided email was not an acceptable email address."),
+    })
     @PostMapping("/register/contrib")
-    public ResponseEntity<String> registerContributor(@RequestBody ContribDTO user) {
+    public ResponseEntity<String> registerContributor(
+            @ApiParam(name = "Contributor's information", type = "ContribDTO", value = "Contributor's information to create an account", required = true) @RequestBody ContribDTO user) {
         return contribService.create(user) == null ?
                 new ResponseEntity<>("This contributor already exists", HttpStatus.BAD_REQUEST) :
                 new ResponseEntity<>("Contributor created Successfully", HttpStatus.CREATED);
 
     }
 
+    @ApiOperation(value = "Register a user as a rider so that it can work for the engine by delivering orders.", response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Rider was created successfully and is under revision."),
+            @ApiResponse(code = 400, message = "A user with the provided username already exists in the engine."),
+            @ApiResponse(code = 405, message = "The provided email was not an acceptable email address."),
+    })
     @PostMapping("/register/rider")
-    public ResponseEntity<String> registerRider(@RequestBody UserDTO user) {
+    public ResponseEntity<String> registerRider(
+            @ApiParam(name = "Rider's information", type = "UserDTO", value = "Rider's information to create an account", required = true) @RequestBody UserDTO user) {
         return riderService.create(user) == null ?
                 new ResponseEntity<>("This rider already exists", HttpStatus.BAD_REQUEST) :
                 new ResponseEntity<>("Rider created successfully", HttpStatus.CREATED);

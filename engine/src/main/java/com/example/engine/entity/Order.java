@@ -1,5 +1,7 @@
 package com.example.engine.entity;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.*;
 
 @Entity
@@ -7,28 +9,35 @@ import javax.persistence.*;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @ApiModelProperty(notes = "Order's unique ID automatically generated", required = true, example = "1")
     private Long id;
 
     @Column(name = "price", nullable = false)
+    @ApiModelProperty(notes = "Order's price in Euros", required = true, example = "20", position = 1)
     private Double value;
 
     @OneToOne
     @JoinColumn(name = "Rider_id")
+    @ApiModelProperty(notes = "Pickup rider's ID responsible for the delivery", position = 2)
     private Rider pickupRider;
 
     @OneToOne
     @JoinColumn(name = "Contrib_id", nullable = false)
+    @ApiModelProperty(notes = "Contributor's ID from where the order is dispatched", required = true, position = 3)
     private Contrib serviceOwner;
 
     @Enumerated(EnumType.STRING)
+    @ApiModelProperty(notes = "Current status of the package - it can take the values of WAITING, ASSIGNED, BEING_DELIVERED and DELIVERED", position = 4)
     private OrderStatus status;
 
     @OneToOne
     @JoinColumn(name = "service_location_id", nullable = false)
+    @ApiModelProperty(notes = "Location from where the order should be picked up from", required = true, position = 5)
     private Location serviceLocation;
 
     @OneToOne
     @JoinColumn(name = "delivery_location_id", nullable = false)
+    @ApiModelProperty(notes = "Location where the order should be delivered to", required = true, position = 6)
     private Location deliveryLocation;
 
     public Order() {}

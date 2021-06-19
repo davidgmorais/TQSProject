@@ -113,22 +113,22 @@ class RiderController_mockServiceTest {
     }
 
     @Test
-    void whenPostToVerify_andRiderIdIsValid_thenVerifyRider() throws Exception {
+    void whenPutToVerify_andRiderIdIsValid_thenVerifyRider() throws Exception {
         User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 1);
         Rider riderBob = new Rider(bob);
         when(riderService.verifyRider(riderBob.getId())).thenReturn(riderBob);
 
-        mvc.perform(post("/api/admin/requests/riders/verify/" + riderBob.getId()).contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(put("/api/admin/requests/riders/verify/" + riderBob.getId()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isAccepted())
                 .andExpect(content().string("Rider request accepted"));
         verify(riderService, times(1)).verifyRider(Mockito.anyInt());
     }
 
     @Test
-    void whenPostToVerify_andRiderIdIsInvalid_thenNotFound() throws Exception {
+    void whenPutToVerify_andRiderIdIsInvalid_thenNotFound() throws Exception {
         when(riderService.verifyRider(1)).thenReturn(null);
 
-        mvc.perform(post("/api/admin/requests/riders/verify/" + 1).contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(put("/api/admin/requests/riders/verify/" + 1).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("This rider's request does not exist"));
         verify(riderService, times(1)).verifyRider(Mockito.anyInt());
