@@ -13,6 +13,17 @@ services:
       - '3306:3306'
     volumes:
       - mysql-data:/var/lib/mysql
+  web:
+    build: ./
+    ports:
+      - 8000:8000
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/engine-db?autoReconnect=true&useSSL=false
+    depends_on:
+      - db
+    volumes:
+      - .:/code
 
 volumes:
   mysql-data:
