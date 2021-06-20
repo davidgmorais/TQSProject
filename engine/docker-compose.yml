@@ -16,7 +16,7 @@ services:
   web:
     build: ./
     ports:
-      - 8080:8080
+      - 8000:8000
     restart: always
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/engine-db?autoReconnect=true&useSSL=false
