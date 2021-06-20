@@ -18,6 +18,6 @@ jobs:
       - name: Maven package
         run: cd engine; chmod +x mvnw; ./mvnw clean package -DskipTests
       - name: Maven verify 
-        run: ./mvnw clean verify
+        run: cd engine; ./mvnw clean verify
       - name: Deploy docker-compose
         run: docker-compose up -d --build
