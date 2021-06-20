@@ -9,6 +9,9 @@ jobs:
   CD:
     name: CD Pipeline
     runs-on: self-hosted
+    defaults:
+      run:
+        working-directory: enigne
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 11
@@ -16,8 +19,8 @@ jobs:
         with:
           java-version: 11
       - name: Maven package
-        run: cd engine; chmod +x mvnw; ./mvnw clean package -DskipTests
+        run: chmod +x mvnw; ./mvnw clean package -DskipTests
       - name: Maven verify 
-        run: cd engine; ./mvnw clean verify
+        run: ./mvnw clean verify
       - name: Deploy docker-compose
         run: docker-compose up -d --build
