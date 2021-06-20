@@ -20,4 +20,6 @@ jobs:
       - name: Maven verify 
         run: cd engine; ./mvnw clean verify
       - name: Deploy docker-compose
-        run: cd engeine; docker-compose up -d --build
+        run: cd engine; docker-compose up -d --build
+      - name: Check if containers are running
+        run: docker ps 
