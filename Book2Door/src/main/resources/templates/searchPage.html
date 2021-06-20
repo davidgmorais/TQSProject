@@ -47,7 +47,7 @@
                 <div class="col-lg-12">
                     <nav class="navbar navbar-expand-lg">
                         <a class="navbar-brand" th:href="@{/}">
-                            <img th:src="@{assets/img/logo/logo.svg}" alt="Logo" />
+                            <h3>Book2Door</h3>
                         </a>
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="toggler-icon"></span>
@@ -92,52 +92,43 @@
     <div class="container" style="padding-top: 5%">
         <div class="row align-items-center">
             <div class="col-lg-12">
-                <div class="center" id="location">
-                    <h1 class="wow fadeInUp" data-wow-delay=".2s">Where do you want your order delivered at?</h1>
-                    <br>
-                    <p class="wow fadeInUp" data-wow-delay=".4s">
-                    <div class="input-group input-group-lg">
-                        <span class="input-group-text" id="inputGroup-sizing-lg"><i class="fas fa-map-marker-alt"></i></span>
-                        <input type="text" class="form-control" placeholder="Enter your location" aria-label="address" aria-describedby="addon-wrapping">
-                    </div>
-                    </p>
-                    <br>
-                    <span id="confirm"><button onclick="search()" class="main-btn btn-hover wow fadeInUp confirm" data-wow-delay=".6s">Confirm address</button></span>
-                </div>
-                <div id="search" style="display: none">
+                <div id="search">
                     <div>
                         <form th:action="@{/search}" method="POST">
                             <h1 class="wow fadeInUp" data-wow-delay=".2s">Search for your book or Store!</h1>
-                            <span class="col-lg-8 wow fadeInUp search" data-wow-delay=".4s">
-                                <div class="input-group input-group-lg">
+                            <span class="col-lg-12 wow fadeInUp search" data-wow-delay=".4s">
+                                <div class="input-group input-group-lg" style="width: 70%">
                                     <span class="input-group-text" id="inputGroup-sizing-lg 1"><i class="fas fa-search"></i></span>
                                     <input type="text" name="param" class="form-control" placeholder="Search for Book or Store" aria-label="address" aria-describedby="addon-wrapping">
+                                    <button type="submit" class="main-btn btn-hover wow fadeInUp confirm">Search</button>
                                 </div>
+
                             </span>
-                            <div class="text-center">
-                                <button type="submit" class="main-btn btn-hover wow fadeInUp confirm">Search</button>
-                            </div>
+
                         </form>
                     </div>
                     <div>
                         <div class="stores" th:object="${stores}">
                             <h3>Stores</h3>
+                            <br>
                             <div class="grid-container">
                                 <div class="grid-item"th:each="store: ${stores}">
-                                    <h5 th:text="${store.storeName}"></h5>
+                                    <h4 th:text="${store.storeName}"></h4>
                                     <a th:href="@{/store?name={s}(s=${store.storeName})}">
-                                        <img th:src="@{assets/img/store.jpg}">
+                                        <img th:src="@{assets/img/store.jpg}" style="max-width: 300px">
                                     </a>
                                 </div>
                             </div>
                         </div>
+                        <br>
                         <div class="books" th:object="${books}">
                             <h3>Books</h3>
+                            <br>
                             <div class="grid-container">
                                 <div class="grid-item" th:each="book :${books}">
-                                    <h5 th:text="${book.title}"></h5>
+                                    <h4 th:text="${book.title}"></h4>
                                     <a th:href="@{/book?title={b}(b=${book.title})}">
-                                        <img th:src="@{assets/img/book.jpg}">
+                                        <img th:src="@{assets/img/book.jpg}" style="max-width: 350px">
                                     </a>
                                 </div>
                             </div>

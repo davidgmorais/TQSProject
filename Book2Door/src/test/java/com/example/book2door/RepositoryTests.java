@@ -8,16 +8,20 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.book2door.entities.Admin;
 import com.example.book2door.entities.Book;
+import com.example.book2door.entities.JwtUser;
 import com.example.book2door.entities.Store;
+import com.example.book2door.repository.AdminRepository;
 import com.example.book2door.repository.BookRepository;
 import com.example.book2door.repository.StoreRepository;
-
+import com.example.book2door.service.StoreServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class RepositoryTests {
@@ -28,23 +32,39 @@ class RepositoryTests {
     @Mock(lenient = true)
     private StoreRepository storeRepository;
 
+    @Mock(lenient = true)
+    private AdminRepository adminRepository;
+    @Mock(lenient= true)
+    StoreServiceImpl storeService;
+
+
     @BeforeEach
      void setUp() {
-        Book book = new Book("Branca De neve", "princess and dwarves", 1888, "bob", 12.99 , "Portugues");
+        Book book = new Book("Branca De neve", "princess and dwarves", "bob", 12.99 ,10);
         Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
-        book.addGenres("drama");
         book.getSellers().add(store);
         store.getBookList().add(book);
         ArrayList<Store> storeList = new ArrayList<>();
         storeList.add(store);
         Mockito.when(bookRepository.findByTitle(book.getTitle())).thenReturn(book);
-        Mockito.when(storeRepository.findBystoreEmail(store.getStoreEmail())).thenReturn(store);
+        Mockito.when(storeRepository.findBystoreEmail(store.getEmail())).thenReturn(store);
         Mockito.when(storeRepository.findBystoreName(store.getStoreName())).thenReturn(store);
         Mockito.when(storeRepository.findByAccepted(store.wasAccepted())).thenReturn(storeList);
-       
+        Mockito.when(adminRepository.findByEmail("admin@service.pt")).thenReturn(new Admin());
+        Mockito.when(storeService.loadUserByUsername("fnac@fnac.pt")).thenReturn(new JwtUser(store));
+        Mockito.when(storeService.register(store)).thenReturn(store);
     }
 
-    
+
+    @Test
+    void whenStoreServiceLoadByUsernameThenReturnStore(){
+       assertThat(storeService.loadUserByUsername("fnac@fnac.pt")).isNotNull();
+    }
+    @Test
+    void whenStoreServiceRegisterThenReturnStore(){
+      Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
+      assertThat(storeService.register(store)).isNotNull();
+    }
     
     @Test
      void whenSearchStoreByEmailAndStoreExistsOnDB_ThenReturnStore(){
@@ -67,7 +87,7 @@ class RepositoryTests {
      void whenSearchStoreByNameAndStoreExistsOnDB_ThenReturnStore(){
         String storeName="Fnac";
         Store found = storeRepository.findBystoreName(storeName);
-        assertThat(found.getStoreEmail()).isEqualTo("fnac@fnac.pt");
+        assertThat(found.getEmail()).isEqualTo("fnac@fnac.pt");
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))
                 .findBystoreName(Mockito.anyString());
     }
@@ -104,42 +124,45 @@ class RepositoryTests {
 
     @Test
      void whenSearchForStoresToAcceptAndTheyExist_ThenReturnStoreList(){
-        List<Store> found = storeRepository.findByAccepted(false);
+        List<Store> found = storeRepository.findByAccepted(0);
         Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
         assertThat(found).contains(store);
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))
-                .findByAccepted(Mockito.anyBoolean());
+                .findByAccepted(Mockito.anyInt());
     }
 
     @Test
      void whenSearchForStoresToAcceptAndTheyDontExist_ThenReturnStoreList(){
-        List<Store> found = storeRepository.findByAccepted(true);
+        List<Store> found = storeRepository.findByAccepted(1);
         assertThat(found).isEmpty();
         Mockito.verify(storeRepository, VerificationModeFactory.times(1))
-                .findByAccepted(Mockito.anyBoolean());
+                .findByAccepted(Mockito.anyInt());
     }
 
     @Test
      void whenCreateStore_ThenStoreIsNotAccepted(){
         Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
-        assertThat(store.wasAccepted()).isFalse();
+        assertThat(store.wasAccepted()).isZero();
     }
 
     @Test
      void whenAcceptingStore_ThenStoreIsAccepted(){
         Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
         store.accept();
-        assertThat(store.wasAccepted()).isTrue();
+        assertThat(store.wasAccepted()).isEqualTo(1);
     }
 
     @Test
      void testStoreGetByIdAndEquals(){
         Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
-        Store storeFromEmail = storeRepository.findBystoreEmail(store.getStoreEmail());
+        Store storeFromEmail = storeRepository.findBystoreEmail(store.getEmail());
         assertThat(store.getId()).isEqualTo(storeFromEmail.getId()); 
     }
 
-    
+    @Test
+    void whenLoadAdminByEmailAndItsRightEmailReturnJwtUser(){
+      assertThat(adminRepository.findByEmail("admin@service.pt")).isNotNull();
+    }
 
 
 
