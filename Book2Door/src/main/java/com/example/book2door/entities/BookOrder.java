@@ -29,6 +29,8 @@ public class BookOrder {
     private String storeAddress;
 
 
+    public BookOrder() {};
+
     public BookOrder( String clientAddress, List<String> books, double total, String storeAddress) {
         this.clientAddress = clientAddress;
         this.books = books;

@@ -6,11 +6,14 @@ import com.example.engine.dto.CredentialsDTO;
 import com.example.engine.dto.LocationDTO;
 import com.example.engine.dto.UserDTO;
 import com.example.engine.entity.Contrib;
+import com.example.engine.entity.Order;
 import com.example.engine.entity.OrderStatus;
 import com.example.engine.entity.Rider;
+import com.google.code.geocoder.Geocoder;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
+import org.apache.tomcat.jni.Address;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -119,7 +123,7 @@ public class EngineController {
     }
 
     @ApiOperation(value = "View of the login page", response = String.class)
-    @GetMapping(value = "/login")
+    @GetMapping(value = {"/login", "/"})
     public String login(Model model, UserDTO userDTO) {
         model.addAttribute("authenticateUser", userDTO);
         return "login";
@@ -245,11 +249,14 @@ public class EngineController {
 
     @ApiOperation(value = "View of the front page for riders", response = String.class)
     @GetMapping(value = "/rider/dashboard")
-    public String riderIndex(Model model) {
+    public String riderIndex(Model model, Order order) throws Exception {
+
         model.addAttribute("status", status);
         if (jwt != null) {
             jwt = this.trimToken(jwt);
         }
+        ResponseEntity<Order> responseEntity = orderController.getRidersCurrentOrderStatus(jwt);
+        model.addAttribute("order", responseEntity.getBody());
 
         return INDEX_RIDER;
     }

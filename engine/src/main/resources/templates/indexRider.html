@@ -303,20 +303,26 @@
                                     <table class="table table-bordered" id="storeRequests" width="100%" cellspacing="0">
                                         <thead>
                                         <tr>
-                                            <th>Requester Name</th>
-                                            <th>Store</th>
-                                            <th>Order</th>
-                                            <th>Map Indication</th>
+                                            <th>Price</th>
+                                            <th>Store Address</th>
+                                            <th>Delivery Address</th>
                                             <th>Tracking</th>
                                             <th>Status</th>
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        <tr>
-                                            <td>Inês Silva</td>
-                                            <td>UptownBook Aveiro</td>
-                                            <td>Moby Dick, Herman Melville</td>
-                                            <td>Store: Rua fmemjem, Aveiro <br>Address: Rua medmee <br><a style="cursor: pointer; color: #3b5998; font-weight: bold" data-toggle="modal" data-target="#myModal">Indications here</a></td>
+                                        <tr th:each="order:${order}">
+                                            <td th:text="${order.value}">NA</td>
+                                            <td>
+                                                <div th:text="${order.serviceLocation.latitude}" id="serviceLat"></div>
+                                                <div th:text="${order.serviceLocation.longitude}" id="serviceLon"></div>
+                                                <a style="cursor: pointer; color: #3b5998; font-weight: bold" data-toggle="modal" data-target="#myModal">Indications here</a>
+                                            </td>
+                                            <td>
+                                                <div th:text="${order.deliveryLocation.latitude}" id="deliveryLat"></div>
+                                                <div th:text="${order.deliveryLocation.longitude}" id="deliveryLon"></div>
+                                                <a style="cursor: pointer; color: #3b5998; font-weight: bold" data-toggle="modal" data-target="#myModalDelivery">Indications here</a>
+                                            </td>
                                             <td>
                                                 <form id="updateStatus" method="post" th:action="@{update/order/}">
                                                 <div class="dropdown mb-4">
@@ -336,7 +342,7 @@
                                                 </div>
                                                 </form>
                                             </td>
-                                            <td th:field="${status}"></td>
+                                            <td th:text="${order.status}"></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -431,6 +437,61 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" >Map Indications</h3>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mapouter">
+                        <div class="gmap_canvas">
+                            <iframe class="gmap_iframe" id="iframeModalService" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src=""></iframe>
+                        </div>
+                        <style>.mapouter{position:relative;text-align:right;width:400px;height:300px;}.gmap_canvas {overflow:hidden;background:none!important;width:400px;height:300px;}.gmap_iframe {width:700px!important;height:500px!important;}</style>
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="text-align: center">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModalDelivery" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" >Map Indications</h3>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mapouter">
+                        <div class="gmap_canvas">
+                            <iframe class="gmap_iframe" id="iframeModalDelivery" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src=""></iframe>
+                        </div>
+                        <style>.mapouter{position:relative;text-align:right;width:400px;height:300px;}.gmap_canvas {overflow:hidden;background:none!important;width:400px;height:300px;}.gmap_iframe {width:400px!important;height:300px!important;}</style>
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="text-align: center">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <!-- Bootstrap core JavaScript-->
@@ -451,7 +512,21 @@
 <script th:src="@{/js/demo/chart-pie-demo.js}"></script>
 
 <script>
-    var statusStr;
+
+    document.getElementById("iframeModalService").src = "https://maps.google.com/maps?q=" + document.getElementById("serviceLat").innerText + ",%20" + document.getElementById("serviceLon").innerText +"&t=&z=13&ie=UTF8&iwloc=&output=embed";
+    document.getElementById("iframeModalDelivery").src = "https://maps.google.com/maps?q=" + document.getElementById("deliveryLat").innerText + ",%20" + document.getElementById("deliveryLon").innerText +"&t=&z=13&ie=UTF8&iwloc=&output=embed";
+    http://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&sensor=true/false
+        $.ajax({
+            type: "GET",
+            url: "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + + "," + + "&sensor=true",
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+            },
+        })
+
+
+        var statusStr;
     document.getElementById('received').addEventListener('click', function() {
         console.log(this.innerText);
         statusStr = 'received';
