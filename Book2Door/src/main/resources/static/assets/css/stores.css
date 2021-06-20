@@ -1,0 +1,27 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    background-color: transparent;
+
+}
+
+
+.grid-item {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 5px;
+    width: 90%;
+    height: 90%;
+}
+
+
+.grid-item img{
+    max-width: 100%;
+    min-height: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    object-fit: cover;
+}
+
+.stores {
+    padding-top: 5%;
+}

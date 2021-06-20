@@ -14,7 +14,7 @@ public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true,nullable = false, name = "storeName")
+    @Column(nullable = false, name = "storeName")
     private String storeName;
     @Column(unique = true,nullable = false, name = "storeAddress")
     private String storeAddress;
@@ -28,10 +28,12 @@ public class Store {
     private String storeEmail;
     @Column(name = "rating")
     private Double rating=0.0;
+    @Column(name = "role", nullable = false)
+    private int role;
     @ManyToMany(mappedBy = "sellers")
     private Set<Book> bookList = new HashSet<>();
     @Column(name = "accepted")
-    private boolean accepted;
+    private int accepted;
     @Column(name = "numberOfRates")
     private Double numberOfRates=0.0;
     @Column(name = "totalRate")
@@ -39,6 +41,8 @@ public class Store {
     
 
     public Store() {
+        this.accepted =0;
+        this.role=1;
     }
 
     public Store(String storeName, String storeAddress, String fullName, String password, String storePhone, String storeEmail) {
@@ -48,14 +52,21 @@ public class Store {
         this.password = password;
         this.storePhone = storePhone;
         this.storeEmail = storeEmail;
-        this.accepted = false;
+        this.accepted = 0;
+        this.role=1;
     }
 
 
-
+    public int getRole(){
+        return this.role;
+    }
     public void accept(){
-        this.accepted=true;
+        this.accepted=1;
     }
+    public void deny(){
+        this.accepted=2;
+    }
+
 
     public Double getRating(){
         return this.rating;
@@ -68,7 +79,7 @@ public class Store {
         
     }
 
-    public boolean wasAccepted(){
+    public int wasAccepted(){
         return this.accepted;
     }
     
@@ -122,7 +133,7 @@ public class Store {
         this.storePhone = storePhone;
     }
 
-    public String getStoreEmail() {
+    public String getEmail() {
         return this.storeEmail;
     }
 
@@ -139,7 +150,7 @@ public class Store {
         if (!(o instanceof Store)) {
             return false;
         }
-        Store store = (Store) o;
+        var store = (Store) o;
         return Objects.equals(id, store.id) && Objects.equals(storeName, store.storeName) && Objects.equals(storeAddress, store.storeAddress) && Objects.equals(fullName, store.fullName) && Objects.equals(password, store.password) && Objects.equals(storePhone, store.storePhone) && Objects.equals(storeEmail, store.storeEmail);
     }
 
@@ -160,11 +171,9 @@ public class Store {
             ", storeName='" + getStoreName() + "'" +
             ", storeAddress='" + getStoreAddress() + "'" +
             ", fullName='" + getFullName() + "'" +
-            ", password='" + getPassword() + "'" +
             ", storePhone='" + getStorePhone() + "'" +
-            ", storeEmail='" + getStoreEmail() + "'" +
+            ", storeEmail='" + getEmail() + "'" +
             ", rating='" + getRating() + "'" +
-            ", bookList='" + getBookList() + "'" +
             ", accepted='" + wasAccepted() + "'" +
             "}";
     }

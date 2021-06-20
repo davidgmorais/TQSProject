@@ -1,0 +1,38 @@
+#riderReview {
+    padding-top: 5%;
+}
+
+#storeReview {
+    padding-top: 8%;
+}
+
+#childWrapper {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+
+}
+
+#childWrapper > li {
+    padding-right: 5%;
+    display: inline-block;
+}
+
+#childWrapper2 {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+
+}
+
+#childWrapper2 > li {
+    padding-right: 5%;
+    display: inline-block;
+}
+
+i {
+    color: #ffae8cff;
+}
+
