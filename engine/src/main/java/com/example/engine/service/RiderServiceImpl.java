@@ -1,7 +1,6 @@
 package com.example.engine.service;
 
 import com.example.engine.dto.UserDTO;
-import com.example.engine.entity.Order;
 import com.example.engine.entity.Rider;
 import com.example.engine.entity.User;
 import com.example.engine.repository.RiderRepository;
@@ -10,9 +9,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
