@@ -6,6 +6,7 @@ import com.example.engine.dto.CredentialsDTO;
 import com.example.engine.dto.LocationDTO;
 import com.example.engine.dto.UserDTO;
 import com.example.engine.entity.Contrib;
+import com.example.engine.entity.Order;
 import com.example.engine.entity.OrderStatus;
 import com.example.engine.entity.Rider;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +38,7 @@ public class EngineController {
     public static final String RIDER_DASHBOARD = "redirect:/rider/dashboard";
     private String jwt;
     private String status;
+    private double riderEarnings = 0;
 
     @Autowired
     UserController userController;
@@ -119,7 +121,7 @@ public class EngineController {
     }
 
     @ApiOperation(value = "View of the login page", response = String.class)
-    @GetMapping(value = "/login")
+    @GetMapping(value = {"/login", "/"})
     public String login(Model model, UserDTO userDTO) {
         model.addAttribute("authenticateUser", userDTO);
         return "login";
@@ -246,11 +248,18 @@ public class EngineController {
     @ApiOperation(value = "View of the front page for riders", response = String.class)
     @GetMapping(value = "/rider/dashboard")
     public String riderIndex(Model model) {
+
         model.addAttribute("status", status);
         if (jwt != null) {
             jwt = this.trimToken(jwt);
         }
-
+        ResponseEntity<Order> responseEntity = orderController.getRidersCurrentOrderStatus(jwt);
+        model.addAttribute("order", responseEntity.getBody());
+        var body = responseEntity.getBody();
+        if (body != null && body.getValue() != null) {
+            riderEarnings += (body.getValue().intValue() * 0.20);
+        }
+        model.addAttribute("earnings", riderEarnings);
         return INDEX_RIDER;
     }
 

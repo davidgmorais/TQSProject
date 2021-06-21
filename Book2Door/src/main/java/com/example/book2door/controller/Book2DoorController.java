@@ -36,6 +36,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.client.RestTemplate;
+
+import javax.transaction.Transactional;
+
 
 @Controller
 public class Book2DoorController {
@@ -52,6 +56,7 @@ public class Book2DoorController {
     private static final String ERROR_TEMPLATE = "error";
     private static final String TOTAL = "total";
     private static final String ANON = "anonymoususer";
+    private long orderId;
 
     @Autowired
     JwtUtils jwtUtils;
@@ -80,6 +85,7 @@ public class Book2DoorController {
 
     @Autowired
     AdminRepository adminRepository;
+
 
 
     @GetMapping(value="/")
@@ -244,6 +250,7 @@ public class Book2DoorController {
         }
         JwtUser jwtClient= (JwtUser)(auth.getPrincipal());
         var client = clientRepository.findClientByEmail(jwtClient.getEmail());
+        client.getCart().remove(id);
         clientRepository.save(client);
         return "redirect:/cart";
     }
@@ -341,14 +348,33 @@ public class Book2DoorController {
     public String searchLocation() {
         return "searchPageLocation";
     }
-    
-    @GetMapping(value="/order")
-    public String orderProcess(Long storeId, Model model)
-    {   
+
+    @GetMapping(value="/order/{id}")
+    public String orderProcess(@PathVariable Long id, Model model) {
         var auth=SecurityContextHolder.getContext().getAuthentication();
         if(auth.getName().equals(ANON)){
             return REDIRECT_LOGIN;
         }
+        orderId = id;
+        return "redirect:/order";
+    }
+
+    @GetMapping(value="/order")
+    public String orderProcess(Model model) {
+        var auth=SecurityContextHolder.getContext().getAuthentication();
+        if(auth.getName().equals(ANON)){
+            return REDIRECT_LOGIN;
+        }
+        model.addAttribute("orderId", orderId);
+        return "orderPage";
+    }
+
+    
+    @PostMapping(value="/order")
+    @Transactional
+    public String orderProcess(Long storeId)
+    {   
+        var auth=SecurityContextHolder.getContext().getAuthentication();
         JwtUser jwtClient= (JwtUser)(auth.getPrincipal());
         var client = clientRepository.findClientByEmail(jwtClient.getEmail());
         List<Long> booksOnCart = client.getCart();
@@ -364,7 +390,9 @@ public class Book2DoorController {
         }
         var order = new BookOrder(client.getAddress(), books, total,storeRepository.getById(storeId).getStoreAddress());
         orderRepository.save(order);
-        return "orderPage";
+        sendOrderToEngine(4, order);
+
+        return "redirect:/order/" + orderId;
     }
 
     @GetMapping(value="/store/dashboard")
@@ -459,6 +487,18 @@ public class Book2DoorController {
 
         }
         return new ResponseEntity<>(responseBody, responseHeader, HttpStatus.OK);
+    }
+
+    private void sendOrderToEngine(Integer contribID, BookOrder bookOrder){
+        final var uri = "http://localhost:8080/api/order/" + contribID;
+        Map<String, Double> request = Map.of("value", bookOrder.getTotal(),
+                "pickupLat", 40.631375, "pickupLon", -8.659969, "deliveryLat",  40.6407372, "deliveryLon", -8.6516916);
+        var restTemplate = new RestTemplate();
+        ResponseEntity<BookOrder> responseEntity = restTemplate.postForEntity(uri, request, BookOrder.class);
+        var body = responseEntity.getBody();
+        if (body != null) {
+            orderId = body.getId();
+        }
     }
 
 }

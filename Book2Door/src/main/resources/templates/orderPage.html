@@ -6,17 +6,17 @@
     <title>Book2Door - Follow your Order</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="shortcut icon" type="image/x-icon" th:href="@{assets/img/favicon.png}"/>
+    <link rel="shortcut icon" type="image/x-icon" th:href="@{/assets/img/favicon.png}"/>
     <!-- Place favicon.ico in the root directory -->
 
     <!-- ========================= CSS here ========================= -->
-    <link rel="stylesheet" th:href="@{assets/css/bootstrap-5.0.0-alpha-2.min.css}" />
-    <link rel="stylesheet" th:href="@{assets/css/LineIcons.2.0.css}" />
-    <link rel="stylesheet" th:href="@{assets/css/animate.css}" />
-    <link rel="stylesheet" th:href="@{assets/css/main.css}" />
-    <link rel="stylesheet" th:href="@{assets/css/custom.css}" />
-    <link rel="stylesheet" th:href="@{assets/css/bookPage.css}" />
-    <link rel="stylesheet" th:href="@{assets/css/order.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap-5.0.0-alpha-2.min.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/LineIcons.2.0.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/animate.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/main.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/custom.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/bookPage.css}" />
+    <link rel="stylesheet" th:href="@{/assets/css/order.css}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
@@ -80,10 +80,11 @@
 <!-- ========================= hero-section start ========================= -->
 <section id="login" class="hero-section">
     <div class="hero-shape">
-        <img th:src="@{assets/img/hero/hero-shape.svg}" alt="" class="shape">
+        <img th:src="@{/assets/img/hero/hero-shape.svg}" alt="" class="shape">
     </div>
     <div class="container book">
         <h3 class="wow fadeInUp" data-wow-delay=".2s">Follow your Order</h3>
+        <p style="display: none" th:text="${orderId}" id="orderId"></p>
         <p id="estimatedTime">Estimated time of arrival: 16:40-16:55</p>
         <div id="orderPlaced">
             <div class="row align-items-center">
@@ -96,7 +97,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <img th:src="@{assets/img/orderPlaced.png}">
+                    <img th:src="@{/assets/img/orderPlaced.png}">
                 </div>
             </div>
         </div>
@@ -111,7 +112,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <img th:src="@{assets/img/orderPickedUp.png}">
+                    <img th:src="@{/assets/img/orderPickedUp.png}">
                 </div>
             </div>
         </div>
@@ -128,8 +129,7 @@
                     <!-- MAP here -->
                     <div class="mapouter">
                         <div class="gmap_canvas">
-                            <iframe class="gmap_iframe" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Aveiro&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
-                            <a href="https://www.bgmi.org/">BGMI</a>
+                            <iframe class="gmap_iframe" id="iframe" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src=""></iframe>
                         </div>
                         <style>.mapouter{position:relative;text-align:right;width:700px;height:500px;}.gmap_canvas {overflow:hidden;background:none!important;width:700px;height:500px;}.gmap_iframe {width:700px!important;height:500px!important;}</style>
                     </div>
@@ -165,6 +165,8 @@
     </div>
 
     </div>
+
+
 </section>
 
 <!-- ========================= hero-section end ========================= -->
@@ -172,7 +174,43 @@
 
 
 <!-- ========================= JS here ========================= -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
+
+    var orderid = document.getElementById("orderId").innerText;
+    var interval = 4000;
+    console.log(orderid);
+    function doAjax() {
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:8080/api/order/" + orderid,
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+                var locationRiderLat = data.pickupRider.location[0];
+                var locationRiderLon = data.pickupRider.location[1];
+
+                //data will hold an object with your response data, no need to parse
+                if (data.status == 'ASSIGNED') {
+                    changeDiv();
+                } else if (data.status == 'BEING_DELIVERED') {
+                    changeDiv2();
+                   document.getElementById('iframe').src = "https://maps.google.com/maps?q="+ locationRiderLat +",%20" + locationRiderLon +"&t=&z=13&ie=UTF8&iwloc=&output=embed";
+                } else if (data.status == 'DELIVERED') {
+                    changeDiv3();
+                }
+            },
+            complete: function (data) {
+                // Schedule the next
+                setTimeout(doAjax, interval);
+            }
+        })
+    }
+    setTimeout(doAjax, interval);
+
+
+
+
 
     function changeDiv() {
         document.getElementById("orderPickedUp").style.display = "flex";
@@ -190,15 +228,14 @@
         document.getElementById("estimatedTime").style.display = "none";
     }
 
-    let change = setTimeout(changeDiv, 1000);
-    let change2 = setTimeout(changeDiv2, 2000);
-    let change3 = setTimeout(changeDiv3, 3000);
+    //let change = setTimeout(changeDiv, 1000);
+    //let change2 = setTimeout(changeDiv2, 2000);
+    //let change3 = setTimeout(changeDiv3, 3000);
 
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script th:src="@{assets/js/bootstrap.5.0.0.alpha-2-min.js}"></script>
-<script th:src="@{assets/js/count-up.min.js}"></script>
-<script th:src="@{assets/js/wow.min.js}"></script>
-<script th:src="@{assets/js/main.js}"></script>
+<script th:src="@{/assets/js/bootstrap.5.0.0.alpha-2-min.js}"></script>
+<script th:src="@{/assets/js/count-up.min.js}"></script>
+<script th:src="@{/assets/js/wow.min.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
 </body>
 </html>
