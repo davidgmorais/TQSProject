@@ -255,7 +255,7 @@ public class EngineController {
         }
         ResponseEntity<Order> responseEntity = orderController.getRidersCurrentOrderStatus(jwt);
         model.addAttribute("order", responseEntity.getBody());
-        if (responseEntity.getBody() != null) {
+        if (responseEntity.getBody() != null && responseEntity.getBody().getValue() != null) {
             riderEarnings += (responseEntity.getBody().getValue().intValue() * 0.20);
         }
         model.addAttribute("earnings", riderEarnings);
