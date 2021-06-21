@@ -150,7 +150,6 @@ public class OrderServiceImpl implements OrderService{
             case "DELIVERED":
                 rider.setLocation(order.getDeliveryLocation().getLatitude(), order.getDeliveryLocation().getLongitude());
                 order.setStatus(OrderStatus.DELIVERED);
-                order.setPickupRider(null);
                 dispatchService.dispatchNextOrderInQueue(rider.getUser().getUsername());
                 break;
             default:
