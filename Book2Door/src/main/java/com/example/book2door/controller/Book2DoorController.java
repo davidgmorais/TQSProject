@@ -255,6 +255,7 @@ public class Book2DoorController {
         }
         JwtUser jwtClient= (JwtUser)(auth.getPrincipal());
         var client = clientRepository.findClientByEmail(jwtClient.getEmail());
+        client.getCart().remove(id);
         clientRepository.save(client);
         return "redirect:/cart";
     }

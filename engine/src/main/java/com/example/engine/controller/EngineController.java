@@ -9,11 +9,9 @@ import com.example.engine.entity.Contrib;
 import com.example.engine.entity.Order;
 import com.example.engine.entity.OrderStatus;
 import com.example.engine.entity.Rider;
-import com.google.code.geocoder.Geocoder;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
-import org.apache.tomcat.jni.Address;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +21,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 
@@ -41,6 +38,7 @@ public class EngineController {
     public static final String RIDER_DASHBOARD = "redirect:/rider/dashboard";
     private String jwt;
     private String status;
+    private double riderEarnings = 0;
 
     @Autowired
     UserController userController;
@@ -249,7 +247,7 @@ public class EngineController {
 
     @ApiOperation(value = "View of the front page for riders", response = String.class)
     @GetMapping(value = "/rider/dashboard")
-    public String riderIndex(Model model, Order order) throws Exception {
+    public String riderIndex(Model model) {
 
         model.addAttribute("status", status);
         if (jwt != null) {
@@ -257,7 +255,10 @@ public class EngineController {
         }
         ResponseEntity<Order> responseEntity = orderController.getRidersCurrentOrderStatus(jwt);
         model.addAttribute("order", responseEntity.getBody());
-
+        if (responseEntity.getBody() != null) {
+            riderEarnings += (responseEntity.getBody().getValue().intValue() * 0.20);
+        }
+        model.addAttribute("earnings", riderEarnings);
         return INDEX_RIDER;
     }
 
