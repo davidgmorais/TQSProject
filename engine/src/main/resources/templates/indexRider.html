@@ -53,13 +53,6 @@
             Menu
         </div>
 
-        <!-- Nav Item -->
-        <li class="nav-item"> <!--TODO -->
-            <a class="nav-link" href="#">
-                <i class="fas fa-fw fa-chart-area"></i>
-                <span>Statistics</span></a>
-        </li>
-
 
         <!-- Nav Item -->
         <li class="nav-item">
@@ -207,7 +200,25 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            Total Deliveries Today</div>
+                                            Total Deliveries</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalOrders}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-shopping-bag fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Deliveries -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Total Deliveries Current Shift</div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${deliveries}">0</div>
                                     </div>
                                     <div class="col-auto">
@@ -348,7 +359,6 @@
                                         <tr>
                                             <th>Service Name</th>
                                             <th>Pickup Location</th>
-                                            <th>Delivery Location</th>
                                             <th>Price</th>
                                         </tr>
                                         </thead>
@@ -356,7 +366,6 @@
                                         <tr>
                                             <th>Service Name</th>
                                             <th>Pickup Location</th>
-                                            <th>Delivery Location</th>
                                             <th>Price</th>
                                         </tr>
                                         </tfoot>
@@ -366,10 +375,6 @@
                                                 <td>
                                                     <div th:text="${orderHistory.serviceLocation.getLongitude()}"></div>
                                                     <div th:text="${orderHistory.serviceLocation.getLatitude()}"></div>
-                                                </td>
-                                                <td>
-                                                    <div th:text="${orderHistory.deliveryLocation.getLongitude()}"></div>
-                                                    <div th:text="${orderHistory.deliveryLocation.getLatitude()}"></div>
                                                 </td>
                                                 <td th:text="${orderHistory.value}"></td>
                                             </tr>

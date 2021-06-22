@@ -214,7 +214,17 @@ public class EngineController {
 
     @ApiOperation(value = "View of the front page for contributors.", response = String.class)
     @GetMapping(value = "/service/dashboard")
-    public String service() {
+    public String service(Model model) {
+        if (jwt != null) {
+            jwt = this.trimToken(jwt);
+        }
+        model.addAttribute("deliveries", totalDeliveries);
+        ResponseEntity<List<Order>> orderResponseEntity = orderController.getContribHistory(jwt);
+        if (orderResponseEntity.getBody() != null) {
+            model.addAttribute("ordersHistory", orderResponseEntity.getBody());
+            model.addAttribute("totalOrders", orderResponseEntity.getBody().size());
+
+        }
         return INDEX_SERVICE;
     }
 
@@ -259,8 +269,10 @@ public class EngineController {
         model.addAttribute("order", responseEntity.getBody());
         model.addAttribute("earnings", riderEarnings);
         model.addAttribute("deliveries", totalDeliveries);
-        model.addAttribute("orderHistory", orderResponseEntity.getBody());
-        System.out.println(orderResponseEntity.getBody());
+        if (orderResponseEntity.getBody() != null) {
+            model.addAttribute("orderHistory", orderResponseEntity.getBody());
+            model.addAttribute("totalOrders", orderResponseEntity.getBody().size());
+        }
         return INDEX_RIDER;
     }
 
