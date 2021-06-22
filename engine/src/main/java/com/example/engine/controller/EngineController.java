@@ -220,9 +220,11 @@ public class EngineController {
         }
         model.addAttribute("deliveries", totalDeliveries);
         ResponseEntity<List<Order>> orderResponseEntity = orderController.getContribHistory(jwt);
-        if (orderResponseEntity.getBody() != null) {
-            model.addAttribute("ordersHistory", orderResponseEntity.getBody());
-            model.addAttribute("totalOrders", orderResponseEntity.getBody().size());
+        var body = orderResponseEntity.getBody();
+        if (body != null) {
+            var bodySize = body.size();
+            model.addAttribute("ordersHistory", body);
+            model.addAttribute("totalOrders", bodySize);
 
         }
         return INDEX_SERVICE;
@@ -269,9 +271,11 @@ public class EngineController {
         model.addAttribute("order", responseEntity.getBody());
         model.addAttribute("earnings", riderEarnings);
         model.addAttribute("deliveries", totalDeliveries);
-        if (orderResponseEntity.getBody() != null) {
-            model.addAttribute("orderHistory", orderResponseEntity.getBody());
-            model.addAttribute("totalOrders", orderResponseEntity.getBody().size());
+        var body = orderResponseEntity.getBody();
+        if (body != null) {
+            var bodySize = body.size();
+            model.addAttribute("orderHistory", body);
+            model.addAttribute("totalOrders", bodySize);
         }
         return INDEX_RIDER;
     }
