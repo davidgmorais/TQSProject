@@ -257,6 +257,7 @@ public class EngineController {
         ResponseEntity<Order> responseEntity = orderController.getRidersCurrentOrderStatus(jwt);
         model.addAttribute("order", responseEntity.getBody());
         model.addAttribute("earnings", riderEarnings);
+        model.addAttribute("deliveries", totalDeliveries);
         return INDEX_RIDER;
     }
 
