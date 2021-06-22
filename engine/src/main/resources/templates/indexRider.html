@@ -40,7 +40,7 @@
 
         <!-- Nav Item - Dashboard -->
         <li class="nav-item active">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" th:href="@{/rider/dashboard}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span></a>
         </li>
@@ -346,20 +346,33 @@
                                     <table class="table table-bordered" id="riderRequests" width="100%" cellspacing="0">
                                         <thead>
                                         <tr>
-                                            <th>Requester Name</th>
-                                            <th>Store</th>
-                                            <th>Order</th>
+                                            <th>Service Name</th>
+                                            <th>Pickup Location</th>
+                                            <th>Delivery Location</th>
+                                            <th>Price</th>
                                         </tr>
                                         </thead>
                                         <tfoot>
                                         <tr>
-                                            <th>Requester Name</th>
-                                            <th>Store</th>
-                                            <th>Order</th>
+                                            <th>Service Name</th>
+                                            <th>Pickup Location</th>
+                                            <th>Delivery Location</th>
+                                            <th>Price</th>
                                         </tr>
                                         </tfoot>
                                         <tbody>
-
+                                            <tr th:each="orderHistory:${orderHistory}">
+                                                <td th:text="${orderHistory.serviceOwner.storeName}"></td>
+                                                <td>
+                                                    <div th:text="${orderHistory.serviceLocation.getLongitude()}"></div>
+                                                    <div th:text="${orderHistory.serviceLocation.getLatitude()}"></div>
+                                                </td>
+                                                <td>
+                                                    <div th:text="${orderHistory.deliveryLocation.getLongitude()}"></div>
+                                                    <div th:text="${orderHistory.deliveryLocation.getLatitude()}"></div>
+                                                </td>
+                                                <td th:text="${orderHistory.value}"></td>
+                                            </tr>
 
                                         </tbody>
                                     </table>

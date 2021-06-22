@@ -255,9 +255,12 @@ public class EngineController {
             jwt = this.trimToken(jwt);
         }
         ResponseEntity<Order> responseEntity = orderController.getRidersCurrentOrderStatus(jwt);
+        ResponseEntity<List<Order>> orderResponseEntity = orderController.getRidersHistory(jwt);
         model.addAttribute("order", responseEntity.getBody());
         model.addAttribute("earnings", riderEarnings);
         model.addAttribute("deliveries", totalDeliveries);
+        model.addAttribute("orderHistory", orderResponseEntity.getBody());
+        System.out.println(orderResponseEntity.getBody());
         return INDEX_RIDER;
     }
 
