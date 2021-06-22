@@ -491,6 +491,7 @@ public class Book2DoorController {
 
     private void sendOrderToEngine(Integer contribID, BookOrder bookOrder){
         final var uri = "http://localhost:8080/api/order/" + contribID;
+        //todo address
         Map<String, Double> request = Map.of("value", bookOrder.getTotal(),
                 "pickupLat", 40.631375, "pickupLon", -8.659969, "deliveryLat",  40.6407372, "deliveryLon", -8.6516916);
         var restTemplate = new RestTemplate();

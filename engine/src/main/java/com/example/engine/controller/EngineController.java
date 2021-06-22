@@ -39,6 +39,7 @@ public class EngineController {
     private String jwt;
     private String status;
     private double riderEarnings = 0;
+    private int totalDeliveries = 0;
 
     @Autowired
     UserController userController;
@@ -255,11 +256,8 @@ public class EngineController {
         }
         ResponseEntity<Order> responseEntity = orderController.getRidersCurrentOrderStatus(jwt);
         model.addAttribute("order", responseEntity.getBody());
-        var body = responseEntity.getBody();
-        if (body != null && body.getValue() != null) {
-            riderEarnings += (body.getValue().intValue() * 0.20);
-        }
         model.addAttribute("earnings", riderEarnings);
+        model.addAttribute("deliveries", totalDeliveries);
         return INDEX_RIDER;
     }
 
@@ -288,6 +286,7 @@ public class EngineController {
     public String updateOrderStatus(@PathVariable String status) {
         jwt = this.trimToken(jwt);
         logger.info(status);
+        ResponseEntity<Order> responseEntity = orderController.getRidersCurrentOrderStatus(jwt);
         switch (status) {
             case "received":
                 status = OrderStatus.WAITING.name();
@@ -297,6 +296,11 @@ public class EngineController {
                 break;
             case "delivered":
                 status = OrderStatus.DELIVERED.name();
+                var body = responseEntity.getBody();
+                if (body != null && body.getValue() != null) {
+                    riderEarnings += (body.getValue().intValue() * 0.20);
+                    totalDeliveries += 1;
+                }
                 break;
             default:
         }
