@@ -90,6 +90,7 @@ class OrderService_UnitTest {
         when(orderRepository.findOrderByPickupRiderUserUsernameAndStatusIn(dakota.getUsername(), new HashSet<>(Arrays.asList(OrderStatus.ASSIGNED, OrderStatus.BEING_DELIVERED)))).thenReturn(null);
         when(orderRepository.findOrderById(-1L)).thenReturn(null);
         when(orderRepository.findAllByPickupRiderUserUsername(bob.getUsername())).thenReturn(Collections.singletonList(order));
+        when(orderRepository.findAllByServiceOwnerUserUsername(bob.getUsername())).thenReturn(new ArrayList<>(Arrays.asList(order, order2, order3)));
         when(orderRepository.findAllByPickupRiderUserUsername("NonExistingRider")).thenReturn(new ArrayList<>());
         when(orderRepository.save(Mockito.any())).thenReturn(order);
         when(orderRepository.findOrdersByPickupRiderIsNullOrderById()).thenReturn(new ArrayList<>(Arrays.asList(order2, order3)));
@@ -200,7 +201,7 @@ class OrderService_UnitTest {
     }
 
     @Test
-    void whenGetRidesOrderHistory_andRiderIsInvalid_returnNull() {
+    void whenGetRidesOrderHistory_andRiderIsInvalid_returnEmptyList() {
         List<Order> ordersHistory = orderService.getRidersOrderHistory("NonExistingRider");
         assertThat(ordersHistory).isEmpty();
         Mockito.verify(riderService, VerificationModeFactory.times(1))
@@ -214,9 +215,17 @@ class OrderService_UnitTest {
     }
 
     @Test
-    void whenGetRidesOrderHistory_andRiderIInvValid_returnEmptyList() {
-        List<Order> ordersHistory = orderService.getRidersOrderHistory("NonExistingRider");
-        assertThat(ordersHistory).isEmpty();
+    void whenGetContribOrderHistory_andContribIsInvalid_returnEmptyList() {
+        List<Order> orderHistory = orderService.getContributorOrderHistory("NonExistingContrib");
+        assertThat(orderHistory).isEmpty();
+        Mockito.verify(contribService, VerificationModeFactory.times(1))
+                .getContributorByUsername(Mockito.anyString());
+    }
+
+    @Test
+    void whenGetContribOrderHistory_andContribIsValid_returnOrderHistory() {
+        List<Order> orderHistory = orderService.getContributorOrderHistory("bob");
+        assertThat(orderHistory).hasSize(3);
     }
 
     @Test

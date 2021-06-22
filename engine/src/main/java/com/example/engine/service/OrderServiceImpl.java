@@ -119,8 +119,16 @@ public class OrderServiceImpl implements OrderService{
         if (rider == null) {
             return new ArrayList<>();
         }
-
         return orderRepository.findAllByPickupRiderUserUsername(rider.getUser().getUsername());
+    }
+
+    @Override
+    public List<Order> getContributorOrderHistory(String contributorUsername) {
+        var contrib = contribService.getContributorByUsername(contributorUsername);
+        if (contrib == null){
+            return new ArrayList<>();
+        }
+        return orderRepository.findAllByServiceOwnerUserUsername(contrib.getUser().getUsername());
     }
 
     @Override

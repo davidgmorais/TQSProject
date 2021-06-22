@@ -20,6 +20,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -230,6 +233,56 @@ class OrderController_mockServiceTest {
         mvc.perform(get("/api/order/" + 100).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
         verify(orderService, times(1)).getOrderByI(Mockito.anyLong());
+    }
+
+    @Test
+    void whenGetRidersHistory_andInvalidRider_orNoOrderHistory_thenReturnsEmptyList() throws Exception {
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 0);
+
+        when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(dakota.getUsername());
+        when(orderService.getRidersOrderHistory(dakota.getUsername())).thenReturn(new ArrayList<>());
+        mvc.perform(get("/api/rider/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void whenGetRidersHistory_andHistory_thenReturnsOrderHistory() throws Exception {
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 0);
+
+        Contrib contrib = new Contrib(new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2), "Service");
+        Order order = new Order(20.0, contrib, new Location(42.5, -7.0));
+
+        when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(dakota.getUsername());
+        when(orderService.getRidersOrderHistory(dakota.getUsername())).thenReturn(new ArrayList<>(Collections.singletonList(order)));
+        mvc.perform(get("/api/rider/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(order.getId())));
+    }
+
+    @Test
+    void whenGetContributorsHistory_andInvalidContributor_orNoOrderHistory_thenReturnsEmptyList() throws Exception {
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 0);
+
+        when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(dakota.getUsername());
+        when(orderService.getContributorOrderHistory(dakota.getUsername())).thenReturn(new ArrayList<>());
+        mvc.perform(get("/api/contrib/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void whenGetContributorsHistory_andHistory_thenReturnsOrderHistory() throws Exception {
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 0);
+
+        Contrib contrib = new Contrib(new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2), "Service");
+        Order order = new Order(20.0, contrib, new Location(42.5, -7.0));
+
+        when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(dakota.getUsername());
+        when(orderService.getContributorOrderHistory(dakota.getUsername())).thenReturn(new ArrayList<>(Collections.singletonList(order)));
+        mvc.perform(get("/api/contrib/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(order.getId())));
     }
 
 
