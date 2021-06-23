@@ -99,9 +99,11 @@
                     <p th:text="${total}" style="font-size: 22px; padding:1%"></p>
                     <h4><i class="far fa-clock"></i> As soon as possible</h4>
                 </div>
-                <div id="placeOrder" th:object="${store}">
-                    <a th:href="@{/order?storeId={id}(id=${store.id})}"><button class="main-btn btn-hover wow fadeInUp order">Place Order</button></a>
-                </div>
+                <div id="placeOrder" th:object="${store}" style="padding-top: 3%">
+                <form th:method="post" th:action="@{/order?storeId={id}(id=${store.id})}">
+                    <button class="main-btn btn-hover wow fadeInUp order" type="submit">Place Order</button>
+                </form>
+            </div>
             </div>
         </div>
     </div>

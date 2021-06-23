@@ -1,5 +1,8 @@
 package com.example.engine.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -9,29 +12,37 @@ import javax.validation.constraints.NotBlank;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ApiModelProperty(notes = "Rider's unique ID automatically generated", required = true)
     private int id;
 
     @NotBlank
     @Column(name = "username", nullable = false, unique = true)
+    @ApiModelProperty(notes = "User unique username", required = true)
     private String username;
 
     @NotBlank
     @Email
     @Column(name = "email", nullable = false, unique = true)
+    @ApiModelProperty(notes = "Email associated with the user's account", required = true)
     private String email;
 
+    @JsonIgnore
     @NotBlank
     @Column(name = "password", nullable = false)
+    @ApiModelProperty(notes = "Password to authenticate the user by", required = true)
     private String password;
 
     @Column(name = "first_name")
+    @ApiModelProperty(notes = "User's first name")
     private String firstName;
 
     @Column(name = "last_name")
+    @ApiModelProperty(notes = "User's last name")
     private String lastName;
 
     // 0 - admin, 1 - rider, 2 - contrib
     @Column(name = "role", nullable = false)
+    @ApiModelProperty(notes = "User's role in the engine - 0 are admins, 1 are riders and 2 are contributors", required = true)
     private int role;
 
     public User(String username, String email, String password, String firstName, String lastName, int role) {
