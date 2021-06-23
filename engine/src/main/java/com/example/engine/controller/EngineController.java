@@ -240,7 +240,7 @@ public class EngineController {
             model.addAttribute("services", contrib.get(0));
             int thumbsUps = contrib.get(0).getThumbsUp();
             int thumbsDowns = contrib.get(0).getThumbsDown();
-            int rating = (int) (( (thumbsUps * 100) / (thumbsUps + thumbsDowns) ) / 0.20);
+            int rating = (int) (( (thumbsUps * 100) / (thumbsUps + thumbsDowns) ) / 20);
             model.addAttribute("rating", rating);
         }
 
@@ -349,7 +349,7 @@ public class EngineController {
             model.addAttribute("rider", rider.get(0));
             int thumbsUps = rider.get(0).getThumbsUp();
             int thumbsDowns = rider.get(0).getThumbsDown();
-            int rating = (int) (( (thumbsUps * 100) / (thumbsUps + thumbsDowns) ) / 0.20);
+            int rating = (int) (( (thumbsUps * 100) / (thumbsUps + thumbsDowns) ) / 20);
             model.addAttribute("rating", rating);
         }
 
