@@ -55,7 +55,10 @@ public class Client {
         this.role=2;
     }
 
-    
+    public void setId(Long id){
+        this.id=id;
+    }
+
     public int getRole(){
         return this.role;
     }

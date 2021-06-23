@@ -509,7 +509,7 @@
 
     document.getElementById("iframeModalService").src = "https://maps.google.com/maps?q=" + document.getElementById("serviceLat").innerText + ",%20" + document.getElementById("serviceLon").innerText +"&t=&z=13&ie=UTF8&iwloc=&output=embed";
     document.getElementById("iframeModalDelivery").src = "https://maps.google.com/maps?q=" + document.getElementById("deliveryLat").innerText + ",%20" + document.getElementById("deliveryLon").innerText +"&t=&z=13&ie=UTF8&iwloc=&output=embed";
-    http://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&sensor=true/false
+
         $.ajax({
             type: "GET",
             url: "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + + "," + + "&sensor=true",
@@ -521,12 +521,6 @@
 
 
         var statusStr;
-    document.getElementById('received').addEventListener('click', function() {
-        console.log(this.innerText);
-        statusStr = 'received';
-        document.getElementById('updateStatus').action = 'http://localhost:8080/update/order/received';
-
-    });
 
     document.getElementById('picked').addEventListener('click', function() {
         statusStr = 'picked';

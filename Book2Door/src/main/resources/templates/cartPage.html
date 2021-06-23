@@ -17,6 +17,38 @@
     <link rel="stylesheet" th:href="@{assets/css/custom.css}" />
     <link rel="stylesheet" th:href="@{assets/css/cartPage.css}" />
 </head>
+<style>
+    .plus {
+  display:inline-block;
+  width:20px;
+  height:20px;
+  
+  background:
+    linear-gradient(#fff,#fff),
+    linear-gradient(#fff,#fff),
+    #000;
+  background-position:center;
+  background-size: 50% 1px,1px 50%; /*thickness = 2px, length = 50% (25px)*/
+  background-repeat:no-repeat;
+}
+.minus{
+  display:inline-block;
+  width:20px;
+  height:20px;
+  
+  background:
+    linear-gradient(#fff,#fff),
+    #000;
+  background-position:center;
+  background-size: 50% 1px,1px 50%; /*thickness = 2px, length = 50% (25px)*/
+  background-repeat:no-repeat;
+}
+
+.radius {
+  border-radius:50%;
+}
+    
+</style>
 <body>
 
 <!-- ========================= preloader start ========================= -->
@@ -97,8 +129,8 @@
                         <tbody>
                         <div th:object="${books}">
                             <tr th:each="book: ${books}">
-                                <td id="remove"><div th:text="${book.key.getTitle()}"></div><div><a th:href="@{/cart/remove?id={id}(id=${book.key.id})}">Remove</a></div></td>
-                                <td th:text=${book.value} ></td>
+                                <td id="remove"><div th:text="${book.key.title}"></div><div><a th:href="@{/cart/remove?id={id}(id=${book.key.id})}">Remove</a></div></td>
+                                <td id="add"><div><a th:href="@{/cart/decrease?id={id}(id=${book.key.id})}" class="minus radius"></a> <a style="padding-right: 2%; padding-left: 2%; font-size: 30px;" th:text="${book.value}"></a><a th:href="@{/cart/add?id={id}(id=${book.key.id})}" class="plus radius"></a></div></td>
                                 <td th:text="${book.key.price}"></td>
                             </tr>
                         </div>
