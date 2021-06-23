@@ -1,7 +1,10 @@
 package com.example.book2door;
 
 
+import com.example.book2door.entities.*;
+import com.example.book2door.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -14,10 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.book2door.entities.Admin;
-import com.example.book2door.entities.Book;
-import com.example.book2door.entities.JwtUser;
-import com.example.book2door.entities.Store;
 import com.example.book2door.repository.AdminRepository;
 import com.example.book2door.repository.BookRepository;
 import com.example.book2door.repository.StoreRepository;
@@ -37,10 +36,16 @@ class RepositoryTests {
     @Mock(lenient= true)
     StoreServiceImpl storeService;
 
+    @Mock(lenient = true)
+    private OrderRepository orderRepository;
+
 
     @BeforeEach
      void setUp() {
         Book book = new Book("Branca De neve", "princess and dwarves", "bob", 12.99 ,10);
+        List<String> books = new ArrayList<String>();
+        books.add("Branca de neve");
+        BookOrder order = new BookOrder("Viseu", books, 12.99, "Viseu", (long) 1);
         Store store = new Store("Fnac","Forum aveiro", "Fanacito","112233","123222222","fnac@fnac.pt");
         book.getSellers().add(store);
         store.getBookList().add(book);
@@ -54,6 +59,7 @@ class RepositoryTests {
         Mockito.when(storeService.loadUserByUsername("fnac@fnac.pt")).thenReturn(new JwtUser(store));
         Mockito.when(storeService.register(store)).thenReturn(store);
     }
+
 
 
     @Test
