@@ -31,6 +31,7 @@ class ControllerTests {
     private MockMvc Mockmvc;
     @Autowired
     private WebApplicationContext webApplicationContext;
+    
     @Autowired
     AdminServiceImpl adminService;
 
@@ -41,7 +42,6 @@ class ControllerTests {
         adminService.register(adm);
         Mockmvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
-
 
 
     @Test
@@ -142,7 +142,8 @@ class ControllerTests {
     void whenAdminWantsToAcceptStoresThenCheckIfModelHasAttributeStores() throws Exception{
         this.Mockmvc.perform(get("/admin"))
         .andExpect(status().is(200))
-        .andExpect(model().attributeExists("stores"));
+        .andExpect(model().attributeExists("storesToAccept"))
+        .andExpect(model().attributeExists("storesAccepted"));
     }
 
     @Test
@@ -290,6 +291,14 @@ class ControllerTests {
     @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
     void whenClientAddsBookToCartCheckCart() throws Exception{
         this.Mockmvc.perform(get("/cart/add")
+        .param("id","1"))
+        .andExpect(status().is(302));
+    }
+
+    @Test
+    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
+    void whenClientDecreasesBookAmmountThenCheckCart() throws Exception{
+        this.Mockmvc.perform(get("/cart/decrease")
         .param("id","1"))
         .andExpect(status().is(302));
     }
