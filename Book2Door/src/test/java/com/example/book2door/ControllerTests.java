@@ -1,5 +1,6 @@
 package com.example.book2door;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -18,7 +19,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;  
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.NestedServletException;  
 
 
 @AutoConfigureMockMvc
@@ -133,18 +135,13 @@ class ControllerTests {
     }
 
     @Test
-    void whenLoginStoreWithRightDataRedirect() throws Exception{
-        this.Mockmvc.perform(post("/log")
-            .param("email", "TestStore@service.pt")
-            .param("password", "TestStorePassWord")).andExpect(status().is(302));
-    }
-    @Test
     void whenAdminWantsToAcceptStoresThenCheckIfModelHasAttributeStores() throws Exception{
         this.Mockmvc.perform(get("/admin"))
         .andExpect(status().is(200))
         .andExpect(model().attributeExists("storesToAccept"))
         .andExpect(model().attributeExists("storesAccepted"));
     }
+
 
     @Test
     void whenLoginAdminWithRightDataRedirect() throws Exception{
@@ -205,6 +202,13 @@ class ControllerTests {
         this.Mockmvc.perform(post("/search")
             .param("param","TestBook"))
             .andExpect(status().is(302));
+    }
+
+    @Test
+    void whenLoginStoreWithRightDataRedirect() throws Exception{
+        this.Mockmvc.perform(post("/log")
+            .param("email", "TestStore@service.pt")
+            .param("password", "TestStorePassWord")).andExpect(status().is(302));
     }
 
     @Test
@@ -307,5 +311,16 @@ class ControllerTests {
         this.Mockmvc.perform(get("/order")
         .param("storeId","1"))
         .andExpect(status().is(200));
+    }
+
+
+    @Test
+    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
+    void whenOrderIsCompleteThenCheckModels() throws Exception{
+        assertThrows(NestedServletException.class, () -> {
+            this.Mockmvc.perform(post("/order")
+                .param("storeId","1"))
+                .andReturn();
+          });
     }
 }
