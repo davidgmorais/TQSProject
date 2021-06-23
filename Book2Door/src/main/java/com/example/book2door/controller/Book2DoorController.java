@@ -244,9 +244,11 @@ public class Book2DoorController {
         }
         JwtUser jwtClient= (JwtUser)(auth.getPrincipal());
         var client = clientRepository.findClientByEmail(jwtClient.getEmail());
+        client.getCart().clear();
         clientRepository.save(client);
         return "redirect:/cart";
     }
+
     @GetMapping(value="/cart/add")
     public String addToCart(@RequestParam long id, Model model)
     {
@@ -257,6 +259,20 @@ public class Book2DoorController {
         JwtUser jwtClient= (JwtUser)(auth.getPrincipal());
         var client = clientRepository.findClientByEmail(jwtClient.getEmail());
         client.getCart().add(id);
+        clientRepository.save(client);
+        return "redirect:/cart";
+    }
+
+    @GetMapping(value="/cart/decrease")
+    public String decreaseBookNumber(@RequestParam long id, Model model)
+    {
+        var auth=SecurityContextHolder.getContext().getAuthentication();
+        if(auth.getName().equals(ANON)){
+            return REDIRECT_LOGIN;
+        }
+        JwtUser jwtClient= (JwtUser)(auth.getPrincipal());
+        var client = clientRepository.findClientByEmail(jwtClient.getEmail());
+        client.getCart().remove(id);
         clientRepository.save(client);
         return "redirect:/cart";
     }
@@ -362,8 +378,10 @@ public class Book2DoorController {
                 total+=book.getPrice();
             }
         }
-        var order = new BookOrder(client.getAddress(), books, total,storeRepository.getById(storeId).getStoreAddress());
+        var order = new BookOrder(client.getAddress(), books, total,storeRepository.getById(storeId).getStoreAddress(), client.getId());
         orderRepository.save(order);
+        client.getCart().clear();
+        clientRepository.save(client);
         return "orderPage";
     }
 

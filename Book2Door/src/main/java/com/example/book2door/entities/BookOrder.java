@@ -27,17 +27,28 @@ public class BookOrder {
     private double total;
     @Column(name="storeAddress")
     private String storeAddress;
+    @Column(name="clientId")
+    private Long clientId;
 
 
-    public BookOrder( String clientAddress, List<String> books, double total, String storeAddress) {
+    public BookOrder( String clientAddress, List<String> books, double total, String storeAddress, Long clientId) {
         this.clientAddress = clientAddress;
         this.books = books;
         this.total = total;
+        this.clientId = clientId;
         this.storeAddress = storeAddress;
     }
 
     public Long getId() {
         return this.id;
+    }
+
+    public Long getClientId(){
+        return this.clientId;
+    }
+
+    public void setClientId(Long clientId){
+        this.clientId = clientId;
     }
 
     public String getClientAddress() {
