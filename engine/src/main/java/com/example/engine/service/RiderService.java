@@ -18,4 +18,5 @@ public interface RiderService {
     boolean endShift(String riderUsername);
     Rider getRiderByUsername(String riderUsername);
     Rider save(Rider rider);
+    Rider getRiderById(int riderId);
 }

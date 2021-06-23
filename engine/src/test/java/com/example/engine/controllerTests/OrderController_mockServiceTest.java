@@ -3,6 +3,7 @@ package com.example.engine.controllerTests;
 import com.example.engine.component.JwtUtils;
 import com.example.engine.controller.OrderController;
 import com.example.engine.dto.OrderDTO;
+import com.example.engine.dto.RatingDTO;
 import com.example.engine.entity.*;
 import com.example.engine.service.OrderServiceImpl;
 import com.example.engine.service.UserServiceImpl;
@@ -20,6 +21,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -230,6 +234,96 @@ class OrderController_mockServiceTest {
         mvc.perform(get("/api/order/" + 100).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
         verify(orderService, times(1)).getOrderByI(Mockito.anyLong());
+    }
+
+    @Test
+    void whenGetRidersHistory_andInvalidRider_orNoOrderHistory_thenReturnsEmptyList() throws Exception {
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 0);
+
+        when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(dakota.getUsername());
+        when(orderService.getRidersOrderHistory(dakota.getUsername())).thenReturn(new ArrayList<>());
+        mvc.perform(get("/api/rider/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void whenGetRidersHistory_andHistory_thenReturnsOrderHistory() throws Exception {
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 0);
+
+        Contrib contrib = new Contrib(new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2), "Service");
+        Order order = new Order(20.0, contrib, new Location(42.5, -7.0));
+
+        when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(dakota.getUsername());
+        when(orderService.getRidersOrderHistory(dakota.getUsername())).thenReturn(new ArrayList<>(Collections.singletonList(order)));
+        mvc.perform(get("/api/rider/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(order.getId())));
+    }
+
+    @Test
+    void whenGetContributorsHistory_andInvalidContributor_orNoOrderHistory_thenReturnsEmptyList() throws Exception {
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 0);
+
+        when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(dakota.getUsername());
+        when(orderService.getContributorOrderHistory(dakota.getUsername())).thenReturn(new ArrayList<>());
+        mvc.perform(get("/api/contrib/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void whenGetContributorsHistory_andHistory_thenReturnsOrderHistory() throws Exception {
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 0);
+
+        Contrib contrib = new Contrib(new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2), "Service");
+        Order order = new Order(20.0, contrib, new Location(42.5, -7.0));
+
+        when(jwtUtils.getUsernameFromJwt(Mockito.anyString())).thenReturn(dakota.getUsername());
+        when(orderService.getContributorOrderHistory(dakota.getUsername())).thenReturn(new ArrayList<>(Collections.singletonList(order)));
+        mvc.perform(get("/api/contrib/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(order.getId())));
+    }
+
+    @Test
+    void whenRatingOrder_andRiderIsInvalid_thenReturnNotFound() throws Exception {
+        RatingDTO rating = new RatingDTO(1, true, 1, true);
+        mvc.perform(put("/api/rating").contentType(MediaType.APPLICATION_JSON).content(toJson(rating)))
+                .andExpect(status().isNotFound());
+        verify(orderService, times(1)).rateRider(Mockito.anyInt(), Mockito.anyBoolean());
+        verify(orderService, times(0)).rateContrib(Mockito.anyInt(), Mockito.anyBoolean());
+    }
+
+    @Test
+    void whenRatingOrder_andContribIsInvalid_thenReturnNotFound() throws Exception {
+        RatingDTO rating = new RatingDTO(1, true, 1, true);
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 0);
+        Rider dakotaRider = new Rider(dakota);
+        dakotaRider.setId(1);
+
+        when(orderService.rateRider(1, true)).thenReturn(dakotaRider);
+        mvc.perform(put("/api/rating").contentType(MediaType.APPLICATION_JSON).content(toJson(rating)))
+                .andExpect(status().isNotFound());
+        verify(orderService, times(1)).rateRider(Mockito.anyInt(), Mockito.anyBoolean());
+        verify(orderService, times(1)).rateContrib(Mockito.anyInt(), Mockito.anyBoolean());
+    }
+
+    @Test
+    void whenRatingOrder_andRiderIsValid_andContribIsValid_thenReturnRatingSuccessful() throws Exception {
+        RatingDTO rating = new RatingDTO(1, true, 1, true);
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 0);
+        Rider dakotaRider = new Rider(dakota);
+        Contrib service = new Contrib(dakota, "Service");
+        service.setId(1);
+        dakotaRider.setId(1);
+
+        when(orderService.rateRider(1, true)).thenReturn(dakotaRider);
+        when(orderService.rateContrib(1, true)).thenReturn(service);
+        mvc.perform(put("/api/rating").contentType(MediaType.APPLICATION_JSON).content(toJson(rating)))
+                .andExpect(status().isOk());
+        verify(orderService, times(1)).rateRider(Mockito.anyInt(), Mockito.anyBoolean());
+        verify(orderService, times(1)).rateContrib(Mockito.anyInt(), Mockito.anyBoolean());
     }
 
 

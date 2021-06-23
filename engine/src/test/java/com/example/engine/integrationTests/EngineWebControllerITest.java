@@ -68,23 +68,6 @@ class EngineWebControllerITest {
                 .andExpect(content().string(containsString("Create an Account!")));
     }
 
-    @Test
-    void whenNavigateToRiderRating_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/rider/rating")).andExpect(status().isOk())
-                .andExpect(content().string(containsString("Dashboard")));
-    }
-
-    @Test
-    void whenNavigateToServiceIndex_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/service/dashboard")).andExpect(status().isOk())
-                .andExpect(content().string(containsString("Dashboard")));
-    }
-
-    @Test
-    void whenNavigateToServiceStatistics_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/service/statistics")).andExpect(status().isOk())
-                .andExpect(content().string(containsString("Statistics")));
-    }
 
     @Test
     void whenNavigateToServices_thenReturnContent_andStatusOk() throws Exception {

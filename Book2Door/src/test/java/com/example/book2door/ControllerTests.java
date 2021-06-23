@@ -31,6 +31,7 @@ class ControllerTests {
     private MockMvc Mockmvc;
     @Autowired
     private WebApplicationContext webApplicationContext;
+    
     @Autowired
     AdminServiceImpl adminService;
 
@@ -41,7 +42,6 @@ class ControllerTests {
         adminService.register(adm);
         Mockmvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
-
 
 
     @Test
@@ -135,14 +135,15 @@ class ControllerTests {
     @Test
     void whenLoginStoreWithRightDataRedirect() throws Exception{
         this.Mockmvc.perform(post("/log")
-            .param("email", "TestStore@service.pt")
-            .param("password", "TestStorePassWord")).andExpect(status().is(302));
+                .param("email", "TestStore@service.pt")
+                .param("password", "TestStorePassWord")).andExpect(status().is(302));
     }
     @Test
     void whenAdminWantsToAcceptStoresThenCheckIfModelHasAttributeStores() throws Exception{
         this.Mockmvc.perform(get("/admin"))
         .andExpect(status().is(200))
-        .andExpect(model().attributeExists("stores"));
+        .andExpect(model().attributeExists("storesToAccept"))
+        .andExpect(model().attributeExists("storesAccepted"));
     }
 
     @Test
@@ -251,6 +252,16 @@ class ControllerTests {
     }
 
     @Test
+    void whenAdminDeny() throws Exception {
+        Mockmvc.perform(get("/admin/deny")).andExpect(status().is(405));
+    }
+
+    @Test
+    void whenAdminAccept() throws Exception {
+        Mockmvc.perform(get("/admin/accept")).andExpect(status().is(405));
+    }
+
+    @Test
     void whenGetLoginPage() throws Exception {
       Mockmvc.perform(get("/login")).andExpect(status().isOk());
     }
@@ -280,6 +291,14 @@ class ControllerTests {
     @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
     void whenClientAddsBookToCartCheckCart() throws Exception{
         this.Mockmvc.perform(get("/cart/add")
+        .param("id","1"))
+        .andExpect(status().is(302));
+    }
+
+    @Test
+    @WithUserDetails(userDetailsServiceBeanName="ClientDetailsService", value="client@a.pt")
+    void whenClientDecreasesBookAmmountThenCheckCart() throws Exception{
+        this.Mockmvc.perform(get("/cart/decrease")
         .param("id","1"))
         .andExpect(status().is(302));
     }

@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Dashboard 1</title>
+    <title>Dashboard</title>
 
     <!-- Custom fonts for this template-->
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
@@ -40,7 +40,7 @@
 
         <!-- Nav Item - Dashboard -->
         <li class="nav-item active">
-            <a class="nav-link" href="index.html">
+            <a class="nav-link" th:href="@{/rider/dashboard}">
                 <i class="fas fa-fw fa-tachometer-alt"></i>
                 <span>Dashboard</span></a>
         </li>
@@ -52,13 +52,6 @@
         <div class="sidebar-heading">
             Menu
         </div>
-
-        <!-- Nav Item -->
-        <li class="nav-item"> <!--TODO -->
-            <a class="nav-link" href="#">
-                <i class="fas fa-fw fa-chart-area"></i>
-                <span>Statistics</span></a>
-        </li>
 
 
         <!-- Nav Item -->
@@ -207,7 +200,25 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            Total Deliveries Today</div>
+                                            Total Deliveries</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalOrders}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-shopping-bag fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Deliveries -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Total Deliveries Current Shift</div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${deliveries}">0</div>
                                     </div>
                                     <div class="col-auto">
@@ -346,20 +357,27 @@
                                     <table class="table table-bordered" id="riderRequests" width="100%" cellspacing="0">
                                         <thead>
                                         <tr>
-                                            <th>Requester Name</th>
-                                            <th>Store</th>
-                                            <th>Order</th>
+                                            <th>Service Name</th>
+                                            <th>Pickup Location</th>
+                                            <th>Price</th>
                                         </tr>
                                         </thead>
                                         <tfoot>
                                         <tr>
-                                            <th>Requester Name</th>
-                                            <th>Store</th>
-                                            <th>Order</th>
+                                            <th>Service Name</th>
+                                            <th>Pickup Location</th>
+                                            <th>Price</th>
                                         </tr>
                                         </tfoot>
                                         <tbody>
-
+                                            <tr th:each="orderHistory:${orderHistory}">
+                                                <td th:text="${orderHistory.serviceOwner.storeName}"></td>
+                                                <td>
+                                                    <div th:text="${orderHistory.serviceLocation.getLongitude()}"></div>
+                                                    <div th:text="${orderHistory.serviceLocation.getLatitude()}"></div>
+                                                </td>
+                                                <td th:text="${orderHistory.value}"></td>
+                                            </tr>
 
                                         </tbody>
                                     </table>
@@ -491,7 +509,7 @@
 
     document.getElementById("iframeModalService").src = "https://maps.google.com/maps?q=" + document.getElementById("serviceLat").innerText + ",%20" + document.getElementById("serviceLon").innerText +"&t=&z=13&ie=UTF8&iwloc=&output=embed";
     document.getElementById("iframeModalDelivery").src = "https://maps.google.com/maps?q=" + document.getElementById("deliveryLat").innerText + ",%20" + document.getElementById("deliveryLon").innerText +"&t=&z=13&ie=UTF8&iwloc=&output=embed";
-    http://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&sensor=true/false
+
         $.ajax({
             type: "GET",
             url: "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + + "," + + "&sensor=true",
@@ -503,12 +521,6 @@
 
 
         var statusStr;
-    document.getElementById('received').addEventListener('click', function() {
-        console.log(this.innerText);
-        statusStr = 'received';
-        document.getElementById('updateStatus').action = 'http://localhost:8080/update/order/received';
-
-    });
 
     document.getElementById('picked').addEventListener('click', function() {
         statusStr = 'picked';

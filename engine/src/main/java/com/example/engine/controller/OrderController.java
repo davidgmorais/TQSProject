@@ -2,6 +2,7 @@ package com.example.engine.controller;
 
 import com.example.engine.component.JwtUtils;
 import com.example.engine.dto.OrderDTO;
+import com.example.engine.dto.RatingDTO;
 import com.example.engine.entity.Order;
 import com.example.engine.service.OrderService;
 import io.swagger.annotations.*;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.List;
 
 @Controller
 @RequestMapping("/api")
@@ -70,6 +72,27 @@ public class OrderController {
         return (order != null) ? new ResponseEntity<>(order, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @ApiOperation(value = "Public endpoint for rating an order.", response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully rated the service and the rider."),
+            @ApiResponse(code = 404, message = "Either the service or the rider do not exists.")
+    })
+    @PutMapping("/rating")
+    public ResponseEntity<String> rate(
+            @ApiParam(name = "Rating", value = "Rating to be given to both a contributor's service and a rider.", required = true) @RequestBody RatingDTO ratingDTO) {
+        var riderRating = orderService.rateRider(ratingDTO.getRiderId(), ratingDTO.isRiderThumbsUp());
+        if (riderRating == null) {
+            return new ResponseEntity<>("Seems that the rider you are trying to rate does not exist.", HttpStatus.NOT_FOUND);
+        }
+
+        var contribRating = orderService.rateContrib(ratingDTO.getContribId(), ratingDTO.isContribThumbsUp());
+        if (contribRating == null) {
+            return new ResponseEntity<>("Seems that the contributor you are trying to rate does not exist.", HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>("Your rating was completed successfully, let's hope you didn't destroy a career today!", HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Endpoint for getting updates of the order status for contributors.", response = Order.class, notes = "This endpoint will only retrieve the order if the contributor mapped from the token is the Service Owner of said order.")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved the order information."),
@@ -90,7 +113,33 @@ public class OrderController {
         return (order != null) ? new ResponseEntity<>(order, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    // add get mapping to /contributor/order to return all orders history of a contributor
+    @ApiOperation(value = "Endpoint for getting the order history of a specific contributor's service.", response = Iterable.class, notes = "This endpoint will only retrieve the order history of the contributor matched to the provided Authorization token in the header of the request.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved the order history."),
+    })
+    @GetMapping("/contrib/order")
+    public ResponseEntity<List<Order>> getContribHistory(
+            @ApiParam(name = "Authorization", value = "JWT token used for authentication and to fetch the corresponding rider's username.", required = true, example = "Bearer RiderJWTTokenString") @RequestHeader(value = "Authorization") String jwt) {
+        jwt = this.trimToken(jwt);
+        String contribUsername = jwtUtils.getUsernameFromJwt(jwt);
+        logger.info("requesting {} history", contribUsername);
+        var orderList =  orderService.getContributorOrderHistory(contribUsername);
+        return new ResponseEntity<>(orderList, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Endpoint for getting the order history of a specific rider.", response = Iterable.class, notes = "This endpoint will only retrieve the order history of the rider matched to the provided Authorization token in the header of the request.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved the order history.")
+    })
+    @GetMapping("/rider/order")
+    public ResponseEntity<List<Order>> getRidersHistory(
+            @ApiParam(name = "Authorization", value = "JWT token used for authentication and to fetch the corresponding rider's username.", required = true, example = "Bearer RiderJWTTokenString") @RequestHeader(value = "Authorization") String jwt) {
+        jwt = this.trimToken(jwt);
+        String riderUsername = jwtUtils.getUsernameFromJwt(jwt);
+        logger.info("requesting {} history", riderUsername);
+        var orderList =  orderService.getRidersOrderHistory(riderUsername);
+        return new ResponseEntity<>(orderList, HttpStatus.OK);
+    }
 
     @ApiOperation(value = "Endpoint for getting the status of the current order of a rider.", response = Order.class, notes = "If the rider doesn't have a current order, then it will return a 404 response.")
     @ApiResponses(value = {

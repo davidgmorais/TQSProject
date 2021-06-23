@@ -16,10 +16,12 @@ The example service, Book2Door, implements this engine using it to make deliveri
 **Team Manager, Project Owner:** [Mariana Ladeiro, 92964](https://github.com/marianabladeiro)
 
 ## Bookmarks
-[Google Drive](https://drive.google.com/drive/folders/1py9LHF6XjFzE0fQoLlHiBdUrp-AvKi53?usp=sharing)
+File Sharing - [Google Drive](https://drive.google.com/drive/folders/1py9LHF6XjFzE0fQoLlHiBdUrp-AvKi53?usp=sharing)
 
-[Backlog](https://github.com/davidgmorais/Book2Door/projects/1)
+Backlog - [Github Projeccts](https://github.com/davidgmorais/Book2Door/projects/1)
 
-[Engine SonarCloud](https://sonarcloud.io/dashboard?id=engine) 
+Static Code Analysis - [Engine SonarCloud](https://sonarcloud.io/dashboard?id=engine) + [Book2Door SonarCloud](https://sonarcloud.io/dashboard?id=davidgmorais_TQSProject)
 
-[Book2Door SonarCloud](https://sonarcloud.io/dashboard?id=davidgmorais_TQSProject)
+Deployment - [Engine](http://deti-tqs-05.ua.pt:8080/)
+
+Swagger2 Documentation - [Engine](http://deti-tqs-05.ua.pt:8080/swagger-ui.html)

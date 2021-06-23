@@ -224,11 +224,17 @@ class UnitTests{
     @Test
     void testBookOrder(){
         List<String> books = null;
-        BookOrder bookorder = new BookOrder("rua do braçal",books,10.9,"forum aveiro");
+        Client c =new Client();
+        c.setId((long)9999);
+        BookOrder bookorder = new BookOrder("rua do braçal",books,10.9,"forum aveiro",c.getId()); 
         assertThat(bookorder.getBooks()).isNull();
         assertThat(bookorder.getClientAddress()).isEqualTo("rua do braçal");
         assertThat(bookorder.getStoreAddress()).isEqualTo("forum aveiro");
         assertThat(bookorder.getTotal()).isEqualTo(10.9);
+        assertThat(bookorder.getClientId()).isEqualTo(c.getId());
+        bookorder.setClientId((long)2);
+        assertThat(bookorder.getClientId()).isEqualTo((long)2);
+        assertThat(bookorder.getId()).isNull();
     }
 
     @Test

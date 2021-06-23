@@ -10,6 +10,7 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Order findOrderById(Long id);
     List<Order> findAllByPickupRiderUserUsername(String riderUsername);
+    List<Order> findAllByServiceOwnerUserUsername(String ownerUsername);
     Order findOrderByPickupRiderUserUsernameAndStatusIn(String riderUsername, Set<OrderStatus> orderStatuses);
     List<Order> findOrdersByPickupRiderIsNullOrderById();
 }

@@ -233,6 +233,8 @@
                                             <th>Owner's First Name</th>
                                             <th>Owner's Last Name</th>
                                             <th>Email</th>
+                                            <th>Good ratings</th>
+                                            <th>Bad ratings</th>
                                         </tr>
                                         </thead>
                                         <tfoot>
@@ -242,6 +244,8 @@
                                             <th>Owner's First Name</th>
                                             <th>Owner's Last Name</th>
                                             <th>Email</th>
+                                            <th>Good ratings</th>
+                                            <th>Bad ratings</th>
                                         </tr>
                                         </tfoot>
                                         <tbody>
@@ -251,6 +255,8 @@
                                             <td th:text="${contribList.user.firstName}"></td>
                                             <td th:text="${contribList.user.lastName}"></td>
                                             <td th:text="${contribList.user.email}"></td>
+                                            <td th:text="${contribList.getThumbsUp()}"></td>
+                                            <td th:text="${contribList.getThumbsDown()}"></td>
                                         </tr>
 
                                         </tbody>

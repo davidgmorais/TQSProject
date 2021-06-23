@@ -24,9 +24,7 @@ import com.example.book2door.service.StoreService;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -56,6 +54,9 @@ public class Book2DoorController {
     private static final String ERROR_TEMPLATE = "error";
     private static final String TOTAL = "total";
     private static final String ANON = "anonymoususer";
+    private static final String REDIRECT = "redirect:/";
+    private static final String REDIRECT_CART ="redirect:/cart";
+
     private long orderId;
 
     @Autowired
@@ -104,7 +105,7 @@ public class Book2DoorController {
             model.addAttribute(MODEL_STORE_ATTR,store);
             return "redirect:/store?name="+param;
         }
-        return "redirect:/";
+        return REDIRECT;
     }
 
     @GetMapping(value="/login")
@@ -152,7 +153,7 @@ public class Book2DoorController {
                     else if (role.equals("1")) {
                         return "redirect:/store/dashboard";
                     }
-                    return "redirect:/";
+                    return REDIRECT;
                 }
                 
             }
@@ -250,10 +251,12 @@ public class Book2DoorController {
         }
         JwtUser jwtClient= (JwtUser)(auth.getPrincipal());
         var client = clientRepository.findClientByEmail(jwtClient.getEmail());
-        client.getCart().remove(id);
+        client.getCart().clear();
+
         clientRepository.save(client);
-        return "redirect:/cart";
+        return REDIRECT_CART;
     }
+
     @GetMapping(value="/cart/add")
     public String addToCart(@RequestParam long id, Model model)
     {
@@ -265,7 +268,21 @@ public class Book2DoorController {
         var client = clientRepository.findClientByEmail(jwtClient.getEmail());
         client.getCart().add(id);
         clientRepository.save(client);
-        return "redirect:/cart";
+        return REDIRECT_CART;
+    }
+
+    @GetMapping(value="/cart/decrease")
+    public String decreaseBookNumber(@RequestParam long id, Model model)
+    {
+        var auth=SecurityContextHolder.getContext().getAuthentication();
+        if(auth.getName().equals(ANON)){
+            return REDIRECT_LOGIN;
+        }
+        JwtUser jwtClient= (JwtUser)(auth.getPrincipal());
+        var client = clientRepository.findClientByEmail(jwtClient.getEmail());
+        client.getCart().remove(id);
+        clientRepository.save(client);
+        return REDIRECT_CART;
     }
 
 
@@ -324,8 +341,10 @@ public class Book2DoorController {
     @GetMapping(value="/admin")
     public String adminHome(Model model)
     {
-        ArrayList<Store> stores = storeRepository.findByAccepted(0);
-        model.addAttribute(MODEL_STORES_ATTR,stores);
+        ArrayList<Store> storesToAccept = storeRepository.findByAccepted(0);
+        ArrayList<Store> storesAccepted = storeRepository.findByAccepted(1);
+        model.addAttribute("storesToAccept",storesToAccept);
+        model.addAttribute("storesAccepted",storesAccepted);
         return "adminFrontPage";
     }
     
@@ -388,10 +407,11 @@ public class Book2DoorController {
                 total+=book.getPrice();
             }
         }
-        var order = new BookOrder(client.getAddress(), books, total,storeRepository.getById(storeId).getStoreAddress());
+        var order = new BookOrder(client.getAddress(), books, total,storeRepository.getById(storeId).getStoreAddress(), client.getId());
         orderRepository.save(order);
-        sendOrderToEngine(4, order);
-
+        client.getCart().clear();
+        clientRepository.save(client);
+        sendOrderToEngine(2, order);
         return "redirect:/order/" + orderId;
     }
 
@@ -489,9 +509,34 @@ public class Book2DoorController {
         return new ResponseEntity<>(responseBody, responseHeader, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/rating/{riderid}/{reviewRider}/{reviewContrib}")
+    public String rating(@PathVariable int reviewRider, @PathVariable int reviewContrib, @PathVariable int riderid) {
+        if (reviewRider == 1 && reviewContrib == 1) {
+            sendRatingToEngine(2, true, true, riderid);
+        }
+        else if (reviewRider == 1 && reviewContrib == 0) {
+            sendRatingToEngine(2, true, false, riderid);
+        }
+        else if (reviewRider == 0 && reviewContrib == 0) {
+            sendRatingToEngine(2, false, false, riderid);
+        }
+        else if (reviewRider == 0 && reviewContrib == 1) {
+            sendRatingToEngine(2, false, true, riderid);
+        }
+        return REDIRECT;
+
+    }
+
+    private void sendRatingToEngine(int contribID, boolean reviewRider, boolean reviewContrib, int riderID) {
+        final var uri = "http://localhost:8080/api/rating";
+        Map<String, Object> request = Map.of("contribId", contribID, "contribThumbsUp", reviewContrib, "riderId", riderID, "riderThumbsUp", reviewRider);
+        var restTemplate = new RestTemplate();
+        restTemplate.put(uri, request);
+
+    }
+
     private void sendOrderToEngine(Integer contribID, BookOrder bookOrder){
         final var uri = "http://localhost:8080/api/order/" + contribID;
-        //todo address
         Map<String, Double> request = Map.of("value", bookOrder.getTotal(),
                 "pickupLat", 40.631375, "pickupLon", -8.659969, "deliveryLat",  40.6407372, "deliveryLon", -8.6516916);
         var restTemplate = new RestTemplate();
