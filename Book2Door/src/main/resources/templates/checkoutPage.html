@@ -81,20 +81,29 @@
     <div class="hero-shape">
         <img th:src="@{assets/img/hero/hero-shape.svg}" alt="" class="shape">
     </div>
-    <div class="container">
+    <div th:object="${client}" class="container">
         <div class="row align-items-center">
             <div class="cart">
                 <div class="hero-content" style="padding-top: 5%;">
-                    <h3>Order Details</h3>
+                    <h3 style="color: #ffae8cff">Order Details</h3>
                     <br>
-                    <p><i class="fas fa-map-pin"></i> Address</p>
-                    <p><i class="far fa-clock"></i> As soon as possible</p>
-                    <p><i class="fas fa-shopping-bag"></i> Products:</p>
-                    <p><i class="fas fa-money-bill-wave-alt"></i> Total: 45$ </p>
-                    <div id="placeOrder">
-                        <a><button class="main-btn btn-hover wow fadeInUp order" data-wow-delay=".6s">Place Order</button></a>
+                    <h4><i class="fas fa-map-pin"></i> Address</h4>
+                    <p th:text="${client.address}" style="font-size: 22px; padding:1%"></p>
+                    <br>
+                    <h4><i class="fas fa-shopping-bag"></i> Products:</h4>
+                    <div  th:each="book :${books}">
+                        <p th:text="${book.title}" style="font-size: 22px; padding: 1% 0 0 1%"></p>
                     </div>
+                    <br>
+                    <h4><i class="fas fa-money-bill-wave-alt"></i>Price</h4>
+                    <p th:text="${total}" style="font-size: 22px; padding:1%"></p>
+                    <h4><i class="far fa-clock"></i> As soon as possible</h4>
                 </div>
+                <div id="placeOrder" th:object="${store}" style="padding-top: 3%">
+                <form th:method="post" th:action="@{/order?storeId={id}(id=${store.id})}">
+                    <button class="main-btn btn-hover wow fadeInUp order" type="submit">Place Order</button>
+                </form>
+            </div>
             </div>
         </div>
     </div>

@@ -95,21 +95,13 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>Moby Dick, Herman Melville<br><a>Remove</a></td>
-                            <td>1</td>
-                            <td>15$</td>
-                        </tr>
-                        <tr>
-                            <td>Lolita, Vladimir Nabokov<br><a>Remove</a></td>
-                            <td>1</td>
-                            <td>12$</td>
-                        </tr>
-                        <tr>
-                            <td>Dune, Frank Herbert<br><a>Remove</a></td>
-                            <td>1</td>
-                            <td>18$</td>
-                        </tr>
+                        <div th:object="${books}">
+                            <tr th:each="book: ${books}">
+                                <td id="remove"><div th:text="${book.key.getTitle()}"></div><div><a th:href="@{/cart/remove?id={id}(id=${book.key.id})}">Remove</a></div></td>
+                                <td th:text=${book.value} ></td>
+                                <td th:text="${book.key.price}"></td>
+                            </tr>
+                        </div>
                         </tbody>
                     </table>
                     </div>
@@ -119,7 +111,7 @@
                             <tbody>
                             <tr>
                                 <td>Total</td>
-                                <td>45$</td>
+                                <td th:text="${total}"></td>
                             </tr>
                             </tbody>
                         </table>
@@ -142,5 +134,10 @@
 <script th:src="@{assets/js/count-up.min.js}"></script>
 <script th:src="@{assets/js/wow.min.js}"></script>
 <script th:src="@{assets/js/main.js}"></script>
+
+<script>
+
+
+</script>
 </body>
 </html>
