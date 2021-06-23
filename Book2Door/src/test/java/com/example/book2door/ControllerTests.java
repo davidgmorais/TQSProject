@@ -142,7 +142,8 @@ class ControllerTests {
     void whenAdminWantsToAcceptStoresThenCheckIfModelHasAttributeStores() throws Exception{
         this.Mockmvc.perform(get("/admin"))
         .andExpect(status().is(200))
-        .andExpect(model().attributeExists("stores"));
+        .andExpect(model().attributeExists("storesToAccept"))
+        .andExpect(model().attributeExists("storesAccepted"));
     }
 
     @Test
