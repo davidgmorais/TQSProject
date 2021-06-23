@@ -24,9 +24,7 @@ import com.example.book2door.service.StoreService;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -390,7 +388,7 @@ public class Book2DoorController {
         }
         var order = new BookOrder(client.getAddress(), books, total,storeRepository.getById(storeId).getStoreAddress());
         orderRepository.save(order);
-        sendOrderToEngine(4, order);
+        sendOrderToEngine(2, order);
 
         return "redirect:/order/" + orderId;
     }
@@ -489,9 +487,34 @@ public class Book2DoorController {
         return new ResponseEntity<>(responseBody, responseHeader, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/rating/{riderid}/{reviewRider}/{reviewContrib}")
+    public String rating(@PathVariable int reviewRider, @PathVariable int reviewContrib, @PathVariable int riderid) {
+        if (reviewRider == 1 && reviewContrib == 1) {
+            sendRatingToEngine(2, true, true, riderid);
+        }
+        else if (reviewRider == 1 && reviewContrib == 0) {
+            sendRatingToEngine(2, true, false, riderid);
+        }
+        else if (reviewRider == 0 && reviewContrib == 0) {
+            sendRatingToEngine(2, false, false, riderid);
+        }
+        else if (reviewRider == 0 && reviewContrib == 1) {
+            sendRatingToEngine(2, false, true, riderid);
+        }
+        return "redirect:/";
+
+    }
+
+    private void sendRatingToEngine(int contribID, boolean reviewRider, boolean reviewContrib, int riderID) {
+        final var uri = "http://localhost:8080/api/rating";
+        Map<String, Object> request = Map.of("contribId", contribID, "contribThumbsUp", reviewContrib, "riderId", riderID, "riderThumbsUp", reviewRider);
+        var restTemplate = new RestTemplate();
+        restTemplate.put(uri, request);
+
+    }
+
     private void sendOrderToEngine(Integer contribID, BookOrder bookOrder){
         final var uri = "http://localhost:8080/api/order/" + contribID;
-        //todo address
         Map<String, Double> request = Map.of("value", bookOrder.getTotal(),
                 "pickupLat", 40.631375, "pickupLon", -8.659969, "deliveryLat",  40.6407372, "deliveryLon", -8.6516916);
         var restTemplate = new RestTemplate();
