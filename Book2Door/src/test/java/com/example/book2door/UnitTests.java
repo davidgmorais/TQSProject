@@ -231,6 +231,10 @@ class UnitTests{
         assertThat(bookorder.getClientAddress()).isEqualTo("rua do braçal");
         assertThat(bookorder.getStoreAddress()).isEqualTo("forum aveiro");
         assertThat(bookorder.getTotal()).isEqualTo(10.9);
+        assertThat(bookorder.getClientId()).isEqualTo(c.getId());
+        bookorder.setClientId((long)2);
+        assertThat(bookorder.getClientId()).isEqualTo((long)2);
+        assertThat(bookorder.getId()).isNull();
     }
 
     @Test

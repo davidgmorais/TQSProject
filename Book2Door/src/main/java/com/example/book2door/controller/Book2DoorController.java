@@ -52,6 +52,7 @@ public class Book2DoorController {
     private static final String ERROR_TEMPLATE = "error";
     private static final String TOTAL = "total";
     private static final String ANON = "anonymoususer";
+    private static final String REDIRECT_CART ="redirect:/cart";
 
     @Autowired
     JwtUtils jwtUtils;
@@ -246,7 +247,7 @@ public class Book2DoorController {
         var client = clientRepository.findClientByEmail(jwtClient.getEmail());
         client.getCart().clear();
         clientRepository.save(client);
-        return "redirect:/cart";
+        return REDIRECT_CART;
     }
 
     @GetMapping(value="/cart/add")
@@ -260,7 +261,7 @@ public class Book2DoorController {
         var client = clientRepository.findClientByEmail(jwtClient.getEmail());
         client.getCart().add(id);
         clientRepository.save(client);
-        return "redirect:/cart";
+        return REDIRECT_CART;
     }
 
     @GetMapping(value="/cart/decrease")
@@ -274,7 +275,7 @@ public class Book2DoorController {
         var client = clientRepository.findClientByEmail(jwtClient.getEmail());
         client.getCart().remove(id);
         clientRepository.save(client);
-        return "redirect:/cart";
+        return REDIRECT_CART;
     }
 
 
