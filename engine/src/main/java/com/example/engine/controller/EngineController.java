@@ -36,6 +36,7 @@ public class EngineController {
     public static final String INDEX_SERVICE = "indexService";
     public static final String SEARCH_MODEL = "search";
     public static final String RIDER_DASHBOARD = "redirect:/rider/dashboard";
+    private static String username;
     private String jwt;
     private String status;
     private double riderEarnings = 0;
@@ -125,6 +126,7 @@ public class EngineController {
     @GetMapping(value = {"/login", "/"})
     public String login(Model model, UserDTO userDTO) {
         model.addAttribute("authenticateUser", userDTO);
+        username = userDTO.getUsername();
         return "login";
     }
 
@@ -231,8 +233,17 @@ public class EngineController {
     }
 
     @ApiOperation(value = "View of the statistics page for contributors.", response = String.class)
-    @GetMapping(value = "/service/statistics")
-    public String serviceStatistics() {
+    @GetMapping(value = "/service/reviews")
+    public String serviceStatistics(Model model) {
+        List<Contrib> contrib = contribController.listAllContributors(username, null);
+        if (!contrib.isEmpty()) {
+            model.addAttribute("services", contrib.get(0));
+            int thumbsUps = contrib.get(0).getThumbsUp();
+            int thumbsDowns = contrib.get(0).getThumbsDown();
+            int rating = (int) (( (thumbsUps * 100) / (thumbsUps + thumbsDowns) ) / 0.20);
+            model.addAttribute("rating", rating);
+        }
+
         return "serviceStatistics";
     }
 
@@ -266,6 +277,7 @@ public class EngineController {
         if (jwt != null) {
             jwt = this.trimToken(jwt);
         }
+
         ResponseEntity<Order> responseEntity = orderController.getRidersCurrentOrderStatus(jwt);
         ResponseEntity<List<Order>> orderResponseEntity = orderController.getRidersHistory(jwt);
         model.addAttribute("order", responseEntity.getBody());
@@ -331,7 +343,16 @@ public class EngineController {
 
     @ApiOperation(value = "View for rider's rating", response = String.class)
     @GetMapping(value = "/rider/rating")
-    public String riderRating() {
+    public String riderRating(Model model) {
+        List<Rider> rider =  riderController.listAllRiders(username);
+        if (!rider.isEmpty()) {
+            model.addAttribute("rider", rider.get(0));
+            int thumbsUps = rider.get(0).getThumbsUp();
+            int thumbsDowns = rider.get(0).getThumbsDown();
+            int rating = (int) (( (thumbsUps * 100) / (thumbsUps + thumbsDowns) ) / 0.20);
+            model.addAttribute("rating", rating);
+        }
+
         return "riderRating";
     }
 
