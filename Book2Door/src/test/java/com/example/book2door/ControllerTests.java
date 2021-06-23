@@ -135,8 +135,8 @@ class ControllerTests {
     @Test
     void whenLoginStoreWithRightDataRedirect() throws Exception{
         this.Mockmvc.perform(post("/log")
-            .param("email", "TestStore@service.pt")
-            .param("password", "TestStorePassWord")).andExpect(status().is(200));
+                .param("email", "TestStore@service.pt")
+                .param("password", "TestStorePassWord")).andExpect(status().is(302));
     }
     @Test
     void whenAdminWantsToAcceptStoresThenCheckIfModelHasAttributeStores() throws Exception{
