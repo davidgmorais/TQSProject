@@ -14,7 +14,7 @@ public class CommandLineAppStartupRunner implements CommandLineRunner {
 
     @Override
     public void run(String...args) throws Exception {
-        Admin admin = new Admin();
+        var admin = new Admin();
         adminServiceImpl.register(admin);
     }
 }
