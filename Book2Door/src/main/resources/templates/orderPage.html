@@ -143,21 +143,26 @@
                             <h1 style="color: #91e0d2ff">Review your rider and order!</h1>
                         </div>
                     </div>
-                    <div id="riderReview"  class="row align-items-center">
-                        <ul id="childWrapper" style="text-align: center">
-                            <li><i class="fas fa-thumbs-down fa-3x"></i></li>
-                            <li><h2>Rider</h2></li>
-                            <li><i class="fas fa-thumbs-up fa-3x"></i></li>
+                <form th:action="@{/rating/}" th:method="post" id="ratingRiderService">
+                    <div id="serviceReview" class="row align-items-center">
+                        <ul id="childWrapper3" style="text-align: center">
+                            <li><i class="fas fa-thumbs-down fa-3x" id="downService" onclick="ratingDownService()"></i></li>
+                            <li><h2>Book2Door</h2></li>
+                            <li><i class="fas fa-thumbs-up fa-3x" id="upService" onclick="ratingUpService()"></i></li>
                         </ul>
                     </div>
-                <div id="storeReview" class="row align-items-center">
-                    <ul id="childWrapper2" style="text-align: center">
-                        <li><i class="fas fa-thumbs-down fa-3x"></i></li>
-                        <li><h2>Store</h2></li>
-                        <li><i class="fas fa-thumbs-up fa-3x"></i></li>
-                    </ul>
+                    <div id="riderReview"  class="row align-items-center">
+                        <ul id="childWrapper" style="text-align: center">
+                            <li><i class="fas fa-thumbs-down fa-3x" id="downRider" onclick="ratingDownRider()"></i></li>
+                            <li><h2>Rider</h2></li>
+                            <li><i class="fas fa-thumbs-up fa-3x" id="upRider" onclick="ratingUpRider()"></i></li>
+                        </ul>
+                    </div>
+                    <br>
+                    <button  class="main-btn btn-hover wow fadeInUp" data-wow-delay=".6s" type="submit" id="submitRating">Submit</button>
+                </form>
 
-                </div>
+
 
 
             </div>
@@ -165,6 +170,7 @@
     </div>
 
     </div>
+
 
 
 </section>
@@ -179,6 +185,7 @@
 
     var orderid = document.getElementById("orderId").innerText;
     var interval = 4000;
+    var riderid;
     console.log(orderid);
     function doAjax() {
         $.ajax({
@@ -186,29 +193,45 @@
             url: "http://localhost:8080/api/order/" + orderid,
             dataType: "json",
             success: function (data) {
-                console.log(data);
+                riderid = data.pickupRider.id;
                 var locationRiderLat = data.pickupRider.location[0];
                 var locationRiderLon = data.pickupRider.location[1];
 
                 //data will hold an object with your response data, no need to parse
-                if (data.status == 'ASSIGNED') {
+                if (data.status === 'ASSIGNED') {
                     changeDiv();
-                } else if (data.status == 'BEING_DELIVERED') {
+                } else if (data.status === 'BEING_DELIVERED') {
                     changeDiv2();
                    document.getElementById('iframe').src = "https://maps.google.com/maps?q="+ locationRiderLat +",%20" + locationRiderLon +"&t=&z=13&ie=UTF8&iwloc=&output=embed";
-                } else if (data.status == 'DELIVERED') {
+                } else if (data.status === 'DELIVERED') {
                     changeDiv3();
                 }
             },
             complete: function (data) {
                 // Schedule the next
-                setTimeout(doAjax, interval);
+                if (data.status != 'DELIVERED') {
+                    setTimeout(doAjax, interval);
+                }
             }
         })
     }
     setTimeout(doAjax, interval);
 
+    function ratingUpService() {
+        document.getElementById("downService").style.display = 'none';
+    }
 
+    function ratingUpRider() {
+        document.getElementById("downRider").style.display = 'none';
+    }
+
+    function ratingDownRider() {
+        document.getElementById("upRider").style.display = 'none';
+    }
+
+    function ratingDownService() {
+        document.getElementById("downService").style.display = 'none';
+    }
 
 
 
@@ -226,11 +249,26 @@
         document.getElementById("orderMap").style.display = "none";
         document.getElementById("orderReview").style.display = "flex";
         document.getElementById("estimatedTime").style.display = "none";
+
+
+        document.getElementById('submitRating').addEventListener('click', function() {
+            if (document.getElementById("downService").style.display === "none" && document.getElementById("downRider").style.display === 'none') {
+                document.getElementById("ratingRiderService").action = "http://localhost:8888/rating/" + riderid + "/1/1";
+                console.log( document.getElementById("ratingRiderService").action);
+            }
+            else if (document.getElementById("downService").style.display === "none" && document.getElementById("upRider").style.display === 'none') {
+                document.getElementById("ratingRiderService").action += riderid + "/0/1";
+            }
+            else if (document.getElementById("upService").style.display === "none" && document.getElementById("upRider").style.display === 'none') {
+                document.getElementById("ratingRiderService").action += riderid + "/0/0";
+            }
+            else if (document.getElementById("upService").style.display === "none" && document.getElementById("downRider").style.display === 'none') {
+                document.getElementById("ratingRiderService").action+= riderid + "/1/0";
+            }
+        });
     }
 
-    //let change = setTimeout(changeDiv, 1000);
-    //let change2 = setTimeout(changeDiv2, 2000);
-    //let change3 = setTimeout(changeDiv3, 3000);
+
 
 </script>
 <script th:src="@{/assets/js/bootstrap.5.0.0.alpha-2-min.js}"></script>

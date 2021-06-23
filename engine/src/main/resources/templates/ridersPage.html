@@ -235,7 +235,8 @@
                                             <th>Last Name</th>
                                             <th>Username</th>
                                             <th>Email</th>
-                                            <th>Overall Rating</th>
+                                            <th>Good ratings</th>
+                                            <th>Bad ratings</th>
                                         </tr>
                                         </thead>
                                         <tfoot>
@@ -244,7 +245,8 @@
                                             <th>Last Name</th>
                                             <th>Username</th>
                                             <th>Email</th>
-                                            <th>Overall Rating</th>
+                                            <th>Good ratings</th>
+                                            <th>Bad ratings</th>
                                         </tr>
                                         </tfoot>
                                         <tbody>
@@ -253,7 +255,8 @@
                                             <td th:text="${riderList.user.lastName}"></td>
                                             <td th:text="${riderList.user.username}"></td>
                                             <td th:text="${riderList.user.email}"></td>
-                                            <td>5 stars</td>
+                                            <td th:text="${riderList.getThumbsUp()}"></td>
+                                            <td th:text="${riderList.getThumbsDown()}"></td>
                                         </tr>
                                         </tbody>
                                     </table>

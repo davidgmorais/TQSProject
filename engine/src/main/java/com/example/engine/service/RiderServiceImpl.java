@@ -120,5 +120,10 @@ public class RiderServiceImpl implements RiderService {
         return repository.findRidersToDispatch();
     }
 
+    @Override
+    public Rider getRiderById(int riderId) {
+        return repository.findRiderById(riderId);
+    }
+
 
 }

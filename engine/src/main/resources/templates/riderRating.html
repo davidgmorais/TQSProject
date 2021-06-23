@@ -53,13 +53,6 @@
             Menu
         </div>
 
-        <!-- Nav Item -->
-        <li class="nav-item"> <!--TODO -->
-            <a class="nav-link" href="#">
-                <i class="fas fa-fw fa-chart-area"></i>
-                <span>Statistics</span></a>
-        </li>
-
 
         <!-- Nav Item -->
         <li class="nav-item">
@@ -157,7 +150,7 @@
                     <li class="nav-item dropdown no-arrow">
                         <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">Rider's Name</span>
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 small" th:text="${rider.user.username}"></span>
                             <img class="img-profile rounded-circle"
                                  th:src="@{/img/undraw_profile.svg}">
                         </a>
@@ -207,7 +200,7 @@
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                             Overall Rating</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">10</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${rating}"></div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-star fa-2x text-gray-300"></i>
@@ -225,7 +218,7 @@
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                             Good ratings</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">200</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${rider.thumbsUp}"></div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-thumbs-up fa-2x text-gray-300"></i>
@@ -245,7 +238,7 @@
                                         </div>
                                         <div class="row no-gutters align-items-center">
                                             <div class="col-auto">
-                                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">32</div>
+                                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800" th:text="${rider.thumbsDown}"></div>
                                             </div>
                                         </div>
                                     </div>

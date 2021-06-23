@@ -3,6 +3,7 @@ package com.example.engine.controllerTests;
 import com.example.engine.component.JwtUtils;
 import com.example.engine.controller.OrderController;
 import com.example.engine.dto.OrderDTO;
+import com.example.engine.dto.RatingDTO;
 import com.example.engine.entity.*;
 import com.example.engine.service.OrderServiceImpl;
 import com.example.engine.service.UserServiceImpl;
@@ -283,6 +284,46 @@ class OrderController_mockServiceTest {
         mvc.perform(get("/api/contrib/order").contentType(MediaType.APPLICATION_JSON).header("Authorization", "jwt"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(order.getId())));
+    }
+
+    @Test
+    void whenRatingOrder_andRiderIsInvalid_thenReturnNotFound() throws Exception {
+        RatingDTO rating = new RatingDTO(1, true, 1, true);
+        mvc.perform(put("/api/rating").contentType(MediaType.APPLICATION_JSON).content(toJson(rating)))
+                .andExpect(status().isNotFound());
+        verify(orderService, times(1)).rateRider(Mockito.anyInt(), Mockito.anyBoolean());
+        verify(orderService, times(0)).rateContrib(Mockito.anyInt(), Mockito.anyBoolean());
+    }
+
+    @Test
+    void whenRatingOrder_andContribIsInvalid_thenReturnNotFound() throws Exception {
+        RatingDTO rating = new RatingDTO(1, true, 1, true);
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 0);
+        Rider dakotaRider = new Rider(dakota);
+        dakotaRider.setId(1);
+
+        when(orderService.rateRider(1, true)).thenReturn(dakotaRider);
+        mvc.perform(put("/api/rating").contentType(MediaType.APPLICATION_JSON).content(toJson(rating)))
+                .andExpect(status().isNotFound());
+        verify(orderService, times(1)).rateRider(Mockito.anyInt(), Mockito.anyBoolean());
+        verify(orderService, times(1)).rateContrib(Mockito.anyInt(), Mockito.anyBoolean());
+    }
+
+    @Test
+    void whenRatingOrder_andRiderIsValid_andContribIsValid_thenReturnRatingSuccessful() throws Exception {
+        RatingDTO rating = new RatingDTO(1, true, 1, true);
+        User dakota = new User("dakota", "dakota@gmail.com", "qwerty1234", null, null, 0);
+        Rider dakotaRider = new Rider(dakota);
+        Contrib service = new Contrib(dakota, "Service");
+        service.setId(1);
+        dakotaRider.setId(1);
+
+        when(orderService.rateRider(1, true)).thenReturn(dakotaRider);
+        when(orderService.rateContrib(1, true)).thenReturn(service);
+        mvc.perform(put("/api/rating").contentType(MediaType.APPLICATION_JSON).content(toJson(rating)))
+                .andExpect(status().isOk());
+        verify(orderService, times(1)).rateRider(Mockito.anyInt(), Mockito.anyBoolean());
+        verify(orderService, times(1)).rateContrib(Mockito.anyInt(), Mockito.anyBoolean());
     }
 
 

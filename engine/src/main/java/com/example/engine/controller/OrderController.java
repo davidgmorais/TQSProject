@@ -2,6 +2,7 @@ package com.example.engine.controller;
 
 import com.example.engine.component.JwtUtils;
 import com.example.engine.dto.OrderDTO;
+import com.example.engine.dto.RatingDTO;
 import com.example.engine.entity.Order;
 import com.example.engine.service.OrderService;
 import io.swagger.annotations.*;
@@ -69,6 +70,27 @@ public class OrderController {
             @ApiParam(name = "Order's ID", value = "Unique ID of the order whose information is supposed to retrieve", required = true, example = "1") @PathVariable Long orderId) {
         var order = orderService.getOrderByI(orderId);
         return (order != null) ? new ResponseEntity<>(order, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @ApiOperation(value = "Public endpoint for rating an order.", response = String.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully rated the service and the rider."),
+            @ApiResponse(code = 404, message = "Either the service or the rider do not exists.")
+    })
+    @PutMapping("/rating")
+    public ResponseEntity<String> rate(
+            @ApiParam(name = "Rating", value = "Rating to be given to both a contributor's service and a rider.", required = true) @RequestBody RatingDTO ratingDTO) {
+        var riderRating = orderService.rateRider(ratingDTO.getRiderId(), ratingDTO.isRiderThumbsUp());
+        if (riderRating == null) {
+            return new ResponseEntity<>("Seems that the rider you are trying to rate does not exist.", HttpStatus.NOT_FOUND);
+        }
+
+        var contribRating = orderService.rateContrib(ratingDTO.getContribId(), ratingDTO.isContribThumbsUp());
+        if (contribRating == null) {
+            return new ResponseEntity<>("Seems that the contributor you are trying to rate does not exist.", HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>("Your rating was completed successfully, let's hope you didn't destroy a career today!", HttpStatus.OK);
     }
 
     @ApiOperation(value = "Endpoint for getting updates of the order status for contributors.", response = Order.class, notes = "This endpoint will only retrieve the order if the contributor mapped from the token is the Service Owner of said order.")

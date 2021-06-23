@@ -34,11 +34,21 @@ public class Rider {
     @ApiModelProperty(notes = "User account information linked to the rider", required = true)
     private User user;
 
+    @Column(name = "thumbs_up", nullable = false, columnDefinition = "int default 0")
+    @ApiModelProperty(notes = "Number of positive reviews (thumbs up) of a rider")
+    private int thumbsUp;
+
+    @Column(name = "thumbs_down", nullable = false, columnDefinition = "int default 0")
+    @ApiModelProperty(notes = "Number of negative reviews (thumbs down) of a rider")
+    private int thumbsDown;
+
     public Rider() {}
     public Rider(@NotNull User user) {
         this.user = user;
         this.verified = false;
         this.isWorking = false;
+        this.thumbsUp = 0;
+        this.thumbsDown = 0;
     }
 
     public Rider(int id, Boolean verified, Boolean isWorking, Double locationLat, Double locationLon, User user) {
@@ -87,4 +97,19 @@ public class Rider {
         isWorking = working;
     }
 
+    public int getThumbsUp() {
+        return thumbsUp;
+    }
+
+    public void increaseThumbsUp() {
+        this.thumbsUp++;
+    }
+
+    public int getThumbsDown() {
+        return thumbsDown;
+    }
+
+    public void increaseThumbsDown() {
+        this.thumbsDown++;
+    }
 }

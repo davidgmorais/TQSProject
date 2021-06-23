@@ -1,9 +1,10 @@
 #riderReview {
-    padding-top: 5%;
+    padding-top: 8%;
 }
 
-#storeReview {
-    padding-top: 8%;
+
+#serviceReview {
+    padding-top: 5%;
 }
 
 #childWrapper {
@@ -28,6 +29,19 @@
 }
 
 #childWrapper2 > li {
+    padding-right: 5%;
+    display: inline-block;
+}
+
+#childWrapper3 {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+
+}
+
+#childWrapper3 > li {
     padding-right: 5%;
     display: inline-block;
 }

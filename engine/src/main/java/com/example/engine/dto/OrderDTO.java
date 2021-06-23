@@ -14,6 +14,7 @@ public class OrderDTO {
     @ApiModelProperty(notes = "Longitude of the coordinates where the order should be delivered to by a rider.", required = true, example = "-7.8", position = 4)
     private final Double deliveryLon;
 
+
     public OrderDTO(Double value, Double pickupLat, Double pickupLon, Double deliveryLat, Double deliveryLon) {
         this.value = value;
         this.deliveryLat = deliveryLat;
@@ -22,6 +23,7 @@ public class OrderDTO {
         this.pickupLat = pickupLat;
         this.pickupLon = pickupLon;
     }
+
 
     public Double getValue() {
         return value;

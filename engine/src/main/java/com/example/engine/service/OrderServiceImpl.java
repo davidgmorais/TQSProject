@@ -1,9 +1,7 @@
 package com.example.engine.service;
 
 import com.example.engine.dto.OrderDTO;
-import com.example.engine.entity.Location;
-import com.example.engine.entity.Order;
-import com.example.engine.entity.OrderStatus;
+import com.example.engine.entity.*;
 import com.example.engine.repository.LocationRepository;
 import com.example.engine.repository.OrderRepository;
 import org.slf4j.Logger;
@@ -99,6 +97,36 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public List<Order> getOrderQueue() {
         return orderRepository.findOrdersByPickupRiderIsNullOrderById();
+    }
+
+    @Override
+    public Rider rateRider(int riderId, boolean riderThumbsUp) {
+        var rider = riderService.getRiderById(riderId);
+        if (rider == null) {
+            return null;
+        }
+
+        if (riderThumbsUp) {
+            rider.increaseThumbsUp();
+        } else {
+            rider.increaseThumbsDown();
+        }
+        return riderService.save(rider);
+    }
+
+    @Override
+    public Contrib rateContrib(int contribId, boolean contribThumbsUp) {
+        var contrib = contribService.getContributorById(contribId);
+        if (contrib == null) {
+            return null;
+        }
+
+        if (contribThumbsUp) {
+            contrib.incrementThumbsUp();
+        } else {
+            contrib.incrementThumbsDown();
+        }
+        return contribService.save(contrib);
     }
 
     @Override
