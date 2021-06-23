@@ -342,8 +342,10 @@ public class Book2DoorController {
     @GetMapping(value="/admin")
     public String adminHome(Model model)
     {
-        ArrayList<Store> stores = storeRepository.findByAccepted(0);
-        model.addAttribute(MODEL_STORES_ATTR,stores);
+        ArrayList<Store> storesToAccept = storeRepository.findByAccepted(0);
+        ArrayList<Store> storesAccepted = storeRepository.findByAccepted(1);
+        model.addAttribute("storesToAccept",storesToAccept);
+        model.addAttribute("storesAccepted",storesAccepted);
         return "adminFrontPage";
     }
     

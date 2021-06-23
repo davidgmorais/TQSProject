@@ -100,21 +100,21 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="store: ${stores}">
-                                <td th:text="${store.storeName}"></td>
-                                <td th:text="${store.storeAddress}"></td>
-                                <td th:text="${store.email}"></td>
-                                <td th:text="${store.storePhone}"></td>
-                                <td th:text="${store.fullName}"></td>
+                            <tr th:each="storeToAccept: ${storesToAccept}">
+                                <td th:text="${storeToAccept.storeName}"></td>
+                                <td th:text="${storeToAccept.storeAddress}"></td>
+                                <td th:text="${storeToAccept.email}"></td>
+                                <td th:text="${storeToAccept.storePhone}"></td>
+                                <td th:text="${storeToAccept.fullName}"></td>
                                 <td>
                                     <form th:method="post" th:action="@{/admin/accept}">
-                                        <input hidden type="text" th:value="${store.id}" name="id">
+                                        <input hidden type="text" th:value="${storeToAccept.id}" name="id">
                                         <div>
                                             <button  type="submit" class="btn btn-success ">Accept</button>
                                         </div>
                                     </form>
                                     <form th:method="post" th:action="@{/admin/deny}">
-                                        <input hidden type="text" th:value="${store.id}" name="id">
+                                        <input hidden type="text" th:value="${storeToAccept.id}" name="id">
                                         <div>
                                             <button  type="submit" class="btn btn-danger space">Decline</button>
                                         </div>
@@ -138,12 +138,12 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="store: ${stores}">
-                                <td th:text="${store.storeName}"></td>
-                                <td th:text="${store.storeAddress}"></td>
-                                <td th:text="${store.email}"></td>
-                                <td th:text="${store.storePhone}"></td>
-                                <td th:text="${store.fullName}"></td>
+                            <tr th:each="storeAccepted: ${storesAccepted}">
+                                <td th:text="${storeAccepted.storeName}"></td>
+                                <td th:text="${storeAccepted.storeAddress}"></td>
+                                <td th:text="${storeAccepted.email}"></td>
+                                <td th:text="${storeAccepted.storePhone}"></td>
+                                <td th:text="${storeAccepted.fullName}"></td>
                             </tr>
                             </tbody>
                         </table>
