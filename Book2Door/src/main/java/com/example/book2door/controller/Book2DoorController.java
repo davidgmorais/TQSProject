@@ -410,7 +410,7 @@ public class Book2DoorController {
         orderRepository.save(order);
         client.getCart().clear();
         clientRepository.save(client);
-        sendOrderToEngine(4, order);
+        sendOrderToEngine(2, order);
         return "redirect:/order/" + orderId;
     }
 
