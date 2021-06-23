@@ -67,7 +67,7 @@ class EngineWebControllerITest {
         mockMvc.perform(get("/signup")).andExpect(status().isOk())
                 .andExpect(content().string(containsString("Create an Account!")));
     }
-    
+
 
     @Test
     void whenNavigateToServices_thenReturnContent_andStatusOk() throws Exception {
