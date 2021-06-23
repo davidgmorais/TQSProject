@@ -136,7 +136,7 @@ class ControllerTests {
     void whenLoginStoreWithRightDataRedirect() throws Exception{
         this.Mockmvc.perform(post("/log")
             .param("email", "TestStore@service.pt")
-            .param("password", "TestStorePassWord")).andExpect(status().is(302));
+            .param("password", "TestStorePassWord")).andExpect(status().is(200));
     }
     @Test
     void whenAdminWantsToAcceptStoresThenCheckIfModelHasAttributeStores() throws Exception{
@@ -248,6 +248,16 @@ class ControllerTests {
     @Test
     void whenGetErrorPage() throws Exception {
       Mockmvc.perform(get("/error")).andExpect(status().isOk());
+    }
+
+    @Test
+    void whenAdminDeny() throws Exception {
+        Mockmvc.perform(get("/admin/deny")).andExpect(status().is(405));
+    }
+
+    @Test
+    void whenAdminAccept() throws Exception {
+        Mockmvc.perform(get("/admin/accept")).andExpect(status().is(405));
     }
 
     @Test

@@ -54,6 +54,7 @@ public class Book2DoorController {
     private static final String ERROR_TEMPLATE = "error";
     private static final String TOTAL = "total";
     private static final String ANON = "anonymoususer";
+    private static final String REDIRECT = "redirect:/";
     private long orderId;
 
     @Autowired
@@ -102,7 +103,7 @@ public class Book2DoorController {
             model.addAttribute(MODEL_STORE_ATTR,store);
             return "redirect:/store?name="+param;
         }
-        return "redirect:/";
+        return REDIRECT;
     }
 
     @GetMapping(value="/login")
@@ -150,7 +151,7 @@ public class Book2DoorController {
                     else if (role.equals("1")) {
                         return "redirect:/store/dashboard";
                     }
-                    return "redirect:/";
+                    return REDIRECT;
                 }
                 
             }
@@ -501,7 +502,7 @@ public class Book2DoorController {
         else if (reviewRider == 0 && reviewContrib == 1) {
             sendRatingToEngine(2, false, true, riderid);
         }
-        return "redirect:/";
+        return REDIRECT;
 
     }
 

@@ -98,7 +98,7 @@
                         <div th:object="${books}">
                             <tr th:each="book: ${books}">
                                 <td id="remove"><div th:text="${book.key.getTitle()}"></div><div><a th:href="@{/cart/remove?id={id}(id=${book.key.id})}">Remove</a></div></td>
-                                <td th:text=${book.value} ></td>
+                                <td th:text="${book.value}"></td>
                                 <td th:text="${book.key.price}"></td>
                             </tr>
                         </div>
