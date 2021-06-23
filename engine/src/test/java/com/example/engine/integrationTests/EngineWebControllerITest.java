@@ -74,11 +74,6 @@ class EngineWebControllerITest {
                 .andExpect(content().string(containsString("Dashboard")));
     }
 
-    @Test
-    void whenNavigateToServiceIndex_thenReturnContent_andStatusOk() throws Exception {
-        mockMvc.perform(get("/service/dashboard")).andExpect(status().isOk())
-                .andExpect(content().string(containsString("Dashboard")));
-    }
 
     @Test
     void whenNavigateToServiceStatistics_thenReturnContent_andStatusOk() throws Exception {
