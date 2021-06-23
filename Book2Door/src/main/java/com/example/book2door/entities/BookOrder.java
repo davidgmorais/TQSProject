@@ -30,9 +30,9 @@ public class BookOrder {
     @Column(name="clientId")
     private Long clientId;
 
-    public BookOrder(){
-    }
-
+    //this constructor is needed to place an order
+    public BookOrder() {}
+  
     public BookOrder( String clientAddress, List<String> books, double total, String storeAddress, Long clientId) {
         this.clientAddress = clientAddress;
         this.books = books;
