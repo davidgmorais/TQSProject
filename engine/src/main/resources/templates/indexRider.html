@@ -9,24 +9,20 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Dashboard</title>
+    <title>Dashboard 1</title>
 
     <!-- Custom fonts for this template-->
-
     <link th:href="@{/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
-
     <link
             href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
             rel="stylesheet">
 
     <!-- Custom styles for this template-->
-
     <link th:href="@{/css/sb-admin-2.min.css}" rel="stylesheet">
-
 
 </head>
 
-<body id="page-top">
+<body id="page-top" onload="initGeolocation()">
 
 <!-- Page Wrapper -->
 <div id="wrapper">
@@ -35,7 +31,7 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/rider/dashboard}">
             <div class="sidebar-brand-text mx-3">Engine</div>
         </a>
 
@@ -58,8 +54,8 @@
         </div>
 
         <!-- Nav Item -->
-        <li class="nav-item">
-            <a class="nav-link" th:href="@{/service-statistics}">
+        <li class="nav-item"> <!--TODO -->
+            <a class="nav-link" href="#">
                 <i class="fas fa-fw fa-chart-area"></i>
                 <span>Statistics</span></a>
         </li>
@@ -67,9 +63,9 @@
 
         <!-- Nav Item -->
         <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" th:href="@{/rider/rating}">
                 <i class="fas fa-star fa-chart-area"></i>
-                <span>Reviews</span></a>
+                <span>Rating</span></a>
         </li>
 
 
@@ -98,19 +94,6 @@
                     <i class="fa fa-bars"></i>
                 </button>
 
-                <!-- Topbar Search -->
-                <form
-                        class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                    <div class="input-group">
-                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
-                               aria-label="Search" aria-describedby="basic-addon2">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="button">
-                                <i class="fas fa-search fa-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                </form>
 
                 <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
@@ -177,7 +160,7 @@
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span class="mr-2 d-none d-lg-inline text-gray-600 small">Rider's Name</span>
                             <img class="img-profile rounded-circle"
-                                 th:src="@{img/undraw_profile.svg}">
+                                 th:src="@{/img/undraw_profile.svg}">
                         </a>
                         <!-- Dropdown - User Information -->
                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
@@ -217,16 +200,15 @@
                 <!-- Content Row -->
                 <div class="row">
 
-
-                    <!-- Total Stores -->
+                    <!-- Total Deliveries -->
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card border-left-primary shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            Total Deliveries</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">10</div>
+                                            Total Deliveries Today</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${deliveries}">0</div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-shopping-bag fa-2x text-gray-300"></i>
@@ -236,15 +218,15 @@
                         </div>
                     </div>
 
-                    <!-- Total Riders Card  -->
+                    <!-- Total Earnings  -->
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card border-left-success shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                            Total Earnings</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">200$</div>
+                                            Total Earnings Today</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${earnings}"></div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-money-bill-wave fa-2x text-gray-300"></i>
@@ -253,46 +235,120 @@
                             </div>
                         </div>
                     </div>
+
                     <!-- Pending Store Requests Card -->
-                    <div class="col-xl-3 col-md-6 mb-4">
+
+                </div>
+
+                <!-- Content Row -->
+
+                <div class="row">
+
+                    <div class="col-xl-8 col-lg-7" >
                         <div class="card border-left-info shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pending Delivery Requests
-                                        </div>
                                         <div class="row no-gutters align-items-center">
                                             <div class="col-auto">
-                                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">1</div>
+                                                <form id="start" th:method="post" th:action="@{/rider/dashboard/}" >
+                                                    <button class="btn btn-primary" type="submit">Start Shift</button>
+                                                </form>
+                                            </div>
+                                            <div class="col-auto" style="padding-left: 5%">
+                                                <form id="end" th:method="post" th:action="@{/rider/dashboard/end}" >
+                                                    <button class="btn btn-secondary">End Shift</button>
+                                                </form>
+                                            </div>
+                                            <div class="col-auto font-weight-bold text-info text-uppercase mb-1" style="padding-left: 3%; padding-top: 2%; padding-bottom: 0">
+                                                <p id="statusEnded" th:text="${status}"></p>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-tag fa-2x text-gray-300"></i>
+                                        <i class="fas fa-briefcase fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Content Row -->
-                <div id="row">
-                    <div class="col-xl-8 col-lg-7">
+                    <!-- Area Chart -->
+                    <div class="col-xl-8 col-lg-7" style="padding-top: 3%">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Next Deliveries</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Current Order</h6>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-bordered" id="storeRequests" width="100%" cellspacing="0">
                                         <thead>
                                         <tr>
+                                            <th>Price</th>
+                                            <th>Store Address</th>
+                                            <th>Delivery Address</th>
+                                            <th>Tracking</th>
+                                            <th>Status</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="order:${order}">
+                                            <td th:text="${order.value}">NA</td>
+                                            <td>
+                                                <div th:text="${order.serviceLocation.latitude}" id="serviceLat"></div>
+                                                <div th:text="${order.serviceLocation.longitude}" id="serviceLon"></div>
+                                                <a style="cursor: pointer; color: #3b5998; font-weight: bold" data-toggle="modal" data-target="#myModal">Indications here</a>
+                                            </td>
+                                            <td>
+                                                <div th:text="${order.deliveryLocation.latitude}" id="deliveryLat"></div>
+                                                <div th:text="${order.deliveryLocation.longitude}" id="deliveryLon"></div>
+                                                <a style="cursor: pointer; color: #3b5998; font-weight: bold" data-toggle="modal" data-target="#myModalDelivery">Indications here</a>
+                                            </td>
+                                            <td>
+                                                <form id="updateStatus" method="post" th:action="@{update/order/}">
+                                                <div class="dropdown mb-4">
+                                                    <div class="dropdown mb-4">
+                                                        <button class="btn btn-primary dropdown-toggle" type="button"
+                                                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false">
+                                                            Track
+                                                        </button>
+                                                        <div class="dropdown-menu animated--fade-in"
+                                                             aria-labelledby="dropdownMenuButton" id="selectStatus">
+                                                            <button class="dropdown-item" name="Picked up order" type="submit" id="picked">Picked up order</button>
+                                                            <button class="dropdown-item" name="Order delivered" type="submit" id="delivered">Order delivered</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </form>
+                                            </td>
+                                            <td th:text="${order.status}"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+                <div class="row">
+
+                    <!-- Area Chart -->
+                    <div class="col-xl-8 col-lg-7">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">History of Deliveries</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="riderRequests" width="100%" cellspacing="0">
+                                        <thead>
+                                        <tr>
                                             <th>Requester Name</th>
                                             <th>Store</th>
                                             <th>Order</th>
-                                            <th>Map Indication</th>
-                                            <th>Tracking</th>
                                         </tr>
                                         </thead>
                                         <tfoot>
@@ -300,39 +356,16 @@
                                             <th>Requester Name</th>
                                             <th>Store</th>
                                             <th>Order</th>
-                                            <th>Map Indication</th>
-                                            <th>Tracking</th>
                                         </tr>
                                         </tfoot>
                                         <tbody>
-                                        <tr>
-                                            <td>Inês Silva</td>
-                                            <td>UptownBook Aveiro</td>
-                                            <td>Moby Dick, Herman Melville</td>
-                                            <td>Store: Rua fmemjem, Aveiro <br>Address: Rua medmee <br><a style="cursor: pointer; color: #3b5998; font-weight: bold" data-toggle="modal" data-target="#myModal">Indications here</a></td>
-                                            <td>
-                                                <div class="dropdown mb-4">
-                                                    <button class="btn btn-primary dropdown-toggle" type="button"
-                                                            id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                                                            aria-expanded="false">
-                                                        Track
-                                                    </button>
-                                                    <div class="dropdown-menu animated--fade-in"
-                                                         aria-labelledby="dropdownMenuButton">
-                                                        <a class="dropdown-item selected" href="#">Received order</a>
-                                                        <a class="dropdown-item" href="#">Picked up order</a>
-                                                        <a class="dropdown-item" href="#">Order delivered</a>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
+
 
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
                 </div>
@@ -381,56 +414,149 @@
         </div>
     </div>
 
-    <!-- Indications map -->
     <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin: 0;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);">
         <div class="modal-dialog">
-            <div class="modal-content" style="width: 650px">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModal_Label">Indications regarding the order</h5>
+                    <h3 class="modal-title" >Map Indications</h3>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mapouter" >
+                    <div class="mapouter">
                         <div class="gmap_canvas">
-                            <iframe class="gmap_iframe" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Aveiro&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
-                            <a href="https://www.bgmi.org/">BGMI</a>
+                            <iframe class="gmap_iframe" id="iframeModalService" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src=""></iframe>
                         </div>
-                        <style>.mapouter{position:relative;text-align:right;width:600px;height:500px;}.gmap_canvas {overflow:hidden;background:none!important;width:600px;height:500px;}.gmap_iframe {width:600px!important;height:500px!important;}</style>
+                        <style>.mapouter{position:relative;text-align:right;width:400px;height:300px;}.gmap_canvas {overflow:hidden;background:none!important;width:400px;height:300px;}.gmap_iframe {width:700px!important;height:500px!important;}</style>
                     </div>
 
                 </div>
                 <div class="modal-footer" style="text-align: center">
-                    <a href="#"><button type="button" class="btn btn-primary" >Picked up order</button></a>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="modal fade" id="myModalDelivery" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" >Map Indications</h3>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mapouter">
+                        <div class="gmap_canvas">
+                            <iframe class="gmap_iframe" id="iframeModalDelivery" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src=""></iframe>
+                        </div>
+                        <style>.mapouter{position:relative;text-align:right;width:400px;height:300px;}.gmap_canvas {overflow:hidden;background:none!important;width:400px;height:300px;}.gmap_iframe {width:400px!important;height:300px!important;}</style>
+                    </div>
+
+                </div>
+                <div class="modal-footer" style="text-align: center">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Bootstrap core JavaScript-->
+<script th:src="@{/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Core plugin JavaScript-->
+<script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+<!-- Custom scripts for all pages-->
+<script th:src="@{/js/sb-admin-2.min.js}"></script>
+
+<!-- Page level plugins -->
+<script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
+
+<!-- Page level custom scripts -->
+<script th:src="@{/js/demo/chart-area-demo.js}"></script>
+<script th:src="@{/js/demo/chart-pie-demo.js}"></script>
+
+<script>
+
+    document.getElementById("iframeModalService").src = "https://maps.google.com/maps?q=" + document.getElementById("serviceLat").innerText + ",%20" + document.getElementById("serviceLon").innerText +"&t=&z=13&ie=UTF8&iwloc=&output=embed";
+    document.getElementById("iframeModalDelivery").src = "https://maps.google.com/maps?q=" + document.getElementById("deliveryLat").innerText + ",%20" + document.getElementById("deliveryLon").innerText +"&t=&z=13&ie=UTF8&iwloc=&output=embed";
+    http://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&sensor=true/false
+        $.ajax({
+            type: "GET",
+            url: "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + + "," + + "&sensor=true",
+            dataType: "json",
+            success: function (data) {
+                console.log(data);
+            },
+        })
 
 
+        var statusStr;
+    document.getElementById('received').addEventListener('click', function() {
+        console.log(this.innerText);
+        statusStr = 'received';
+        document.getElementById('updateStatus').action = 'http://localhost:8080/update/order/received';
 
-    <!-- Bootstrap core JavaScript-->
+    });
 
-    <script th:src="@{/vendor/jquery/jquery.min.js}"></script>
-    <script th:src="@{/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    document.getElementById('picked').addEventListener('click', function() {
+        statusStr = 'picked';
+        document.getElementById('updateStatus').action = 'http://localhost:8080/update/order/picked';
 
-    <!-- Core plugin JavaScript-->
-    <script th:src="@{/vendor/jquery-easing/jquery.easing.min.js}"></script>
+    });
 
-    <!-- Custom scripts for all pages-->
-    <script th:src="@{/js/sb-admin-2.min.js}"></script>
+    document.getElementById('delivered').addEventListener('click', function() {
+        statusStr = 'delivered';
+        document.getElementById('updateStatus').action = 'http://localhost:8080/update/order/delivered';
+    });
 
-    <!-- Page level plugins -->
-    <script th:src="@{/vendor/chart.js/Chart.min.js}"></script>
+    var long;
+    var lat;
+    function initGeolocation()
+    {
+        if( navigator.geolocation )
+        {
+            // Call getCurrentPosition with success and failure callbacks
+            navigator.geolocation.getCurrentPosition( success, fail );
+        }
+        else
+        {
+            alert("Sorry, your browser does not support geolocation services.");
+        }
+    }
 
-    <!-- Page level custom scripts -->
-    <script th:src="@{/js/demo/chart-area-demo.js}"></script>
-    <script th:src="@{/js/demo/chart-pie-demo.js}"></script>
+    function success(position)
+    {
 
+        long = position.coords.longitude;
+        lat = position.coords.latitude;
+        document.getElementById('start').action = document.getElementById('start').action + long + '/' + lat;
+    }
+
+    function fail() {
+
+    }
+
+    function startShift() {
+        document.getElementById("status").innerText = "Working";
+    }
+
+    function endShift() {
+        document.getElementById("status").innerText = "Not working";
+    }
+
+</script>
 
 </body>
 
