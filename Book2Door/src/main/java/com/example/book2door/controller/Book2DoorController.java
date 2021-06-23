@@ -54,12 +54,9 @@ public class Book2DoorController {
     private static final String ERROR_TEMPLATE = "error";
     private static final String TOTAL = "total";
     private static final String ANON = "anonymoususer";
-<<<<<<< HEAD
     private static final String REDIRECT = "redirect:/";
-=======
     private static final String REDIRECT_CART ="redirect:/cart";
 
->>>>>>> 38b753b2e288435358e7b4b3fd64ed212a4a0b67
     private long orderId;
 
     @Autowired
