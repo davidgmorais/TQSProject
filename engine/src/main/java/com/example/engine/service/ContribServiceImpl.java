@@ -109,4 +109,9 @@ public class ContribServiceImpl implements ContribService{
     public Contrib getContributorById(int contribId) {
         return repository.findContribById(contribId);
     }
+
+    @Override
+    public Contrib save(Contrib contrib) {
+        return repository.save(contrib);
+    }
 }

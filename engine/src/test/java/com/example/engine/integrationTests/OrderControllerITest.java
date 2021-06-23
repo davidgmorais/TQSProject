@@ -4,6 +4,7 @@ package com.example.engine.integrationTests;
 import com.example.engine.EngineApplication;
 import com.example.engine.component.JwtUtils;
 import com.example.engine.dto.OrderDTO;
+import com.example.engine.dto.RatingDTO;
 import com.example.engine.entity.*;
 import com.example.engine.repository.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -542,6 +543,39 @@ class OrderControllerITest {
     void whenGetOrderInfo_andOrderIsInvalid_thenReturnNull() throws Exception {
         mvc.perform(get("/api/order/" + -10).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void whenRatingOrder_andRiderIsInvalid_thenReturnNotFound() throws Exception {
+        RatingDTO rating = new RatingDTO(1, true, 1, true);
+        mvc.perform(put("/api/rating").contentType(MediaType.APPLICATION_JSON).content(toJson(rating)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void whenRatingOrder_andContribIsInvalid_thenReturnNotFound() throws Exception {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        userRepository.saveAndFlush(bob);
+
+        Rider riderBob = new Rider(bob);
+        riderRepository.saveAndFlush(riderBob);
+
+        RatingDTO rating = new RatingDTO(-1, true, riderBob.getId(), true);
+        mvc.perform(put("/api/rating").contentType(MediaType.APPLICATION_JSON).content(toJson(rating)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void whenRatingOrder_adnRiderIsValid_andContribIsValid_thenReturnRatingSuccessful() throws Exception {
+        User bob = new User("bob", "bobSmith@gmail.com", "password", "Bob", "Smith", 2);
+        userRepository.saveAndFlush(bob);
+
+        Rider riderBob = new Rider(bob);
+        riderBob = riderRepository.saveAndFlush(riderBob);
+
+        RatingDTO rating = new RatingDTO(contribId, true, riderBob.getId(), true);
+        mvc.perform(put("/api/rating").contentType(MediaType.APPLICATION_JSON).content(toJson(rating)))
+                .andExpect(status().isOk());
     }
 
 

@@ -45,6 +45,8 @@ class RiderService_UnitTest {
         riderDakota.setId(2);
 
         Mockito.when(riderRepository.getRiderByUserId(bob.getId())).thenReturn(riderBob);
+        Mockito.when(riderRepository.findRiderById(riderBob.getId())).thenReturn(riderBob);
+        Mockito.when(riderRepository.findRiderById(-1)).thenReturn(null);
         Mockito.when(riderRepository.getRiderByUserId(dakota.getId())).thenReturn(riderDakota);
 
         Mockito.when(riderRepository.findAllByVerifiedTrue()).thenReturn(new ArrayList<>(Collections.singletonList(riderBob)));
@@ -127,6 +129,19 @@ class RiderService_UnitTest {
     void givenNoRider_whenEndShift_thenReturnFalse() {
         boolean shiftStarted = riderService.endShift("NonExistingUsername");
         assertThat(shiftStarted).isFalse();
+    }
+
+    @Test
+    void givenNoRider_whenGetRiderById_thenReturnNull() {
+        Rider rider = riderService.getRiderById(-1);
+        assertThat(rider).isNull();
+    }
+
+    @Test
+    void givenRider_whenGetRiderById_thenRider() {
+        Rider rider = riderService.getRiderById(1);
+        assertThat(rider).isNotNull();
+        assertThat(rider.getUser().getUsername()).isEqualTo("bob");
     }
 
 

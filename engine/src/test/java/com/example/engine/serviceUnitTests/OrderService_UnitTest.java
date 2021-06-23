@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -60,6 +61,8 @@ class OrderService_UnitTest {
         riderBob.setWorking(true);
         riderBob.setVerified(true);
         Rider riderDakota = new Rider(dakota);
+        riderDakota.setId(1);
+        riderDakota.increaseThumbsDown();
         riderDakota.setWorking(true);
         riderDakota.setVerified(true);
 
@@ -79,10 +82,15 @@ class OrderService_UnitTest {
         when(contribService.getContributorById(bobService.getId())).thenReturn(bobService);
         when(contribService.getContributorById(dakotaService.getId())).thenReturn(dakotaService);
         when(contribService.getContributorById(-1)).thenReturn(null);
+        when(contribService.save(Mockito.any())).thenReturn(bobService);
+
 
         when(riderService.getRidersToDispatch()).thenReturn(Collections.singletonList(riderBob));
         when(riderService.getRiderByUsername(bob.getUsername())).thenReturn(riderBob);
         when(riderService.getRiderByUsername(dakota.getUsername())).thenReturn(riderDakota);
+        when(riderService.getRiderById(riderDakota.getId())).thenReturn(riderDakota);
+        when(riderService.getRiderById(-10)).thenReturn(null);
+        when(riderService.save(Mockito.any())).thenReturn(riderDakota);
         when(riderService.getRiderByUsername("NonExistingRider")).thenReturn(null);
 
         when(orderRepository.findOrderById(order.getId())).thenReturn(order);
@@ -257,6 +265,74 @@ class OrderService_UnitTest {
     void whenGetQueueOrder_thenReturnListOfOrders() {
         List<Order> queue = orderService.getOrderQueue();
         assertThat(queue).hasSize(2).extracting(Order::getId).containsExactly(2L, 3L);
+    }
+
+    @Test
+    void whenRatingRider_andRiderDoesNotExist_returnNull() {
+        Rider ratedRider = orderService.rateRider(-10, true);
+        assertThat(ratedRider).isNull();
+        Mockito.verify(riderService, VerificationModeFactory.times(1))
+                .getRiderById(Mockito.anyInt());
+        Mockito.verify(riderService, VerificationModeFactory.times(0))
+                .save(Mockito.any());
+    }
+
+    @Test
+    void whenRatingRider_andRiderExist_andPositiveRating_returnRider() {
+        Rider ratedRider = orderService.rateRider(1, true);
+        assertThat(ratedRider).isNotNull();
+        assertThat(ratedRider.getThumbsUp()).isEqualTo(1);
+        assertThat(ratedRider.getThumbsDown()).isEqualTo(1);
+        Mockito.verify(riderService, VerificationModeFactory.times(1))
+                .getRiderById(Mockito.anyInt());
+        Mockito.verify(riderService, VerificationModeFactory.times(1))
+                .save(Mockito.any());
+    }
+
+    @Test
+    void whenRatingRider_andRiderExist_andNegativeRating_returnRider() {
+        Rider ratedRider = orderService.rateRider(1, false);
+        assertThat(ratedRider).isNotNull();
+        assertThat(ratedRider.getThumbsUp()).isZero();
+        assertThat(ratedRider.getThumbsDown()).isEqualTo(2);
+        Mockito.verify(riderService, VerificationModeFactory.times(1))
+                .getRiderById(Mockito.anyInt());
+        Mockito.verify(riderService, VerificationModeFactory.times(1))
+                .save(Mockito.any());
+    }
+
+    @Test
+    void whenRatingContrib_andContribDoesNotExist_returnNull() {
+        Contrib ratedContrib = orderService.rateContrib(-1, true);
+        assertThat(ratedContrib).isNull();
+        Mockito.verify(contribService, VerificationModeFactory.times(1))
+                .getContributorById(Mockito.anyInt());
+        Mockito.verify(contribService, VerificationModeFactory.times(0))
+                .save(Mockito.any());
+    }
+
+    @Test
+    void whenRatingContrib_andContribExist_andPositiveRating_returnContrib() {
+        Contrib ratedContrib = orderService.rateContrib(1, true);
+        assertThat(ratedContrib).isNotNull();
+        assertThat(ratedContrib.getThumbsUp()).isEqualTo(1);
+        assertThat(ratedContrib.getThumbsDown()).isZero();
+        Mockito.verify(contribService, VerificationModeFactory.times(1))
+                .getContributorById(Mockito.anyInt());
+        Mockito.verify(contribService, VerificationModeFactory.times(1))
+                .save(Mockito.any());
+    }
+
+    @Test
+    void whenRatingContrib_andContribExist_andNegativeRating_returnContrib() {
+        Contrib ratedContrib = orderService.rateContrib(1, false);
+        assertThat(ratedContrib).isNotNull();
+        assertThat(ratedContrib.getThumbsUp()).isZero();
+        assertThat(ratedContrib.getThumbsDown()).isEqualTo(1);
+        Mockito.verify(contribService, VerificationModeFactory.times(1))
+                .getContributorById(Mockito.anyInt());
+        Mockito.verify(contribService, VerificationModeFactory.times(1))
+                .save(Mockito.any());
     }
 
 }
