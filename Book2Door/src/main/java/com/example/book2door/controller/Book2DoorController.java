@@ -54,6 +54,8 @@ public class Book2DoorController {
     private static final String ERROR_TEMPLATE = "error";
     private static final String TOTAL = "total";
     private static final String ANON = "anonymoususer";
+    private static final String REDIRECT_CART ="redirect:/cart";
+
     private long orderId;
 
     @Autowired
@@ -248,10 +250,12 @@ public class Book2DoorController {
         }
         JwtUser jwtClient= (JwtUser)(auth.getPrincipal());
         var client = clientRepository.findClientByEmail(jwtClient.getEmail());
-        client.getCart().remove(id);
+        client.getCart().clear();
+
         clientRepository.save(client);
-        return "redirect:/cart";
+        return REDIRECT_CART;
     }
+
     @GetMapping(value="/cart/add")
     public String addToCart(@RequestParam long id, Model model)
     {
@@ -263,7 +267,21 @@ public class Book2DoorController {
         var client = clientRepository.findClientByEmail(jwtClient.getEmail());
         client.getCart().add(id);
         clientRepository.save(client);
-        return "redirect:/cart";
+        return REDIRECT_CART;
+    }
+
+    @GetMapping(value="/cart/decrease")
+    public String decreaseBookNumber(@RequestParam long id, Model model)
+    {
+        var auth=SecurityContextHolder.getContext().getAuthentication();
+        if(auth.getName().equals(ANON)){
+            return REDIRECT_LOGIN;
+        }
+        JwtUser jwtClient= (JwtUser)(auth.getPrincipal());
+        var client = clientRepository.findClientByEmail(jwtClient.getEmail());
+        client.getCart().remove(id);
+        clientRepository.save(client);
+        return REDIRECT_CART;
     }
 
 
@@ -322,8 +340,10 @@ public class Book2DoorController {
     @GetMapping(value="/admin")
     public String adminHome(Model model)
     {
-        ArrayList<Store> stores = storeRepository.findByAccepted(0);
-        model.addAttribute(MODEL_STORES_ATTR,stores);
+        ArrayList<Store> storesToAccept = storeRepository.findByAccepted(0);
+        ArrayList<Store> storesAccepted = storeRepository.findByAccepted(1);
+        model.addAttribute("storesToAccept",storesToAccept);
+        model.addAttribute("storesAccepted",storesAccepted);
         return "adminFrontPage";
     }
     
@@ -386,10 +406,11 @@ public class Book2DoorController {
                 total+=book.getPrice();
             }
         }
-        var order = new BookOrder(client.getAddress(), books, total,storeRepository.getById(storeId).getStoreAddress());
+        var order = new BookOrder(client.getAddress(), books, total,storeRepository.getById(storeId).getStoreAddress(), client.getId());
         orderRepository.save(order);
+        client.getCart().clear();
+        clientRepository.save(client);
         sendOrderToEngine(2, order);
-
         return "redirect:/order/" + orderId;
     }
 
